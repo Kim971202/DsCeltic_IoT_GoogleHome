@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.31.25.138:3306/dsiot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: dsiotAppServer
+    password: bZGPt9zQZ7aAtv+T]6}(*EfDONfO.R
+server:
+  port: 8888
+mybatis:
+  config-location: classpath:mybatis-config.xml
+
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
+#    org.springframework.web: DEBUG
+#    org.springframework.web.servlet.DispatcherServlet: DEBUG
+
+custom:
+  google:
+    oauth2:
+      project_id: dsiot-52315
+      client_id: 505891126739-5nst99tq7ib748ovv80s6tdd5c0epcp3.apps.googleusercontent.com
+      client_secret: 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
+      #초단위(24시간)
+      expires: 86400
+      #앱 서버 로그인 연동 정보
+#      google_resource_server: https://hn.celtic.co.kr:8191
+#      app_auth_server: https://hn.celtic.co.kr
+#      app_resource_server: https://hn.celtic.co.kr:8091

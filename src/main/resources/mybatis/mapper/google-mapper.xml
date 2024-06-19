@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.smarthome.mapper.GoogleMapper">
+
+    <resultMap id="google" type="com.google.smarthome.dto.GoogleDTO"> </resultMap>
+
+    <select id="getInfoByDeviceId" parameterType="String" resultMap="google">
+        SELECT
+            POWR AS powrStatus,
+            HTTP AS tempStatus,
+            DEVC_ID AS deviceId
+        FROM
+            TBR_OPR_DEVICE_STATUS
+        WHERE
+            DEVC_ID = #{deviceId}
+    </select>
+
+    <update id="updateDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
+        UPDATE
+            TBR_OPR_DEVICE_STATUS
+        <set>
+            <if test="tempStatus != null">HTTP = #{tempStatus},</if>
+            <if test="powrStatus != null">POWR = #{powrStatus},</if>
+        </set>
+        WHERE
+            DEVC_ID = #{deviceId}
+    </update>
+
+</mapper>
