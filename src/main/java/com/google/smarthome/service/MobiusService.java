@@ -1,12 +1,280 @@
 package com.google.smarthome.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.smarthome.contant.MobiusResponse;
+import com.google.smarthome.dto.mobius.AeDTO;
+import com.google.smarthome.dto.mobius.CinDTO;
+import com.google.smarthome.dto.mobius.CntDTO;
+import com.google.smarthome.dto.mobius.SubDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
 public class MobiusService {
 
+    @Value("${custom.server.info.app_server_address}")
+    private String appServerAddress;
+    @Value("${custom.server.info.mobius_server_address}")
+    private String mobiusServerAddress;
+    @Value("${custom.server.info.mobius_host}")
+    private String mobiusHost;
 
+    ObjectMapper objectMapper = new ObjectMapper();
+    private static PoolingHttpClientConnectionManager connectionManager = null;
+    private static CloseableHttpClient httpClient;
+    private static int requestIndex = 0;
+
+    public CloseableHttpClient getHttpClient() {
+        log.info("InteractionRequest -> getHttpClient CALLED");
+        if(connectionManager == null) {
+            connectionManager = new PoolingHttpClientConnectionManager();
+            connectionManager.setMaxTotal(500);
+            connectionManager.setDefaultMaxPerRoute(50);
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectionRequestTimeout(500)
+                    .setConnectTimeout(10)
+                    .setSocketTimeout(2000)
+                    .setExpectContinueEnabled(true).build();
+
+            httpClient = HttpClients.custom()
+                    .setDefaultRequestConfig(config)
+                    .setConnectionManager(connectionManager)
+                    .build();
+        }
+        return httpClient;
+    }
+
+    private MobiusResponse pickupResponse(URI uri, String reqBody, HttpResponse response) throws ParseException, IOException {
+
+        MobiusResponse mobiusResponse = new MobiusResponse();
+
+        int responseCode = response.getStatusLine().getStatusCode();
+        mobiusResponse.setResponseCode(String.valueOf(responseCode));
+
+        HttpEntity responseEntity = response.getEntity();
+        String responseString = EntityUtils.toString(responseEntity);
+        mobiusResponse.setResponseContent(responseString);
+
+        log.info("FirstHeader Content-Location: " + response.getFirstHeader("Content-Location"));
+        log.info("LastHeader Content-Location: " + response.getLastHeader("Content-Location"));
+
+        log.info("====HTTP Request URI===============================================================================");
+        log.info("HTTP Request URI : " + uri.toString());
+        log.info("====HTTP Request Body=================================================================================");
+        log.info("HTTP Request Body : " + reqBody);
+        log.info("====HTTP Response Code=================================================================================");
+        log.info("HTTP Response Code, dKey : " + responseCode);
+        log.info("====HTTP Response String=================================================================================");
+        log.info("HTTP Response String : " + responseString);
+        log.info("====END OF pickupResponse=================================================================================");
+
+        return mobiusResponse;
+    }
+
+    public MobiusResponse createAe(String serialNumber) throws Exception {
+
+        AeDTO aeObject = new AeDTO();
+        AeDTO.Ae ae = new AeDTO.Ae();
+
+        ae.setRn(serialNumber);
+        ae.setApi("api");
+        ae.setLbl(Arrays.asList("key1", "key2"));
+        ae.setRr(true);
+        ae.setPoa(List.of("http://127.0.0.1:7579"));
+        aeObject.setDefaultValue(ae);
+        String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(aeObject);
+
+        StringEntity entity = new StringEntity(requestBody);
+
+        URI uri = new URIBuilder()
+                .setScheme("http")
+                .setHost(mobiusHost)
+                .setPath("/Mobius")
+                .build();
+
+        HttpPost post = new HttpPost(uri);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-Type", "application/vnd.onem2m-res+json;ty=2");
+        post.setHeader("X-M2M-Origin", "S");
+        post.setHeader("locale", "ko");
+        post.setHeader("X-M2M-RI", Integer.toString(requestIndex));
+        post.setEntity(entity);
+        requestIndex++;
+
+        MobiusResponse mobiusResponse = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            CloseableHttpClient httpClient = getHttpClient();
+            response = httpClient.execute(post);
+            mobiusResponse = pickupResponse(uri, requestBody, response);
+
+        } catch (Exception e) {
+            log.error("send to oneM2M Error : " + e);
+        } finally {
+            if(response != null)
+                response.close();
+        }
+        return mobiusResponse;
+    }
+
+    public MobiusResponse createCnt(String aeName, String cntName) throws Exception {
+
+        CntDTO cntObject = new CntDTO();
+        CntDTO.Cnt cnt = new CntDTO.Cnt();
+
+        cnt.setRn(cntName);
+        cnt.setMbs(10000);
+
+        cntObject.setDefaultValue(cnt);
+
+        String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(cntObject);
+
+        StringEntity entity = new StringEntity(requestBody);
+
+        URI uri = new URIBuilder()
+                .setScheme("http")
+                .setHost(mobiusHost)
+                .setPath("/Mobius" + "/" + aeName)
+                .build();
+
+        HttpPost post = new HttpPost(uri);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-Type", "application/vnd.onem2m-res+json;ty=3");
+        post.setHeader("X-M2M-Origin", "S");
+        post.setHeader("locale", "ko");
+        post.setHeader("X-M2M-RI", Integer.toString(requestIndex));
+        post.setEntity(entity);
+        requestIndex++;
+
+        MobiusResponse mobiusResponse = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            CloseableHttpClient httpClient = getHttpClient();
+            response = httpClient.execute(post);
+            mobiusResponse = pickupResponse(uri, requestBody, response);
+
+        } catch (Exception e) {
+            log.error("send to oneM2M Error : " + e);
+        } finally {
+           if(response != null)
+                response.close();
+        }
+        return mobiusResponse;
+    }
+
+    public MobiusResponse createCin(String aeName, String cntName, String con) throws Exception{
+        CinDTO cinObject = new CinDTO();
+        CinDTO.Cin cin = new CinDTO.Cin();
+
+        cin.setCon(con);
+        cinObject.setDefaultValue(cin);
+
+        String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(cinObject);
+        log.info("requestBody: " + requestBody);
+        StringEntity entity = new StringEntity(requestBody);
+
+        URI uri = new URIBuilder()
+                .setScheme("http")
+                .setHost(mobiusHost)
+                .setPath("/Mobius" + "/" + aeName + "/" + cntName)
+                .build();
+
+        HttpPost post = new HttpPost(uri);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-Type", "application/vnd.onem2m-res+json;ty=4");
+        post.setHeader("X-M2M-Origin", "S");
+        post.setHeader("locale", "ko");
+        post.setHeader("X-M2M-RI", Integer.toString(requestIndex));
+        post.setEntity(entity);
+        requestIndex++;
+
+        MobiusResponse mobiusResponse = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            CloseableHttpClient httpClient = getHttpClient();
+            response = httpClient.execute(post);
+            mobiusResponse = pickupResponse(uri, requestBody, response);
+            log.info("mobiusResponse: " + mobiusResponse);
+        } catch (Exception e) {
+            log.error("send to oneM2M Error : " + e);
+            return mobiusResponse;
+        } finally {
+            if(response != null)
+                response.close();
+        }
+        return mobiusResponse;
+    }
+
+    public MobiusResponse createSub(String aeName, String cntName) throws Exception{
+
+        SubDTO subOject = new SubDTO();
+        SubDTO.Sub sub = new SubDTO.Sub();
+        SubDTO.Sub.Enc enc = new SubDTO.Sub.Enc();
+
+        enc.setNet(List.of(3));
+
+        sub.setEnc(enc);
+        sub.setRn("ToAppServer-Google");
+        sub.setNu(List.of(appServerAddress));
+        sub.setExc(10);
+        subOject.setDefaultValue(sub);
+
+        String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(subOject);
+
+        StringEntity entity = new StringEntity(requestBody);
+
+        URI uri = new URIBuilder()
+                .setScheme("http")
+                .setHost(mobiusHost)
+                .setPath("/Mobius" + "/" + aeName + "/" + cntName)
+                .build();
+
+        HttpPost post = new HttpPost(uri);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-Type", "application/vnd.onem2m-res+json;ty=4");
+        post.setHeader("X-M2M-Origin", "S");
+        post.setHeader("locale", "ko");
+        post.setHeader("X-M2M-RI", Integer.toString(requestIndex));
+        post.setEntity(entity);
+        requestIndex++;
+
+        MobiusResponse mobiusResponse = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            CloseableHttpClient httpClient = getHttpClient();
+            response = httpClient.execute(post);
+            mobiusResponse = pickupResponse(uri, requestBody, response);
+
+        } catch (Exception e) {
+            log.error("send to oneM2M Error : " + e);
+        } finally {
+            if(response != null)
+                response.close();
+        }
+        return mobiusResponse;
+    }
 
 }

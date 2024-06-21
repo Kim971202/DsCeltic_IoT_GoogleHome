@@ -1,10 +1,13 @@
 package com.google.smarthome.controller;
 
+import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.utils.Constants;
 import com.google.smarthome.utils.CookieStorage;
 import com.google.smarthome.utils.JSON;
+import com.google.smarthome.utils.RedisCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +30,12 @@ public class AuthorizationController {
     private final RestTemplate restTemplate;
     private final CookieStorage cookieStorage;
 
+    @Autowired
+    GoogleMapper googleMapper;
+    @Autowired
+    RedisCommand redisCommand;
+
+
     @GetMapping("/oauth2/authorize")
     public String authorize(
             HttpServletRequest request,
@@ -44,15 +53,16 @@ public class AuthorizationController {
         cookieStorage.setCookie(request, "state", state, response);
         cookieStorage.setCookie(request, "redirect_uri", redirectUri, response);
 
-        return "redirect:/home.html";
+        return "redirect:/access/home.html";
     }
 
     @GetMapping({"/authorization_code"})
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public String authorizationCode(HttpSession session, HttpServletRequest request, String code, Model model, HttpServletResponse response) throws Exception {
+    public String authorizationCode(HttpServletRequest request,
+                                    @RequestParam(name = "username", required = false) String username,
+                                    @RequestParam(name = "password", required = false) String password) throws Exception {
 
         log.info("@GetMapping({\"/authorization_code\"})\n");
-
 
         String state = cookieStorage.getCookie(request, "state");
         String redirectUri = cookieStorage.getCookie(request, "redirect_uri");
@@ -61,6 +71,8 @@ public class AuthorizationController {
 
         final String authorizationCode = UUID.randomUUID().toString();
         log.info("authorizationCode:{}", authorizationCode);
+
+        redisCommand.setValues(authorizationCode, username);
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 
@@ -77,7 +89,6 @@ public class AuthorizationController {
     public String token(String code) throws Exception {
 
         log.info("@GetMapping({\"/token\"})");
-
 
         // 엑세스 토큰 요청
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -104,10 +115,9 @@ public class AuthorizationController {
         try {
             Map<String,String> response = restTemplate.postForObject("https://daesungiot.co.kr" + "/oauth/token", params, Map.class);
             log.info("app /oauth/token response: {}", JSON.toJson(response, true));
-            String accessToken = response.get("access_token");
-            return accessToken;
+            if(response != null) return response.get("access_token");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("", e);
         }
         return null;
     }

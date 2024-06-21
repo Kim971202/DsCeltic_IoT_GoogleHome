@@ -37,6 +37,10 @@ dependencies {
 
 	implementation 'org.json:json:20220320' // 추가된 부분
 
+	// Gson 라이브러리
+	implementation 'com.google.code.gson:gson'
+	implementation"com.googlecode.json-simple:json-simple:1.1.1"
+
 	// Lombok 라이브러리
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -47,6 +51,9 @@ dependencies {
 	// Mybatis 라이브러리
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
+
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

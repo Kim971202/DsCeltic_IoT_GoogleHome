@@ -10,4 +10,7 @@ public interface GoogleMapper {
 
     public int updateDeviceStatus(GoogleDTO value);
 
+    public GoogleDTO getAccountByUserId(String userId);
+
+    public GoogleDTO getDeviceIdByUserId(String userId);
 }

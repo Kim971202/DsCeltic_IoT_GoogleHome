@@ -1,12 +1,17 @@
 package com.google.smarthome.service;
 
+import com.google.smarthome.contant.MobiusResponse;
 import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.mapper.GoogleMapper;
+import com.google.smarthome.utils.JSON;
+import com.google.smarthome.utils.RedisCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -14,9 +19,11 @@ public class FulfillmentService {
 
     @Autowired
     private GoogleMapper googleMapper;
+    @Autowired
+    private MobiusService mobiusService;
     GoogleDTO deviceStatus;
 
-    public JSONObject handleSync(JSONObject requestBody) {
+    public JSONObject handleSync(JSONObject requestBody, String deviceId, String userId) {
         log.info("handleSync CALLED");
         log.info("requestBody: " + requestBody);
 
@@ -24,11 +31,11 @@ public class FulfillmentService {
         response.put("requestId", requestBody.getString("requestId"));
 
         JSONObject payload = new JSONObject();
-        payload.put("agentUserId", "userId123");
+        payload.put("agentUserId", userId);
 
         JSONArray devices = new JSONArray();
         JSONObject boiler = new JSONObject();
-        boiler.put("id", "deviceId123");
+        boiler.put("id", deviceId);
         boiler.put("type", "action.devices.types.THERMOSTAT");
         boiler.put("traits", new JSONArray()
                 .put("action.devices.traits.OnOff")
@@ -48,7 +55,7 @@ public class FulfillmentService {
         log.info("handleSync response: " + response);
         return response;
     }
-    public JSONObject handleExecute(JSONObject requestBody) {
+    public JSONObject handleExecute(JSONObject requestBody, String userId) {
         log.info("handleExecute CALLED");
         log.info("requestBody: " + requestBody);
 
@@ -74,15 +81,16 @@ public class FulfillmentService {
                         String commandName = execCommand.getString("command");
 
                         switch (commandName) {
-                            case "action.devices.commands.OnOff":
-                                boolean on = execCommand.getJSONObject("params").getBoolean("on");
-                                log.info("Turning " + (on ? "on" : "off") + " device " + deviceId);
-                                break;
                             case "action.devices.commands.ThermostatTemperatureSetpoint":
                                 double temp = execCommand.getJSONObject("params").getDouble("thermostatTemperatureSetpoint");
                                 log.info("Setting temperature of device " + deviceId + " to " + temp);
                                 deviceStatus.setTempStatus(String.valueOf(temp));
                                 googleMapper.updateDeviceStatus(deviceStatus);
+                                try {
+                                    handleDevice(userId, deviceId, String.valueOf(temp), "wtTp");
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
                                 break;
                             case "action.devices.commands.ThermostatSetMode":
                                 String mode = execCommand.getJSONObject("params").getString("thermostatMode");
@@ -90,6 +98,11 @@ public class FulfillmentService {
                                 if(mode.equals("off")) deviceStatus.setPowrStatus("of");
                                 else if(mode.equals("heat")) deviceStatus.setPowrStatus("on");
                                 googleMapper.updateDeviceStatus(deviceStatus);
+                                try {
+                                    handleDevice(userId, deviceId, mode, "powr");
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
                                 break;
                         }
                     });
@@ -104,11 +117,11 @@ public class FulfillmentService {
         log.info("handleExecute response: " + response);
         return response;
     }
-    public JSONObject handleQuery(JSONObject requestBody) {
+    public JSONObject handleQuery(JSONObject requestBody, String devceId) {
         log.info("handleQuery CALLED");
         log.info("requestBody: " + requestBody);
 
-        deviceStatus = googleMapper.getInfoByDeviceId("0.2.481.1.1.2045534365636f313353.20202020303833413844434146353435");
+        deviceStatus = googleMapper.getInfoByDeviceId(devceId);
 
         JSONObject response = new JSONObject();
         response.put("requestId", requestBody.getString("requestId"));
@@ -129,13 +142,27 @@ public class FulfillmentService {
             deviceState.put("thermostatMode", deviceStatus.getPowrStatus());
         }
 
-        devices.put("deviceId123", deviceState);
+        devices.put(devceId, deviceState);
         payload.put("devices", devices);
         response.put("payload", payload);
 
         log.info("handleQuery response: " + response);
 
         return response;
+    }
+
+    private String handleDevice(String userId, String deviceId, String value, String functionId) throws Exception {
+        MobiusResponse mobiusResponse;
+        ConcurrentHashMap<String, String> conMap = new ConcurrentHashMap<>();
+
+        conMap.put("userId", userId);
+        conMap.put("deviceId",deviceId);
+        conMap.put("value", value);
+        conMap.put("functionId", functionId);
+        System.out.println(JSON.toJson(conMap));
+        mobiusResponse = mobiusService.createCin("googleAE", "googleCNT", JSON.toJson(conMap));
+
+        return mobiusResponse.getResponseCode();
     }
 
 }

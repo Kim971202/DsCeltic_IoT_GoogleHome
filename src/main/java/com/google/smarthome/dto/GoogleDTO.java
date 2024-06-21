@@ -13,9 +13,16 @@ public class GoogleDTO implements Serializable {
 
     private static final long serialVersionUID = 54436712726576487L;
 
+    // Device
     private String powrStatus;
     private String tempStatus;
 
+    // User
+    private String userId;
+    private String userPassword;
+
+
+    // Main Key Value
     private String deviceId;
 
 }

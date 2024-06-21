@@ -2,8 +2,10 @@ package com.google.smarthome.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.smarthome.utils.RedisCommand;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,7 +32,8 @@ public class AuthTokenController {
     private String googleOauth2ProjectId;
     @Value("${custom.google.oauth2.expires}")
     private int googleOauth2Expires;
-
+    @Autowired
+    RedisCommand redisCommand;
     @ResponseBody
     @PostMapping("/oauth2/token")
     public ResponseEntity<?> authorize(
@@ -64,9 +67,7 @@ public class AuthTokenController {
         log.info("clientId:{}", clientId);
         log.info("clientSecret:{}", clientSecret);
 
-        String accessToken = UUID.randomUUID().toString();
-        String myRefreshToke = Base64Utils.encodeToUrlSafeString(accessToken.getBytes("UTF-8"));
-        log.info("accessToken:{}", accessToken);
+        String myRefreshToke = Base64Utils.encodeToUrlSafeString(authorizationCode.getBytes("UTF-8"));
         log.info("myRefreshToke:{}", myRefreshToke);
 			/*
 			 * {
@@ -77,7 +78,7 @@ public class AuthTokenController {
 			 */
         return ResponseEntity.ok().body(TokenBody.builder()
                 .tokenType("Bearer")
-                .accessToken(accessToken)
+                .accessToken(authorizationCode)
                 .refreshToken(myRefreshToke)
                 .expiresIn(googleOauth2Expires) //구글기준 토큰유효시간
                 .build());

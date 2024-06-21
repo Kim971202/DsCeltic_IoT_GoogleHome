@@ -26,4 +26,23 @@
             DEVC_ID = #{deviceId}
     </update>
 
+    <select id="getAccountByUserId" parameterType="String" resultMap="google">
+        SELECT
+            USER_ID AS userId,
+            PW as userPassword
+        FROM
+            TBR_OPR_ACCOUNT
+        WHERE
+            USER_ID = #{userId}
+    </select>
+
+    <select id="getDeviceIdByUserId" parameterType="String" resultMap="google">
+        SELECT
+            USER_ID AS userId,
+            DEVC_ID as deviceId
+        FROM
+            TBR_OPR_USER_DEVICE
+        WHERE
+            USER_ID = #{userId}
+    </select>
 </mapper>

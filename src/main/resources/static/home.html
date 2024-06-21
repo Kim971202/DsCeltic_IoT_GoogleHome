@@ -10,20 +10,41 @@
           text-align: center;
           margin-top: 50px;
         }
+        input {
+          font-size: 16px;
+          padding: 10px;
+          margin: 10px;
+          display: block;
+          width: 200px;
+          margin-left: auto;
+          margin-right: auto;
+        }
         button {
           font-size: 16px;
           padding: 10px 20px;
           cursor: pointer;
+          margin: 10px;
         }
     </style>
 </head>
 <body>
 <h1>Home Page</h1>
+<input type="text" id="username" placeholder="Username" value="3441693175">
+<input type="password" id="password" placeholder="Password" value="306618E0A1C0136A4147CE80233CE8C3BEE8960EA44428769E02EF95BB3064C0">
 <button id="loginButton">Login</button>
 
 <script>
     document.getElementById('loginButton').addEventListener('click', function() {
-      window.location.href = 'https://daesungiot.co.kr/authorization_code'; // 원하는 URL로 변경
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        // 첫 번째 URL 호출
+        window.location.href = `https://daesungiot.co.kr/access/authorization_code?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+
+        // 두 번째 URL 호출
+        setTimeout(function() {
+            window.location.href = `https://daesungiot.co.kr/access/mobius_code?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+        }, 1000); // 첫 번째 URL이 로드된 후 1초 뒤에 두 번째 URL 호출
     });
 </script>
 </body>
