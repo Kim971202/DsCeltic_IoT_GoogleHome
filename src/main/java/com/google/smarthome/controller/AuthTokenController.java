@@ -58,7 +58,6 @@ public class AuthTokenController {
             log.info("authorization basic 방식");
             String decodeValue = new String(Base64Utils.decodeFromString(authorization));
             log.info("decodeValue:{}", decodeValue);
-
             String[] arrDecode = decodeValue.split(":");
             clientId = arrDecode[0];
             clientSecret = arrDecode[1];
@@ -66,9 +65,13 @@ public class AuthTokenController {
 
         log.info("clientId:{}", clientId);
         log.info("clientSecret:{}", clientSecret);
+        String authorizationToken = UUID.randomUUID().toString();
+        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
 
-        String myRefreshToke = Base64Utils.encodeToUrlSafeString(authorizationCode.getBytes("UTF-8"));
-        log.info("myRefreshToke:{}", myRefreshToke);
+        redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
+        log.info("authorizationToken:{}", authorizationToken);
+        System.out.println("redisCommand.getValues(authorizationCode): " + redisCommand.getValues(authorizationCode));
+        log.info("myRefreshToke:{}", myRefreshToken);
 			/*
 			 * {
 				"token_type": "Bearer",
@@ -78,8 +81,8 @@ public class AuthTokenController {
 			 */
         return ResponseEntity.ok().body(TokenBody.builder()
                 .tokenType("Bearer")
-                .accessToken(authorizationCode)
-                .refreshToken(myRefreshToke)
+                .accessToken(authorizationToken)
+                .refreshToken(myRefreshToken)
                 .expiresIn(googleOauth2Expires) //구글기준 토큰유효시간
                 .build());
 
