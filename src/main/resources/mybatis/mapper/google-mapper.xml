@@ -21,6 +21,7 @@
         <set>
             <if test="tempStatus != null">HTTP = #{tempStatus},</if>
             <if test="powrStatus != null">POWR = #{powrStatus},</if>
+            <if test="modeValue != null">OPMD = #{modeValue},</if>
         </set>
         WHERE
             DEVC_ID = #{deviceId}
