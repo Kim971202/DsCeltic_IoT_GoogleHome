@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Getter
@@ -24,7 +26,12 @@ public class GoogleDTO implements Serializable {
     // Mode
     private String modeValue;
 
-    // Main Key Value
     private String deviceId;
 
+    // Method to convert single deviceId to a list
+    public List<String> getDeviceIds() {
+        List<String> deviceIds = new ArrayList<>();
+        deviceIds.add(this.deviceId);
+        return deviceIds;
+    }
 }

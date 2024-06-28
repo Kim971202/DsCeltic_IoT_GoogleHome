@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -46,22 +48,33 @@ public class FulfillmentController {
         String userId = redisCommand.getValues(googleAuth);
         log.info("userId: " + userId);
 
-        GoogleDTO info = googleMapper.getDeviceIdByUserId(userId);
+        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(userId);
+        if (devices == null || devices.isEmpty()) {
+            log.error("No devices found for userId: " + userId);
+            return new JSONObject().put("error", "No devices found").toString();
+        }
+
+        devices.forEach(device -> log.info("Device for userId {}: {}", userId, device.getDeviceId()));
 
         JSONObject requestBody = new JSONObject(request);
         String intent = requestBody.getJSONArray("inputs").getJSONObject(0).getString("intent");
 
         JSONObject response = new JSONObject();
+        List<String> deviceIds = devices.stream()
+                .map(GoogleDTO::getDeviceId)
+                .collect(Collectors.toList());
+
+        log.info("Device IDs: " + deviceIds);
 
         switch (intent) {
             case "action.devices.SYNC":
-                response = fulfillmentService.handleSync(requestBody, info.getDeviceId(), userId);
+                response = fulfillmentService.handleSync(requestBody, deviceIds, userId);
                 break;
             case "action.devices.EXECUTE":
-                response = fulfillmentService.handleExecute(requestBody, userId);
+                response = fulfillmentService.handleExecute(requestBody, deviceIds, userId);
                 break;
             case "action.devices.QUERY":
-                response = fulfillmentService.handleQuery(requestBody, info.getDeviceId());
+                response = fulfillmentService.handleQuery(requestBody, deviceIds);
                 break;
             default:
                 response.put("error", "Unknown intent");

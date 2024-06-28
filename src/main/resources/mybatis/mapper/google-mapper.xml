@@ -45,5 +45,6 @@
             TBR_OPR_USER_DEVICE
         WHERE
             USER_ID = #{userId}
+
     </select>
 </mapper>

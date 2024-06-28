@@ -1,18 +1,15 @@
 package com.google.smarthome.service;
 
 import com.google.smarthome.contant.MobiusResponse;
-import com.google.smarthome.contant.Modes;
 import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.utils.JSON;
-import com.google.smarthome.utils.RedisCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +25,7 @@ public class FulfillmentService {
     private MobiusService mobiusService;
     GoogleDTO deviceStatus;
 
-    public JSONObject handleSync(JSONObject requestBody, String deviceId, String userId) {
+    public JSONObject handleSync(JSONObject requestBody, List<String> deviceIds, String userId) {
         log.info("handleSync CALLED");
         log.info("requestBody: " + requestBody);
 
@@ -39,83 +36,92 @@ public class FulfillmentService {
         payload.put("agentUserId", userId);
 
         JSONArray devices = new JSONArray();
-        JSONObject boiler = new JSONObject();
 
-        // 보일러 온도 최소/최대 값
-        JSONObject temperatureRange = new JSONObject();
-        temperatureRange.put("minThresholdCelsius", 5);
-        temperatureRange.put("maxThresholdCelsius", 40);
+        for (String deviceId : deviceIds) {
+            log.info("Processing device with ID: " + deviceId);
+            if (deviceId == null) {
+                log.error("Null device ID found");
+                continue;
+            }
+            JSONObject boiler = new JSONObject();
 
-        // 모드 관련 속성 추가
-        JSONArray availableModes = new JSONArray();
+            // 보일러 온도 최소/최대 값
+            JSONObject temperatureRange = new JSONObject();
+            temperatureRange.put("minThresholdCelsius", 10);
+            temperatureRange.put("maxThresholdCelsius", 80);
 
-        JSONObject modeBoiler = new JSONObject();
-        modeBoiler.put("name", "mode_boiler");
+            // 모드 관련 속성 추가
+            JSONArray availableModes = new JSONArray();
 
-        JSONArray nameValuesArray = new JSONArray();
-        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("보일러")).put("lang", "ko"));
-        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("boiler")).put("lang", "en"));
-        modeBoiler.put("name_values", nameValuesArray);
+            JSONObject modeBoiler = new JSONObject();
+            modeBoiler.put("name", "mode_boiler");
 
-        JSONArray settingsArray = new JSONArray();
+            JSONArray nameValuesArray = new JSONArray();
+            nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("보일러")).put("lang", "ko"));
+            nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("boiler")).put("lang", "en"));
+            modeBoiler.put("name_values", nameValuesArray);
 
-        // 설정 정보를 배열로 정의
-        String[][] settings = {
-                {"난방-실내온도", "01", "Heating_Indoor_Temperature"},
-                {"02", "난방-난방수온도", "Heating_Water_Temperature"},
-                {"03", "외출", "Away"},
-                {"05", "절약난방", "Economy_Heating"},
-                {"061", "취침1", "Sleep1"},
-                {"062", "취침2", "Sleep2"},
-                {"063", "취침3", "Sleep3"},
-                {"07", "온수전용", "Hot_Water_Only"},
-                {"08", "온수-빠른온수", "Quick_Hot_Water"},
-                {"10", "24시간예약", "24_Hour_Reservation"},
-                {"11", "12시간예약", "12_Hour_Reservation"},
-                {"12", "주간예약", "Weekly_Reservation"}
-        };
+            JSONArray settingsArray = new JSONArray();
 
-        // for 문을 사용하여 설정 정보를 추가
-        for (String[] setting : settings) {
-            JSONObject settingObject = new JSONObject();
-            settingObject.put("setting_name", setting[0]);
+            // 설정 정보를 배열로 정의
+            String[][] settings = {
+                    {"난방-실내온도", "01", "Heating_Indoor_Temperature"},
+                    {"02", "난방-난방수온도", "Heating_Water_Temperature"},
+                    {"03", "외출", "Away"},
+                    {"05", "절약난방", "Economy_Heating"},
+                    {"061", "취침1", "Sleep1"},
+                    {"062", "취침2", "Sleep2"},
+                    {"063", "취침3", "Sleep3"},
+                    {"07", "온수전용", "Hot_Water_Only"},
+                    {"08", "온수-빠른온수", "Quick_Hot_Water"},
+                    {"10", "24시간예약", "24_Hour_Reservation"},
+                    {"11", "12시간예약", "12_Hour_Reservation"},
+                    {"12", "주간예약", "Weekly_Reservation"}
+            };
 
-            JSONArray settingValues = new JSONArray();
-            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"));
-            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en"));
+            // for 문을 사용하여 설정 정보를 추가
+            for (String[] setting : settings) {
+                JSONObject settingObject = new JSONObject();
+                settingObject.put("setting_name", setting[0]);
 
-            settingObject.put("setting_values", settingValues);
-            settingsArray.put(settingObject);
+                JSONArray settingValues = new JSONArray();
+                settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"));
+                settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en"));
+
+                settingObject.put("setting_values", settingValues);
+                settingsArray.put(settingObject);
+            }
+
+            modeBoiler.put("settings", settingsArray);
+            modeBoiler.put("ordered", false); // ordered 필드 추가
+            availableModes.put(modeBoiler);
+
+            boiler.put("attributes", new JSONObject()
+                    .put("temperatureUnitForUX", "C")
+                    .put("temperatureStepCelsius", 1)
+                    .put("temperatureRange", temperatureRange)
+                    .put("availableModes", availableModes));
+
+            boiler.put("id", deviceId);
+            boiler.put("type", "action.devices.types.BOILER");
+            boiler.put("traits", new JSONArray()
+                    .put("action.devices.traits.OnOff")
+                    .put("action.devices.traits.TemperatureControl")
+                    .put("action.devices.traits.Modes"));
+
+            boiler.put("name", new JSONObject().put("name", "대성IoT 보일러 + modelCode"));
+
+            devices.put(boiler);
         }
 
-        modeBoiler.put("settings", settingsArray);
-        modeBoiler.put("ordered", false); // ordered 필드 추가
-        availableModes.put(modeBoiler);
-
-        boiler.put("attributes", new JSONObject()
-                .put("temperatureUnitForUX", "C")
-                .put("temperatureStepCelsius", 1)
-                .put("temperatureRange", temperatureRange)
-                .put("availableModes", availableModes));
-
-        boiler.put("id", deviceId);
-        boiler.put("type", "action.devices.types.BOILER");
-        boiler.put("traits", new JSONArray()
-                .put("action.devices.traits.OnOff")
-                .put("action.devices.traits.TemperatureControl")
-                .put("action.devices.traits.Modes"));
-
-        boiler.put("name", new JSONObject().put("name", "대성IoT 보일러 + modelCode"));
-
-        devices.put(boiler);
         payload.put("devices", devices);
-
         response.put("payload", payload);
+
         log.info("handleSync response: " + response);
         return response;
     }
 
-    public JSONObject handleExecute(JSONObject requestBody, String userId) {
+    public JSONObject handleExecute(JSONObject requestBody, List<String> deviceIds, String userId) {
         log.info("handleExecute CALLED");
         log.info("requestBody: " + requestBody);
 
@@ -212,28 +218,9 @@ public class FulfillmentService {
         return response;
     }
 
-    // 모드를 설정하는 새로운 메서드
-    private void handleSetModes(String userId, String deviceId, String modeName, String modeValue) {
-        // 여기에서 모드를 설정하는 로직을 구현하세요.
-        // 예를 들어, 데이터베이스를 업데이트하거나, 외부 API를 호출하는 등의 작업을 수행할 수 있습니다.
-        log.info("Setting mode for device " + deviceId + ": " + modeName + " = " + modeValue);
-        // deviceStatus를 업데이트하고 DB에 저장
-        deviceStatus.setModeValue(modeValue);
-        googleMapper.updateDeviceStatus(deviceStatus);
-        try {
-            handleDevice(userId, deviceId, modeValue, "mode"); // 실제로 모드를 설정하는 로직을 호출
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public JSONObject handleQuery(JSONObject requestBody, String devceId) {
+    public JSONObject handleQuery(JSONObject requestBody, List<String> deviceIds) {
         log.info("handleQuery CALLED");
         log.info("requestBody: " + requestBody);
-
-        deviceStatus = googleMapper.getInfoByDeviceId(devceId);
-
-        boolean deviceOnOff = false;
 
         JSONObject response = new JSONObject();
         response.put("requestId", requestBody.getString("requestId"));
@@ -241,29 +228,31 @@ public class FulfillmentService {
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
 
-        JSONObject deviceState = new JSONObject();
+        for (String deviceId : deviceIds) {
+            deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
 
-        Map<String, Object> currentModeSettings = new HashMap<>();
-        currentModeSettings.put("mode_boiler", "01");
-        if(deviceStatus.getPowrStatus().equals("on")) deviceOnOff = true;
-        deviceState.put("on", deviceOnOff); // The device is ON
-        deviceState.put("online", true);
-        deviceState.put("currentModeSettings", currentModeSettings);
-        deviceState.put("temperatureAmbientCelsius", 55);
-        deviceState.put("temperatureSetpointCelsius", 55);
-        deviceState.put("status", "SUCCESS");
+            boolean deviceOnOff = false;
 
-//        if(!deviceStatus.getPowrStatus().equals("of")) {
-//            deviceState.put("thermostatMode", "heat"); // Current mode
-//            log.info("Double.parseDouble(deviceStatus.getTempStatus()): " + Double.parseDouble(deviceStatus.getTempStatus()));
-//            deviceState.put("thermostatTemperatureSetpoint", Double.parseDouble(deviceStatus.getTempStatus())); // default temp
-//        } else {
-//            deviceStatus.setPowrStatus("off");
-//            log.info("deviceStatus.getPowrStatus(): " + deviceStatus.getPowrStatus());
-//            deviceState.put("thermostatMode", deviceStatus.getPowrStatus());
-//        }
+            JSONObject deviceState = new JSONObject();
+            Map<String, Object> currentModeSettings = new HashMap<>();
+            currentModeSettings.put("mode_boiler", "01");
 
-        devices.put(devceId, deviceState);
+            if (deviceStatus.getPowrStatus().equals("on")) {
+                deviceOnOff = true;
+            }
+            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("deviceOnOff: " + deviceOnOff);
+            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            deviceState.put("on", deviceOnOff); // The device is ON
+            deviceState.put("online", true);
+            deviceState.put("currentModeSettings", currentModeSettings);
+            deviceState.put("temperatureAmbientCelsius", 55);
+            deviceState.put("temperatureSetpointCelsius", 55);
+            deviceState.put("status", "SUCCESS");
+
+            devices.put(deviceId, deviceState);
+        }
+
         payload.put("devices", devices);
         response.put("payload", payload);
 
@@ -272,12 +261,24 @@ public class FulfillmentService {
         return response;
     }
 
+    // 모드를 설정하는 새로운 메서드
+    private void handleSetModes(String userId, String deviceId, String modeName, String modeValue) {
+        log.info("Setting mode for device " + deviceId + ": " + modeName + " = " + modeValue);
+        deviceStatus.setModeValue(modeValue);
+        googleMapper.updateDeviceStatus(deviceStatus);
+        try {
+            handleDeviceWithMode(userId, deviceId, modeValue, "mode");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private String handleDevice(String userId, String deviceId, String value, String functionId) throws Exception {
         MobiusResponse mobiusResponse;
         ConcurrentHashMap<String, String> conMap = new ConcurrentHashMap<>();
 
         conMap.put("userId", userId);
-        conMap.put("deviceId",deviceId);
+        conMap.put("deviceId", deviceId);
         conMap.put("value", value);
         conMap.put("functionId", functionId);
         System.out.println(JSON.toJson(conMap));
@@ -286,4 +287,62 @@ public class FulfillmentService {
         return mobiusResponse.getResponseCode();
     }
 
+    private String handleDeviceWithMode(String userId, String deviceId, String value, String functionId) throws Exception {
+        // 모드를 설정하는 로직을 여기에 구현합니다.
+        MobiusResponse mobiusResponse;
+        ConcurrentHashMap<String, String> conMap = new ConcurrentHashMap<>();
+
+        conMap.put("userId", userId);
+        conMap.put("deviceId", deviceId);
+        conMap.put("value", value);
+        conMap.put("functionId", functionId);
+        System.out.println(JSON.toJson(conMap));
+        mobiusResponse = mobiusService.createCin("googleAE", "googleCNT", JSON.toJson(conMap));
+
+        return mobiusResponse.getResponseCode();
+    }
 }
+//    public JSONObject handleQuery(JSONObject requestBody, List<String> devceId) {
+//        log.info("handleQuery CALLED");
+//        log.info("requestBody: " + requestBody);
+//
+//        deviceStatus = googleMapper.getInfoByDeviceId(devceId);
+//
+//        boolean deviceOnOff = false;
+//
+//        JSONObject response = new JSONObject();
+//        response.put("requestId", requestBody.getString("requestId"));
+//
+//        JSONObject payload = new JSONObject();
+//        JSONObject devices = new JSONObject();
+//
+//        JSONObject deviceState = new JSONObject();
+//
+//        Map<String, Object> currentModeSettings = new HashMap<>();
+//        currentModeSettings.put("mode_boiler", "01");
+//        if(deviceStatus.getPowrStatus().equals("on")) deviceOnOff = true;
+//        deviceState.put("on", deviceOnOff); // The device is ON
+//        deviceState.put("online", true);
+//        deviceState.put("currentModeSettings", currentModeSettings);
+//        deviceState.put("temperatureAmbientCelsius", 55);
+//        deviceState.put("temperatureSetpointCelsius", 55);
+//        deviceState.put("status", "SUCCESS");
+//
+////        if(!deviceStatus.getPowrStatus().equals("of")) {
+////            deviceState.put("thermostatMode", "heat"); // Current mode
+////            log.info("Double.parseDouble(deviceStatus.getTempStatus()): " + Double.parseDouble(deviceStatus.getTempStatus()));
+////            deviceState.put("thermostatTemperatureSetpoint", Double.parseDouble(deviceStatus.getTempStatus())); // default temp
+////        } else {
+////            deviceStatus.setPowrStatus("off");
+////            log.info("deviceStatus.getPowrStatus(): " + deviceStatus.getPowrStatus());
+////            deviceState.put("thermostatMode", deviceStatus.getPowrStatus());
+////        }
+//
+//        devices.put(devceId, deviceState);
+//        payload.put("devices", devices);
+//        response.put("payload", payload);
+//
+//        log.info("handleQuery response: " + response);
+//
+//        return response;
+//    }

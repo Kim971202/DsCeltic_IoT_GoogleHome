@@ -3,6 +3,8 @@ package com.google.smarthome.mapper;
 import com.google.smarthome.dto.GoogleDTO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface GoogleMapper {
 
@@ -12,5 +14,5 @@ public interface GoogleMapper {
 
     public GoogleDTO getAccountByUserId(String userId);
 
-    public GoogleDTO getDeviceIdByUserId(String userId);
+    public List<GoogleDTO> getDeviceIdByUserId(String userId);
 }
