@@ -22,6 +22,8 @@ public class GoogleDTO implements Serializable {
     // User
     private String userId;
     private String userPassword;
+    private String deviceNickname;
+    private String addressNickname;
 
     // Mode
     private String modeValue;

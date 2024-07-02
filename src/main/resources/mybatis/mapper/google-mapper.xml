@@ -45,6 +45,16 @@
             TBR_OPR_USER_DEVICE
         WHERE
             USER_ID = #{userId}
-
     </select>
+
+    <select id="getNicknameByDeviceId" parameterType="String" resultMap="google">
+        SELECT
+            DEVC_NICK AS deviceNickname,
+            ADDR_NICK AS addressNickname
+        FROM
+            TBR_OPR_DEVICE_DETAIL
+        WHERE
+            DEVC_ID = #{deviceId}
+    </select>
+
 </mapper>

@@ -109,7 +109,11 @@ public class FulfillmentService {
                     .put("action.devices.traits.TemperatureControl")
                     .put("action.devices.traits.Modes"));
 
-            boiler.put("name", new JSONObject().put("name", "대성IoT 보일러 + modelCode"));
+            GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(deviceId);
+
+            boiler.put("name", new JSONObject().put("name", deviceNick.getDeviceNickname() +
+                    "_" +
+                    deviceNick.getAddressNickname()));
 
             devices.put(boiler);
         }
