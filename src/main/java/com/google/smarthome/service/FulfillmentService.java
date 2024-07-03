@@ -65,7 +65,7 @@ public class FulfillmentService {
 
             // 설정 정보를 배열로 정의
             String[][] settings = {
-                    {"난방-실내온도", "01", "Heating_Indoor_Temperature"},
+                    {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
                     {"02", "난방-난방수온도", "Heating_Water_Temperature"},
                     {"03", "외출", "Away"},
                     {"05", "절약난방", "Economy_Heating"},
@@ -185,8 +185,9 @@ public class FulfillmentService {
                                     JSONObject params = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
                                     for (String modeName : params.keySet()) {
                                         String modeValue = params.getString(modeName);
-                                        log.info("Setting mode of device " + deviceId + " to " + modeName + ": " + modeValue);
+                                        log.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSetting mode of device " + deviceId + " to " + modeName + ": " + modeValue);
                                         handleSetModes(userId, deviceId, modeName, modeValue);
+                                        googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
                                 default:
@@ -239,13 +240,15 @@ public class FulfillmentService {
 
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
-            currentModeSettings.put("mode_boiler", "01");
+            currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
 
             if (deviceStatus.getPowrStatus().equals("on")) {
                 deviceOnOff = true;
             }
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             System.out.println("deviceOnOff: " + deviceOnOff);
+            System.out.println("deviceId: " + deviceId);
+            System.out.println("deviceStatus.getModeValue(): " + deviceStatus.getModeValue());
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);

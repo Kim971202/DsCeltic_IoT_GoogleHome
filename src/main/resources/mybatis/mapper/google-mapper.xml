@@ -8,7 +8,8 @@
         SELECT
             POWR AS powrStatus,
             HTTP AS tempStatus,
-            DEVC_ID AS deviceId
+            DEVC_ID AS deviceId,
+            OPMD AS modeValue
         FROM
             TBR_OPR_DEVICE_STATUS
         WHERE
