@@ -146,6 +146,7 @@ public class FulfillmentService {
                 devices.forEach(deviceObj -> {
                     JSONObject device = (JSONObject) deviceObj;
                     String deviceId = device.getString("id");
+                    System.out.println("deviceId: " + deviceId);
                     JSONArray execCommands = command.getJSONArray("execution");
 
                     execCommands.forEach(execCommandObj -> {
@@ -154,6 +155,7 @@ public class FulfillmentService {
                         boolean isSuccess = true;
                         String errorString = "";
 
+                        deviceStatus.setDeviceId(deviceId);
                         try {
                             switch (commandName) {
                                 case "action.devices.commands.OnOff":
@@ -163,6 +165,7 @@ public class FulfillmentService {
                                     log.info("=================================================================");
                                     log.info("Turning " + (on ? "on" : "off") + " device " + deviceId);
                                     log.info("=================================================================");
+                                    System.out.println(deviceStatus);
                                     googleMapper.updateDeviceStatus(deviceStatus);
                                     handleDevice(userId, deviceId, (on ? "on" : "of"), "powr");
                                     break;
@@ -185,8 +188,22 @@ public class FulfillmentService {
                                     JSONObject params = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
                                     for (String modeName : params.keySet()) {
                                         String modeValue = params.getString(modeName);
-                                        log.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSetting mode of device " + deviceId + " to " + modeName + ": " + modeValue);
+                                        log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
                                         handleSetModes(userId, deviceId, modeName, modeValue);
+                                        switch (modeValue) {
+                                            case "061":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("01");
+                                                break;
+                                            case "062":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("02");
+                                                break;
+                                            case "063":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("03");
+                                                break;
+                                        }
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
@@ -236,6 +253,10 @@ public class FulfillmentService {
         for (String deviceId : deviceIds) {
             deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
 
+            System.out.println("handleQuery++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("deviceStatus: " + deviceStatus);
+            System.out.println("handleQuery++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
             boolean deviceOnOff = false;
 
             JSONObject deviceState = new JSONObject();
@@ -274,7 +295,7 @@ public class FulfillmentService {
         deviceStatus.setModeValue(modeValue);
         googleMapper.updateDeviceStatus(deviceStatus);
         try {
-            handleDeviceWithMode(userId, deviceId, modeValue, "mode");
+            handleDeviceWithMode(userId, deviceId, modeValue, "opMd");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -309,47 +330,3 @@ public class FulfillmentService {
         return mobiusResponse.getResponseCode();
     }
 }
-//    public JSONObject handleQuery(JSONObject requestBody, List<String> devceId) {
-//        log.info("handleQuery CALLED");
-//        log.info("requestBody: " + requestBody);
-//
-//        deviceStatus = googleMapper.getInfoByDeviceId(devceId);
-//
-//        boolean deviceOnOff = false;
-//
-//        JSONObject response = new JSONObject();
-//        response.put("requestId", requestBody.getString("requestId"));
-//
-//        JSONObject payload = new JSONObject();
-//        JSONObject devices = new JSONObject();
-//
-//        JSONObject deviceState = new JSONObject();
-//
-//        Map<String, Object> currentModeSettings = new HashMap<>();
-//        currentModeSettings.put("mode_boiler", "01");
-//        if(deviceStatus.getPowrStatus().equals("on")) deviceOnOff = true;
-//        deviceState.put("on", deviceOnOff); // The device is ON
-//        deviceState.put("online", true);
-//        deviceState.put("currentModeSettings", currentModeSettings);
-//        deviceState.put("temperatureAmbientCelsius", 55);
-//        deviceState.put("temperatureSetpointCelsius", 55);
-//        deviceState.put("status", "SUCCESS");
-//
-////        if(!deviceStatus.getPowrStatus().equals("of")) {
-////            deviceState.put("thermostatMode", "heat"); // Current mode
-////            log.info("Double.parseDouble(deviceStatus.getTempStatus()): " + Double.parseDouble(deviceStatus.getTempStatus()));
-////            deviceState.put("thermostatTemperatureSetpoint", Double.parseDouble(deviceStatus.getTempStatus())); // default temp
-////        } else {
-////            deviceStatus.setPowrStatus("off");
-////            log.info("deviceStatus.getPowrStatus(): " + deviceStatus.getPowrStatus());
-////            deviceState.put("thermostatMode", deviceStatus.getPowrStatus());
-////        }
-//
-//        devices.put(devceId, deviceState);
-//        payload.put("devices", devices);
-//        response.put("payload", payload);
-//
-//        log.info("handleQuery response: " + response);
-//
-//        return response;
-//    }

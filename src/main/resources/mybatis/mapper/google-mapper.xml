@@ -23,6 +23,7 @@
             <if test="tempStatus != null">HTTP = #{tempStatus},</if>
             <if test="powrStatus != null">POWR = #{powrStatus},</if>
             <if test="modeValue != null">OPMD = #{modeValue},</if>
+            <if test="sleepCode != null">SLCD = #{sleepCode},</if>
         </set>
         WHERE
             DEVC_ID = #{deviceId}

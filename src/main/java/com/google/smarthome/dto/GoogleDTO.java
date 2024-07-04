@@ -27,6 +27,7 @@ public class GoogleDTO implements Serializable {
 
     // Mode
     private String modeValue;
+    private String sleepCode;
 
     private String deviceId;
 

@@ -13,9 +13,9 @@ mybatis:
 
 logging:
   level:
-    root: info
-    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari.HikariConfig: INFO
     com.zaxxer.hikari: TRACE
+    root: info
     org.springframework.web: DEBUG
     org.springframework.web.servlet.DispatcherServlet: DEBUG
   file:
