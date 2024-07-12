@@ -25,6 +25,7 @@ logging:
 redis:
   host: 172.31.50.223
   port: 6379
+  password:
 
 custom:
   server:

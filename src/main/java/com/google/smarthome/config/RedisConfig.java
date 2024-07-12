@@ -19,7 +19,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Slf4j
 @Configuration
 @EnableRedisRepositories
-@RequiredArgsConstructor
 public class RedisConfig {
 
     @Value("${spring.redis.host}")
@@ -32,12 +31,11 @@ public class RedisConfig {
     private String redisPassword;
 
     @Bean
-    public CommandLineRunner redisFlushAllOnStartup(
-            @Autowired RedisTemplate<String, Object> redisTemplate) {
+    public CommandLineRunner redisFlushAllOnStartup(RedisTemplate<String, Object> redisTemplate) {
         return args -> {
             log.info("Flushing all data from Redis on application startup...");
             redisTemplate.getConnectionFactory().getConnection().flushAll();
-            log.info(("Flush complete."));
+            log.info("Flush complete.");
         };
     }
 
@@ -45,8 +43,9 @@ public class RedisConfig {
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
 
-        System.out.println("redisHost: " + redisHost);
-        System.out.println("redisPort: " + redisPort);
+        log.info("Redis Host: {}", redisHost);
+        log.info("Redis Port: {}", redisPort);
+        log.info("Redis Password: {}", redisPassword);
 
         redisStandaloneConfiguration.setHostName(redisHost);
         redisStandaloneConfiguration.setPort(redisPort);
