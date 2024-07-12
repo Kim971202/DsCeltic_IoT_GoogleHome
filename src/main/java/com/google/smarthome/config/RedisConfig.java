@@ -3,6 +3,7 @@ package com.google.smarthome.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    private final RedisProperties redisProperties;
+    @Value("${spring.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
+
+    @Value("${spring.redis.password:}")
+    private String redisPassword;
 
     @Bean
     public CommandLineRunner redisFlushAllOnStartup(
@@ -37,17 +45,17 @@ public class RedisConfig {
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
 
-        System.out.println("redisProperties.getHost(): " + redisProperties.getHost());
-        System.out.println("redisProperties.getPort(): " + redisProperties.getPort());
-        System.out.println("redisProperties.getPassword(): " + redisProperties.getPassword());
+        System.out.println("redisHost: " + redisHost);
+        System.out.println("redisPort: " + redisPort);
 
-        redisStandaloneConfiguration.setHostName(redisProperties.getHost());
-        redisStandaloneConfiguration.setPort(redisProperties.getPort());
-        redisStandaloneConfiguration.setPassword(redisProperties.getPassword());
+        redisStandaloneConfiguration.setHostName(redisHost);
+        redisStandaloneConfiguration.setPort(redisPort);
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+        if (!redisPassword.isEmpty()) {
+            redisStandaloneConfiguration.setPassword(redisPassword);
+        }
 
-        return lettuceConnectionFactory;
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
     @Bean
