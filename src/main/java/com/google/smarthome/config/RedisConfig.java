@@ -37,6 +37,10 @@ public class RedisConfig {
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
 
+        System.out.println("redisProperties.getHost(): " + redisProperties.getHost());
+        System.out.println("redisProperties.getPort(): " + redisProperties.getPort());
+        System.out.println("redisProperties.getPassword(): " + redisProperties.getPassword());
+
         redisStandaloneConfiguration.setHostName(redisProperties.getHost());
         redisStandaloneConfiguration.setPort(redisProperties.getPort());
         redisStandaloneConfiguration.setPassword(redisProperties.getPassword());
