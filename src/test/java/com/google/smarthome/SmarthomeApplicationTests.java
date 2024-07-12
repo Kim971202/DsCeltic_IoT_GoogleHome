@@ -11,7 +11,6 @@ class SmarthomeApplicationTests {
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 
-
 	@Test
 	void contextLoads() {
 	}
