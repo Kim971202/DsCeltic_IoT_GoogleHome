@@ -23,7 +23,7 @@ logging:
     name: app.log
 
 redis:
-  host: localhost
+  host: 172.31.50.223
   port: 6379
 
 custom:
