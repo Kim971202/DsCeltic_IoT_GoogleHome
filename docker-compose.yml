@@ -1,13 +1,7 @@
 version: '3.8'
 services:
-  redis:
-    image: redis
-    container_name: redis
   smarthome:
     build: .
     container_name: smarthome
     ports:
       - "8888:8888"
-    environment:
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PORT=6379
