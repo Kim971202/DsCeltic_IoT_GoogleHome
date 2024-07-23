@@ -23,8 +23,8 @@ logging:
     name: app.log
 
 redis:
-  host: 172.31.50.223
-  port: 6379
+  host: ${SPRING_REDIS_HOST:localhost}
+  port: ${SPRING_REDIS_PORT:6379}
 
 custom:
   server:
