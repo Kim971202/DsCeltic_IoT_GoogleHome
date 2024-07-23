@@ -3,7 +3,7 @@ spring:
     static-path-pattern: /**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.31.25.138:3306/dsiot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://172.31.50.223:3306/dsiot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: dsiotAppServer
     password: bZGPt9zQZ7aAtv+T]6}(*EfDONfO.R
 server:
@@ -25,15 +25,14 @@ logging:
 redis:
   host: 172.31.50.223
   port: 6379
-  password:
 
 custom:
   server:
     info:
       # Mobius에서 구독하는 AppServer 주소
-      app_server_address: http://172.31.25.138:8080/GoogleToAppServer
-      mobius_server_address: http://172.31.25.138:7579
-      mobius_host: 172.31.25.138:7579
+      app_server_address: http://172.31.50.223:8080/GoogleToAppServer
+      mobius_server_address: http://172.31.50.223:7579
+      mobius_host: 172.31.50.223:7579
   google:
     oauth2:
       project_id: dsiot-52315
