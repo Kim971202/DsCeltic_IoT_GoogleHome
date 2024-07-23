@@ -7,18 +7,18 @@
 #      - "8888:8888"
 version: '3'
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
   smarthome:
     build: .
     container_name: smarthome
     ports:
       - "8888:8888"
-    depends_on:
-      - redis
     environment:
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
+    networks:
+      - dsceltic_iot_oauthserver_default
+
+networks:
+  dsceltic_iot_oauthserver_default:
+    external:
+      name: dsceltic_iot_oauthserver_default
