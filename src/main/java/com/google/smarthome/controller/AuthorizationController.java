@@ -84,7 +84,7 @@ public class AuthorizationController {
      * Authorization 코드 요청에 의한 엑세스 토큰 발급
      */
     @ResponseBody
-    @GetMapping({"/token"})
+    @GetMapping("/access/token")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public String token(String code) throws Exception {
 

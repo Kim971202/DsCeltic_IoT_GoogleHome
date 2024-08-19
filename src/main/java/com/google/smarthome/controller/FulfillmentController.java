@@ -37,7 +37,7 @@ public class FulfillmentController {
     @Autowired
     RedisCommand redisCommand;
 
-    @PostMapping("/api/fulfillment")
+    @PostMapping("/access/api/fulfillment")
     public String handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
         log.info("POST /api/fulfillment CALLED");
         log.info("Request Body: " + request);
