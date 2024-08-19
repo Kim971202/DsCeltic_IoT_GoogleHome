@@ -56,7 +56,7 @@ public class AuthorizationController {
         return "redirect:/access/home.html";
     }
 
-    @GetMapping({"/authorization_code"})
+    @GetMapping("/access/authorization_code")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public String authorizationCode(HttpServletRequest request,
                                     @RequestParam(name = "username", required = false) String username,
