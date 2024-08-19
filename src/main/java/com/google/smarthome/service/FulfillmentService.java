@@ -108,8 +108,11 @@ public class FulfillmentService {
                     .put("action.devices.traits.OnOff")
                     .put("action.devices.traits.TemperatureControl")
                     .put("action.devices.traits.Modes"));
-
-            GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(deviceId);
+    
+            GoogleDTO params = new GoogleDTO();
+            params.setUserId(userId);
+            params.setDeviceId(deviceId);
+            GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 
             boiler.put("name", new JSONObject().put("name", deviceNick.getDeviceNickname() +
                     "_" +

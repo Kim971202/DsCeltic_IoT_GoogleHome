@@ -16,5 +16,5 @@ public interface GoogleMapper {
 
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
 
-    public GoogleDTO getNicknameByDeviceId(String deviceId);
+    public GoogleDTO getNicknameByDeviceId(GoogleDTO params);
 }

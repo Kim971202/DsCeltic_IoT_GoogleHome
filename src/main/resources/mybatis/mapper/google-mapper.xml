@@ -49,15 +49,16 @@
             USER_ID = #{userId}
     </select>
 
-    <select id="getNicknameByDeviceId" parameterType="String" resultMap="google">
+    <select id="getNicknameByDeviceId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
         SELECT
             DEVC_NICK AS deviceNickname,
             ADDR_NICK AS addressNickname
         FROM
-            TBR_OPR_DEVICE_DETAIL
+            TBT_OPR_DEVICE_REGIST
         WHERE
             DEVC_ID = #{deviceId}
-        LIMIT 1
+        AND
+            USER_ID = #{userId}
     </select>
 
 </mapper>
