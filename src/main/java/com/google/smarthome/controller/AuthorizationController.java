@@ -53,7 +53,7 @@ public class AuthorizationController {
         cookieStorage.setCookie(request, "state", state, response);
         cookieStorage.setCookie(request, "redirect_uri", redirectUri, response);
 
-        return "redirect:/access/home.html";
+        return "redirect:/home.html";
     }
 
     @GetMapping({"/authorization_code"})
@@ -76,11 +76,11 @@ public class AuthorizationController {
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 
-        log.info("redirectUrl:{}", redirectUrl);
-        return "redirect:" + redirectUrl;
-    }
+     log.info("redirectUrl:{}", redirectUrl);
+     return "redirect:" + redirectUrl;
+     }
 
-    /**
+     /**
      * Authorization 코드 요청에 의한 엑세스 토큰 발급
      */
     @ResponseBody
