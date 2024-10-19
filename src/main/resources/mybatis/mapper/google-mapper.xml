@@ -41,12 +41,17 @@
 
     <select id="getDeviceIdByUserId" parameterType="String" resultMap="google">
         SELECT
-            USER_ID AS userId,
-            DEVC_ID as deviceId
+            a.USER_ID AS userId,
+            a.DEVC_ID AS deviceId,
+            b.DEVC_MODL_CD AS deviceModelCode
         FROM
-            TBR_OPR_USER_DEVICE
+            TBR_OPR_USER_DEVICE a
+        INNER JOIN
+            TBR_IOT_DEVICE b
+        ON
+            a.DEVC_ID = b.DEVC_ID
         WHERE
-            USER_ID = #{userId}
+            USER_ID = #{userId}G
     </select>
 
     <select id="getNicknameByDeviceId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">

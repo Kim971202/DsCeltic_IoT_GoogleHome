@@ -20,7 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,15 +56,26 @@ public class FulfillmentController {
             return new JSONObject().put("error", "No devices found").toString();
         }
 
-        devices.forEach(device -> log.info("Device for userId {}: {}", userId, device.getDeviceId()));
+        devices.forEach(device -> log.info("Device for userId {}: DeviceId: {}, DeviceModelCode: {}",
+                userId, device.getDeviceId(), device.getDeviceModelCode()));
 
         JSONObject requestBody = new JSONObject(request);
         String intent = requestBody.getJSONArray("inputs").getJSONObject(0).getString("intent");
 
         JSONObject response = new JSONObject();
+
         List<String> deviceIds = devices.stream()
                 .map(GoogleDTO::getDeviceId)
                 .collect(Collectors.toList());
+
+        Map<String, String> deviceInfoMap = new LinkedHashMap<>();
+        devices.forEach(device -> deviceInfoMap.put(device.getDeviceId(), device.getDeviceModelCode()));
+
+        // 출력
+        deviceInfoMap.forEach((deviceId, modelCode) -> {
+            System.out.println("Device ID: " + deviceId + ", Model Code: " + modelCode);
+        });
+
 
         log.info("Device IDs: " + deviceIds);
 
