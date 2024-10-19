@@ -54,7 +54,7 @@ public class FulfillmentService {
             String deviceType = "";
 
             // modelCode에 따라 보일러와 환기 기기를 구분
-            if (modelCode.startsWith("BOILER")) {
+            if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
                 deviceType = "action.devices.types.BOILER";
                 attributes.put("temperatureUnitForUX", "C")
                         .put("temperatureStepCelsius", 1)
@@ -74,7 +74,7 @@ public class FulfillmentService {
                         .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.Modes"));
             }
-            else if (modelCode.startsWith("VENT")) {
+            else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
 
                 // 환기 기기에 대한 settings 정의
@@ -337,7 +337,7 @@ public class FulfillmentService {
 
     // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
-        if (modelCode.equals("BOILER_A")) {
+        if (modelCode.equals("ESCeco13S")) {
             return new String[][] {
                     {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
                     {"02", "난방-난방수온도", "Heating_Water_Temperature"},
@@ -354,7 +354,7 @@ public class FulfillmentService {
 
     // 환기 설정에 따라 settings 배열 생성
     private String[][] getVentSettings(String modelCode) {
-        if (modelCode.equals("VENT_A")) {
+        if (modelCode.equals("DCR-47/WF")) {
             return new String[][] {
                     {"01", "환기-저속", "Ventilation_Low"},
                     {"02", "환기-고속", "Ventilation_High"}
