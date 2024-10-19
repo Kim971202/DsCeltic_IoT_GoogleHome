@@ -84,9 +84,46 @@ public class FulfillmentService {
                 availableModes.put(modeFan);
                 attributes.put("availableModes", availableModes);
 
+                // FanSpeed 설정 추가
+                attributes.put("availableFanSpeeds", new JSONObject()
+                        .put("speeds", new JSONArray()
+                                .put(new JSONObject().put("speed_name", "low")
+                                        .put("speed_values", new JSONArray()
+                                                .put(new JSONObject().put("speed_synonym", new JSONArray()
+                                                        .put("저속")).put("lang", "ko"))
+                                                .put(new JSONObject().put("speed_synonym", new JSONArray()
+                                                        .put("low"))
+                                                        .put("lang", "en"))))
+                                .put(new JSONObject()
+                                        .put("speed_name", "medium")
+                                        .put("speed_values", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("speed_synonym", new JSONArray()
+                                                                .put("중속"))
+                                                        .put("lang", "ko"))
+                                                .put(new JSONObject()
+                                                        .put("speed_synonym", new JSONArray()
+                                                                .put("medium"))
+                                                        .put("lang", "en"))))
+                                .put(new JSONObject()
+                                        .put("speed_name", "high")
+                                        .put("speed_values", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("speed_synonym", new JSONArray()
+                                                                .put("고속"))
+                                                        .put("lang", "ko"))
+                                                .put(new JSONObject()
+                                                        .put("speed_synonym", new JSONArray()
+                                                                .put("high"))
+                                                        .put("lang", "en")))))
+                        .put("ordered", true));
+
+                attributes.put("reversible", false);  // 회전 방향 설정 (true면 양방향 회전 지원)
+
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.FanSpeed"));
+                        .put("action.devices.traits.FanSpeed")
+                        .put("action.devices.traits.Modes"));  // FanSpeed와 Modes 추가
             }
 
             // 공통으로 device에 추가할 값들
