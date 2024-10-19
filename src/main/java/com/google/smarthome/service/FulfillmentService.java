@@ -84,25 +84,7 @@ public class FulfillmentService {
                 availableModes.put(modeFan);
                 attributes.put("availableModes", availableModes);
 
-                // FanSpeed 설정 추가
-                attributes.put("availableFanSpeeds", new JSONObject()
-                        .put("speeds", new JSONArray()
-                                .put(new JSONObject().put("speed_name", "low")
-                                        .put("speed_values", new JSONArray()
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("저속")).put("lang", "ko"))
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("low")).put("lang", "en"))))
-                                .put(new JSONObject().put("speed_name", "medium")
-                                        .put("speed_values", new JSONArray()
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("중속")).put("lang", "ko"))
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("medium")).put("lang", "en"))))
-                                .put(new JSONObject().put("speed_name", "high")
-                                        .put("speed_values", new JSONArray()
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("고속")).put("lang", "ko"))
-                                                .put(new JSONObject().put("speed_synonym", new JSONArray().put("high")).put("lang", "en")))))
-                        .put("ordered", true));
-
                 device.put("traits", new JSONArray()
-                        .put("action.devices.traits.FanSpeed")
                         .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.Modes"));  // FanSpeed와 Modes 추가
             }
@@ -356,16 +338,34 @@ public class FulfillmentService {
     // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
         if (modelCode.equals("ESCeco13S")) {
-            return new String[][] {
+            return new String[][]  {
                     {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
                     {"02", "난방-난방수온도", "Heating_Water_Temperature"},
-                    {"03", "외출", "Away"}
+                    {"03", "외출", "Away"},
+                    {"05", "절약난방", "Economy_Heating"},
+                    {"061", "취침1", "Sleep1"},
+                    {"062", "취침2", "Sleep2"},
+                    {"063", "취침3", "Sleep3"},
+                    {"07", "온수전용", "Hot_Water_Only"},
+                    {"08", "온수-빠른온수", "Quick_Hot_Water"},
+                    {"10", "24시간예약", "24_Hour_Reservation"},
+                    {"11", "12시간예약", "12_Hour_Reservation"},
+                    {"12", "주간예약", "Weekly_Reservation"}
             };
         } else {
-            return new String[][] {
+            return new String[][]  {
                     {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
+                    {"02", "난방-난방수온도", "Heating_Water_Temperature"},
+                    {"03", "외출", "Away"},
                     {"05", "절약난방", "Economy_Heating"},
-                    {"07", "온수전용", "Hot_Water_Only"}
+                    {"061", "취침1", "Sleep1"},
+                    {"062", "취침2", "Sleep2"},
+                    {"063", "취침3", "Sleep3"},
+                    {"07", "온수전용", "Hot_Water_Only"},
+                    {"08", "온수-빠른온수", "Quick_Hot_Water"},
+                    {"10", "24시간예약", "24_Hour_Reservation"},
+                    {"11", "12시간예약", "12_Hour_Reservation"},
+                    {"12", "주간예약", "Weekly_Reservation"}
             };
         }
     }
