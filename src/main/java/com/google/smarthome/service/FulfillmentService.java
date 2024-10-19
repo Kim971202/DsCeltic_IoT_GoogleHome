@@ -25,7 +25,7 @@ public class FulfillmentService {
     private MobiusService mobiusService;
     GoogleDTO deviceStatus;
 
-    public JSONObject handleSync(JSONObject requestBody, List<String> deviceIds, String userId) {
+    public JSONObject handleSync(JSONObject requestBody, Map<String, String> deviceInfoMap, String userId) {
         log.info("handleSync CALLED");
         log.info("requestBody: " + requestBody);
 
@@ -37,88 +37,71 @@ public class FulfillmentService {
 
         JSONArray devices = new JSONArray();
 
-        for (String deviceId : deviceIds) {
-            log.info("Processing device with ID: " + deviceId);
+        for (Map.Entry<String, String> entry : deviceInfoMap.entrySet()) {
+            String deviceId = entry.getKey();  // deviceId
+            String modelCode = entry.getValue();  // modelCode
+
+            log.info("Processing device with ID: " + deviceId + " and Model Code: " + modelCode);
+
             if (deviceId == null) {
                 log.error("Null device ID found");
                 continue;
             }
-            JSONObject boiler = new JSONObject();
 
-            // 보일러 온도 최소/최대 값
-            JSONObject temperatureRange = new JSONObject();
-            temperatureRange.put("minThresholdCelsius", 10);
-            temperatureRange.put("maxThresholdCelsius", 80);
-
-            // 모드 관련 속성 추가
+            JSONObject device = new JSONObject();
+            JSONObject attributes = new JSONObject();
             JSONArray availableModes = new JSONArray();
+            String deviceType = "";
 
-            JSONObject modeBoiler = new JSONObject();
-            modeBoiler.put("name", "mode_boiler");
+            // modelCode에 따라 보일러와 환기 기기를 구분
+            if (modelCode.startsWith("BOILER")) {
+                deviceType = "action.devices.types.BOILER";
+                attributes.put("temperatureUnitForUX", "C")
+                        .put("temperatureStepCelsius", 1)
+                        .put("temperatureRange", new JSONObject()
+                                .put("minThresholdCelsius", 10)
+                                .put("maxThresholdCelsius", 80));
 
-            JSONArray nameValuesArray = new JSONArray();
-            nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("보일러")).put("lang", "ko"));
-            nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("boiler")).put("lang", "en"));
-            modeBoiler.put("name_values", nameValuesArray);
+                // 보일러에 대한 settings 정의
+                String[][] settings = getBoilerSettings(modelCode);
 
-            JSONArray settingsArray = new JSONArray();
+                JSONObject modeBoiler = createModeBoiler(settings);
+                availableModes.put(modeBoiler);
+                attributes.put("availableModes", availableModes);
 
-            // 설정 정보를 배열로 정의
-            String[][] settings = {
-                    {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
-                    {"02", "난방-난방수온도", "Heating_Water_Temperature"},
-                    {"03", "외출", "Away"},
-                    {"05", "절약난방", "Economy_Heating"},
-                    {"061", "취침1", "Sleep1"},
-                    {"062", "취침2", "Sleep2"},
-                    {"063", "취침3", "Sleep3"},
-                    {"07", "온수전용", "Hot_Water_Only"},
-                    {"08", "온수-빠른온수", "Quick_Hot_Water"},
-                    {"10", "24시간예약", "24_Hour_Reservation"},
-                    {"11", "12시간예약", "12_Hour_Reservation"},
-                    {"12", "주간예약", "Weekly_Reservation"}
-            };
+                device.put("traits", new JSONArray()
+                        .put("action.devices.traits.OnOff")
+                        .put("action.devices.traits.TemperatureControl")
+                        .put("action.devices.traits.Modes"));
+            }
+            else if (modelCode.startsWith("VENT")) {
+                deviceType = "action.devices.types.FAN";
 
-            // for 문을 사용하여 설정 정보를 추가
-            for (String[] setting : settings) {
-                JSONObject settingObject = new JSONObject();
-                settingObject.put("setting_name", setting[0]);
+                // 환기 기기에 대한 settings 정의
+                String[][] settings = getVentSettings(modelCode);
 
-                JSONArray settingValues = new JSONArray();
-                settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"));
-                settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en"));
+                JSONObject modeFan = createModeFan(settings);
+                availableModes.put(modeFan);
+                attributes.put("availableModes", availableModes);
 
-                settingObject.put("setting_values", settingValues);
-                settingsArray.put(settingObject);
+                device.put("traits", new JSONArray()
+                        .put("action.devices.traits.OnOff")
+                        .put("action.devices.traits.FanSpeed"));
             }
 
-            modeBoiler.put("settings", settingsArray);
-            modeBoiler.put("ordered", false); // ordered 필드 추가
-            availableModes.put(modeBoiler);
+            // 공통으로 device에 추가할 값들
+            device.put("id", deviceId);
+            device.put("type", deviceType);
+            device.put("attributes", attributes);
 
-            boiler.put("attributes", new JSONObject()
-                    .put("temperatureUnitForUX", "C")
-                    .put("temperatureStepCelsius", 1)
-                    .put("temperatureRange", temperatureRange)
-                    .put("availableModes", availableModes));
-
-            boiler.put("id", deviceId);
-            boiler.put("type", "action.devices.types.BOILER");
-            boiler.put("traits", new JSONArray()
-                    .put("action.devices.traits.OnOff")
-                    .put("action.devices.traits.TemperatureControl")
-                    .put("action.devices.traits.Modes"));
-    
+            // GoogleDTO에서 기기 닉네임 가져오기
             GoogleDTO params = new GoogleDTO();
             params.setUserId(userId);
             params.setDeviceId(deviceId);
             GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 
-            boiler.put("name", new JSONObject().put("name", deviceNick.getDeviceNickname() +
-                    "_" +
-                    deviceNick.getAddressNickname()));
-
-            devices.put(boiler);
+            device.put("name", new JSONObject().put("name", deviceNick.getDeviceNickname() + "_" + deviceNick.getAddressNickname()));
+            devices.put(device);
         }
 
         payload.put("devices", devices);
@@ -126,6 +109,66 @@ public class FulfillmentService {
 
         log.info("handleSync response: " + response);
         return response;
+    }
+
+    // 보일러 모드 설정
+    private JSONObject createModeBoiler(String[][] settings) {
+        JSONObject modeBoiler = new JSONObject();
+        modeBoiler.put("name", "mode_boiler");
+
+        JSONArray nameValuesArray = new JSONArray();
+        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("보일러")).put("lang", "ko"));
+        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("boiler")).put("lang", "en"));
+        modeBoiler.put("name_values", nameValuesArray);
+
+        JSONArray settingsArray = new JSONArray();
+
+        // settings 배열에 맞는 모드 설정 추가
+        for (String[] setting : settings) {
+            JSONObject settingObject = new JSONObject();
+            settingObject.put("setting_name", setting[0]);
+
+            JSONArray settingValues = new JSONArray();
+            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"));
+            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en"));
+
+            settingObject.put("setting_values", settingValues);
+            settingsArray.put(settingObject);
+        }
+
+        modeBoiler.put("settings", settingsArray);
+        modeBoiler.put("ordered", false); // ordered 필드 추가
+        return modeBoiler;
+    }
+
+    // 환기 모드 설정
+    private JSONObject createModeFan(String[][] settings) {
+        JSONObject modeFan = new JSONObject();
+        modeFan.put("name", "mode_fan");
+
+        JSONArray nameValuesArray = new JSONArray();
+        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("환기")).put("lang", "ko"));
+        nameValuesArray.put(new JSONObject().put("name_synonym", new JSONArray().put("fan")).put("lang", "en"));
+        modeFan.put("name_values", nameValuesArray);
+
+        JSONArray settingsArray = new JSONArray();
+
+        // settings 배열에 맞는 모드 설정 추가
+        for (String[] setting : settings) {
+            JSONObject settingObject = new JSONObject();
+            settingObject.put("setting_name", setting[0]);
+
+            JSONArray settingValues = new JSONArray();
+            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"));
+            settingValues.put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en"));
+
+            settingObject.put("setting_values", settingValues);
+            settingsArray.put(settingObject);
+        }
+
+        modeFan.put("settings", settingsArray);
+        modeFan.put("ordered", false);
+        return modeFan;
     }
 
     public JSONObject handleExecute(JSONObject requestBody, List<String> deviceIds, String userId) {
@@ -290,6 +333,38 @@ public class FulfillmentService {
         log.info("handleQuery response: " + response);
 
         return response;
+    }
+
+    // 보일러 설정에 따라 settings 배열 생성
+    private String[][] getBoilerSettings(String modelCode) {
+        if (modelCode.equals("BOILER_A")) {
+            return new String[][] {
+                    {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
+                    {"02", "난방-난방수온도", "Heating_Water_Temperature"},
+                    {"03", "외출", "Away"}
+            };
+        } else {
+            return new String[][] {
+                    {"01", "난방-실내온도", "Heating_Indoor_Temperature"},
+                    {"05", "절약난방", "Economy_Heating"},
+                    {"07", "온수전용", "Hot_Water_Only"}
+            };
+        }
+    }
+
+    // 환기 설정에 따라 settings 배열 생성
+    private String[][] getVentSettings(String modelCode) {
+        if (modelCode.equals("VENT_A")) {
+            return new String[][] {
+                    {"01", "환기-저속", "Ventilation_Low"},
+                    {"02", "환기-고속", "Ventilation_High"}
+            };
+        } else {
+            return new String[][] {
+                    {"01", "환기-중속", "Ventilation_Medium"},
+                    {"02", "환기-터보", "Ventilation_Turbo"}
+            };
+        }
     }
 
     // 모드를 설정하는 새로운 메서드

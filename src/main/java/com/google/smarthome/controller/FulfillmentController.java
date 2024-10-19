@@ -76,12 +76,9 @@ public class FulfillmentController {
             System.out.println("Device ID: " + deviceId + ", Model Code: " + modelCode);
         });
 
-
-        log.info("Device IDs: " + deviceIds);
-
         switch (intent) {
             case "action.devices.SYNC":
-                response = fulfillmentService.handleSync(requestBody, deviceIds, userId);
+                response = fulfillmentService.handleSync(requestBody, deviceInfoMap, userId);
                 break;
             case "action.devices.EXECUTE":
                 response = fulfillmentService.handleExecute(requestBody, deviceIds, userId);
