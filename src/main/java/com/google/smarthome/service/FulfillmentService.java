@@ -75,7 +75,7 @@ public class FulfillmentService {
                         .put("action.devices.traits.Modes"));
             }
             else if (modelCode.equals("DCR-47/WF")) {
-                deviceType = "action.devices.types.FAN";
+                deviceType = "action.devices.types.AIRPURIFIER";
 
                 // 환기 기기에 대한 settings 정의
                 String[][] settings = getVentSettings(modelCode);
