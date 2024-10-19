@@ -121,8 +121,8 @@ public class FulfillmentService {
                 attributes.put("reversible", false);  // 회전 방향 설정 (true면 양방향 회전 지원)
 
                 device.put("traits", new JSONArray()
-                        .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.FanSpeed")
+                        .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.Modes"));  // FanSpeed와 Modes 추가
             }
 
