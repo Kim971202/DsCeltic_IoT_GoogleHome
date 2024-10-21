@@ -72,7 +72,7 @@ public class FulfillmentService {
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.TemperatureControl")
+                        .put("action.devices.traits.TemperatureSetting")
                         .put("action.devices.traits.Modes"));
             }
             else if (modelCode.equals("DCR-47/WF")) {
@@ -237,7 +237,6 @@ public class FulfillmentService {
                                     for (String modeName : params.keySet()) {
                                         String modeValue = params.getString(modeName);
                                         log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
-                                        handleSetModes(userId, deviceId, modeName, modeValue);
                                         switch (modeValue) {
                                             case "061":
                                                 deviceStatus.setModeValue("06");
@@ -252,8 +251,16 @@ public class FulfillmentService {
                                                 deviceStatus.setSleepCode("03");
                                                 break;
                                         }
+                                        handleSetModes(userId, deviceId, modeName, modeValue);
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
+                                    break;
+                                case "action.devices.commands.SetTemperature":
+                                    double temperature = execCommand.getJSONObject("params").getDouble("temperature");
+                                    log.info("Setting temperature of device " + deviceId + " to " + temperature);
+                                    deviceStatus.setTempStatus(String.valueOf(temperature));
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, String.valueOf(temperature), "htTp");
                                     break;
                                 default:
                                     isSuccess = false;
