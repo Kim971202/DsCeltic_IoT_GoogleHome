@@ -84,41 +84,26 @@ public class FulfillmentService {
                 JSONObject modeFan = createModeFan(settings);
                 availableModes.put(modeFan);
 
-                FanSpeed availableFanSpeeds = FanSpeed.builder()
-                        .speeds(List.of(
-                                FanSpeed.Speed.builder()
-                                        .speed_name("speed_auto")
-                                        .speed_values(List.of(
-                                                FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("자동")).lang("ko").build()
-                                                ,FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("auto")).lang("en").build()
-                                        ))
-                                        .build()
-                                ,FanSpeed.Speed.builder()
-                                        .speed_name("speed_1")
-                                        .speed_values(List.of(
-                                                FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("1단")).lang("ko").build()
-                                                ,FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("step1")).lang("en").build()
-                                        ))
-                                        .build()
-                                ,FanSpeed.Speed.builder()
-                                        .speed_name("speed_2")
-                                        .speed_values(List.of(
-                                                FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("2단")).lang("ko").build()
-                                                ,FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("step2")).lang("en").build()
-                                        ))
-                                        .build()
-                                ,FanSpeed.Speed.builder()
-                                        .speed_name("speed_3")
-                                        .speed_values(List.of(
-                                                FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("3단")).lang("ko").build()
-                                                ,FanSpeed.Speed.SpeedValue.builder().speed_synonym(List.of("step3")).lang("en").build()
-                                        ))
-                                        .build()
-                        ))
-                        .ordered(true)
-                        .build();
+                JSONObject fanSpeedsJson = new JSONObject();
+                fanSpeedsJson.put("speeds", new JSONArray()
+                        .put(new JSONObject().put("speed_name", "low")
+                                .put("speed_values", new JSONArray()
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("저속")).put("lang", "ko"))
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("low")).put("lang", "en"))))
+                        .put(new JSONObject().put("speed_name", "medium")
+                                .put("speed_values", new JSONArray()
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("중속")).put("lang", "ko"))
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("medium")).put("lang", "en"))))
+                        .put(new JSONObject().put("speed_name", "high")
+                                .put("speed_values", new JSONArray()
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("고속")).put("lang", "ko"))
+                                        .put(new JSONObject().put("speed_synonym", new JSONArray().put("high")).put("lang", "en"))))
+                );
+                fanSpeedsJson.put("ordered", true);
 
-                attributes.put("availableFanSpeeds", availableFanSpeeds);
+                // FanSpeed JSON을 attributes에 추가
+                attributes.put("availableFanSpeeds", fanSpeedsJson);
+
                 attributes.put("supportsFanSpeedPercent", false);
                 attributes.put("availableModes", availableModes);
 
