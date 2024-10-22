@@ -253,10 +253,6 @@ public class FulfillmentService {
                                         }
 
                                         handleSetModes(userId, deviceId, modeName, modeValue);
-                                        System.out.println("deviceStatus.getModeValue()");
-                                        System.out.println(deviceStatus.getModeValue());
-                                        System.out.println("deviceStatus.getSleepCode()");
-                                        System.out.println(deviceStatus.getSleepCode());
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
@@ -390,8 +386,6 @@ public class FulfillmentService {
     // 모드를 설정하는 새로운 메서드
     private void handleSetModes(String userId, String deviceId, String modeName, String modeValue) {
         log.info("Setting mode for device " + deviceId + ": " + modeName + " = " + modeValue);
-        deviceStatus.setModeValue(modeValue);
-//        googleMapper.updateDeviceStatus(deviceStatus);
         try {
             handleDeviceWithMode(userId, deviceId, modeValue, "opMd");
         } catch (Exception e) {
