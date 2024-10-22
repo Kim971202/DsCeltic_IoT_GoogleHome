@@ -352,9 +352,7 @@ public class FulfillmentService {
                     {"02", "온돌난방", "Heating_Water_Temperature"},
                     {"03", "외출", "Away"},
                     {"05", "절약난방", "Economy_Heating"},
-                    {"061", "취침1", "Sleep1"},
-                    {"062", "취침2", "Sleep2"},
-                    {"063", "취침3", "Sleep3"},
+                    {"061", "취침", "Sleep1"},
                     {"07", "온수전용", "Hot_Water_Only"}
             };
         } else {
