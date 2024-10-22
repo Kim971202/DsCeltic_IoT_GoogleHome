@@ -253,6 +253,10 @@ public class FulfillmentService {
                                         }
 
                                         handleSetModes(userId, deviceId, modeName, modeValue);
+                                        System.out.println("deviceStatus.getModeValue()");
+                                        System.out.println(deviceStatus.getModeValue());
+                                        System.out.println("deviceStatus.getSleepCode()");
+                                        System.out.println(deviceStatus.getSleepCode());
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
