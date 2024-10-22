@@ -349,7 +349,7 @@ public class FulfillmentService {
         if (modelCode.equals("ESCeco13S")) {
             return new String[][]  {
                     {"01", "실내온도", "Heating_Indoor_Temperature"},
-                    {"02", "난방수온도", "Heating_Water_Temperature"},
+                    {"02", "온돌난방", "Heating_Water_Temperature"},
                     {"03", "외출", "Away"},
                     {"05", "절약난방", "Economy_Heating"},
                     {"061", "취침1", "Sleep1"},
