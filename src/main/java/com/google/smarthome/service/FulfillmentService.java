@@ -251,6 +251,7 @@ public class FulfillmentService {
                                                 deviceStatus.setSleepCode("03");
                                                 break;
                                         }
+
                                         handleSetModes(userId, deviceId, modeName, modeValue);
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
@@ -386,7 +387,7 @@ public class FulfillmentService {
     private void handleSetModes(String userId, String deviceId, String modeName, String modeValue) {
         log.info("Setting mode for device " + deviceId + ": " + modeName + " = " + modeValue);
         deviceStatus.setModeValue(modeValue);
-        googleMapper.updateDeviceStatus(deviceStatus);
+//        googleMapper.updateDeviceStatus(deviceStatus);
         try {
             handleDeviceWithMode(userId, deviceId, modeValue, "opMd");
         } catch (Exception e) {
