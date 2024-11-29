@@ -67,10 +67,11 @@ public class AuthTokenController {
         log.info("clientSecret:{}", clientSecret);
 
         String authorizationToken = UUID.randomUUID().toString();
+        log.info("authorizationToken:{}", authorizationToken);
+
         String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
         if(authorizationCode == null && refreshToken != null){
             redisCommand.setValues(authorizationToken, redisCommand.getValues(refreshToken));
-
         } else if(authorizationCode != null && refreshToken == null){
             redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
         } else {
