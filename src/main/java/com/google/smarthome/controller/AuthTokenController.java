@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -46,56 +49,76 @@ public class AuthTokenController {
             @RequestHeader(name = "Authorization", required = false) String authorization,
             HttpServletRequest request) throws Exception {
 
-        log.info("@PostMapping(\"/oauth2/token\") CALLED");
-
-        log.info("grantType: {}", grantType);
-        log.info("authorizationCode: {}", authorizationCode);
-        log.info("refreshToken: {}", refreshToken);
-        log.info("redirectUri: {}", redirectUri);
-        log.info("authorization: {}", authorization);
-
-        if(StringUtils.hasText(authorization)){
+        // Authorization 헤더 처리
+        if (StringUtils.hasText(authorization)) {
             log.info("authorization basic 방식");
-            String decodeValue = new String(Base64Utils.decodeFromString(authorization));
-            log.info("decodeValue:{}", decodeValue);
-            String[] arrDecode = decodeValue.split(":");
-            clientId = arrDecode[0];
-            clientSecret = arrDecode[1];
+            if (authorization.startsWith("Basic ")) {
+                String base64Credentials = authorization.substring(6);
+                String decodedValue = new String(Base64Utils.decodeFromString(base64Credentials));
+                log.info("decodedValue: {}", decodedValue);
+
+                String[] credentials = decodedValue.split(":", 2); // split with limit
+                if (credentials.length == 2) {
+                    clientId = credentials[0];
+                    clientSecret = credentials[1];
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", "invalid_request", "error_description", "Invalid Authorization header format."));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "invalid_request", "error_description", "Authorization header must start with 'Basic '."));
+            }
         }
 
-        log.info("clientId:{}", clientId);
-        log.info("clientSecret:{}", clientSecret);
+        log.info("clientId: {}", clientId);
+        log.info("clientSecret: {}", clientSecret);
 
-        String authorizationToken = UUID.randomUUID().toString();
-        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
+        // 토큰 생성
+        String newAccessToken = UUID.randomUUID().toString();
+        String newRefreshToken = Base64Utils.encodeToUrlSafeString(newAccessToken.getBytes(StandardCharsets.UTF_8));
 
-        log.info("authorizationToken:{}", authorizationToken);
-        log.info("myRefreshToken:{}", myRefreshToken);
+        // grant_type 처리
+        switch (grantType) {
+            case "authorization_code":
+                if (authorizationCode == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", "invalid_request", "error_description", "Authorization code is required."));
+                }
+                log.info("grant_type=authorization_code");
+                redisCommand.setValues(authorizationCode, clientId); // Redis에 저장
+                return ResponseEntity.ok(TokenBody.builder()
+                        .tokenType("Bearer")
+                        .accessToken(newAccessToken)
+                        .refreshToken(newRefreshToken)
+                        .expiresIn(googleOauth2Expires)
+                        .build());
 
-        if(authorizationCode == null && refreshToken != null){
-            log.info("authorizationCode == null && refreshToken != null");
-            redisCommand.setValues(refreshToken, redisCommand.getValues(refreshToken));
-            authorizationCode = authorizationToken;
-        } else if(authorizationCode != null && refreshToken == null){
-            log.info("authorizationCode != null && refreshToken == null");
-            redisCommand.setValues(authorizationCode, redisCommand.getValues(authorizationCode));
-            refreshToken = myRefreshToken;
-        } else {
-            log.info("NO IDEA");
+            case "refresh_token":
+                if (refreshToken == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", "invalid_request", "error_description", "Refresh token is required."));
+                }
+                log.info("grant_type=refresh_token");
+
+                // Refresh Token 검증
+                String storedClientId = redisCommand.getValues(refreshToken);
+                if (storedClientId == null || !storedClientId.equals(clientId)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", "invalid_grant", "error_description", "Invalid refresh token."));
+                }
+
+                return ResponseEntity.ok(TokenBody.builder()
+                        .tokenType("Bearer")
+                        .accessToken(newAccessToken)
+                        .refreshToken(refreshToken) // Refresh Token은 갱신하지 않음
+                        .expiresIn(googleOauth2Expires)
+                        .build());
+
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "unsupported_grant_type", "error_description", "Grant type not supported."));
         }
-			/*
-			 * {
-				"token_type": "Bearer",
-				"access_token": "ACCESS_TOKEN",
-				"expires_in": SECONDS_TO_EXPIRATION
-				}
-			 */
-        return ResponseEntity.ok().body(TokenBody.builder()
-                .tokenType("Bearer")
-                .accessToken(authorizationCode)
-                .refreshToken(refreshToken)
-                .expiresIn(googleOauth2Expires) //구글기준 토큰유효시간
-                .build());
 
     }
 
