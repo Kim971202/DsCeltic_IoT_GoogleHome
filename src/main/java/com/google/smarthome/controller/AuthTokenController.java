@@ -37,6 +37,7 @@ public class AuthTokenController {
     private int googleOauth2Expires;
     @Autowired
     RedisCommand redisCommand;
+
     @ResponseBody
     @PostMapping("/oauth2/token")
     public ResponseEntity<?> authorize(
@@ -49,78 +50,72 @@ public class AuthTokenController {
             @RequestHeader(name = "Authorization", required = false) String authorization,
             HttpServletRequest request) throws Exception {
 
-        // Authorization 헤더 처리
+        log.info("@PostMapping(\"/oauth2/token\") CALLED");
+
+        log.info("grantType: {}", grantType);
+        log.info("authorizationCode: {}", authorizationCode);
+        log.info("refreshToken: {}", refreshToken);
+        log.info("redirectUri: {}", redirectUri);
+        log.info("authorization: {}", authorization);
+
+        // Authorization 헤더 디코딩 (Basic Auth)
         if (StringUtils.hasText(authorization)) {
             log.info("authorization basic 방식");
-            if (authorization.startsWith("Basic ")) {
-                String base64Credentials = authorization.substring(6);
-                String decodedValue = new String(Base64Utils.decodeFromString(base64Credentials));
-                log.info("decodedValue: {}", decodedValue);
-
-                String[] credentials = decodedValue.split(":", 2); // split with limit
-                if (credentials.length == 2) {
-                    clientId = credentials[0];
-                    clientSecret = credentials[1];
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(Map.of("error", "invalid_request", "error_description", "Invalid Authorization header format."));
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "invalid_request", "error_description", "Authorization header must start with 'Basic '."));
-            }
+            String decodedValue = new String(Base64Utils.decodeFromString(authorization.split(" ")[1]));
+            log.info("decodedValue:{}", decodedValue);
+            String[] arrDecode = decodedValue.split(":");
+            clientId = arrDecode[0];
+            clientSecret = arrDecode[1];
         }
 
         log.info("clientId: {}", clientId);
         log.info("clientSecret: {}", clientSecret);
 
-        // 토큰 생성
-        String newAccessToken = UUID.randomUUID().toString();
-        String newRefreshToken = Base64Utils.encodeToUrlSafeString(newAccessToken.getBytes(StandardCharsets.UTF_8));
+        // 새로운 Token 및 Refresh Token 생성
+        String newAuthorizationToken = UUID.randomUUID().toString();
+        String newRefreshToken = Base64Utils.encodeToUrlSafeString(newAuthorizationToken.getBytes("UTF-8"));
 
-        // grant_type 처리
-        switch (grantType) {
-            case "authorization_code":
-                if (authorizationCode == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(Map.of("error", "invalid_request", "error_description", "Authorization code is required."));
-                }
-                log.info("grant_type=authorization_code");
-                redisCommand.setValues(authorizationCode, clientId); // Redis에 저장
-                return ResponseEntity.ok(TokenBody.builder()
-                        .tokenType("Bearer")
-                        .accessToken(newAccessToken)
-                        .refreshToken(newRefreshToken)
-                        .expiresIn(googleOauth2Expires)
-                        .build());
+        log.info("newAuthorizationToken: {}", newAuthorizationToken);
+        log.info("newRefreshToken: {}", newRefreshToken);
 
-            case "refresh_token":
-                if (refreshToken == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(Map.of("error", "invalid_request", "error_description", "Refresh token is required."));
-                }
-                log.info("grant_type=refresh_token");
+        if (authorizationCode == null && refreshToken != null) {
+            log.info("authorizationCode == null && refreshToken != null");
 
-                // Refresh Token 검증
-                String storedClientId = redisCommand.getValues(refreshToken);
-                if (storedClientId == null || !storedClientId.equals(clientId)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(Map.of("error", "invalid_grant", "error_description", "Invalid refresh token."));
-                }
+            // Redis에서 refreshToken으로 authorizationCode 조회
+            String storedAuthorizationCode = redisCommand.getValues(refreshToken);
+            if (storedAuthorizationCode == null) {
+                throw new IllegalArgumentException("Invalid refresh token");
+            }
 
-                return ResponseEntity.ok(TokenBody.builder()
-                        .tokenType("Bearer")
-                        .accessToken(newAccessToken)
-                        .refreshToken(refreshToken) // Refresh Token은 갱신하지 않음
-                        .expiresIn(googleOauth2Expires)
-                        .build());
+            // 새로운 authorizationCode 생성 및 저장
+            authorizationCode = newAuthorizationToken;
+            redisCommand.setValues(refreshToken, authorizationCode);
+        } else if (authorizationCode != null && refreshToken == null) {
+            log.info("authorizationCode != null && refreshToken == null");
 
-            default:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "unsupported_grant_type", "error_description", "Grant type not supported."));
+            // Redis에서 authorizationCode로 refreshToken 조회
+            String storedRefreshToken = redisCommand.getValues(authorizationCode);
+            if (storedRefreshToken != null) {
+                refreshToken = storedRefreshToken; // 이미 있는 refreshToken 재사용
+            } else {
+                // 새로운 refreshToken 생성 및 저장
+                refreshToken = newRefreshToken;
+                redisCommand.setValues(authorizationCode, refreshToken);
+            }
+        } else {
+            log.info("NO IDEA");
+            throw new IllegalArgumentException("Invalid request: Both authorizationCode and refreshToken are null or invalid.");
         }
 
+        // 응답 데이터 생성
+        return ResponseEntity.ok().body(TokenBody.builder()
+                .tokenType("Bearer")
+                .accessToken(authorizationCode)
+                .refreshToken(refreshToken)
+                .expiresIn(172800) // 2일 (초 단위)
+                .build());
     }
+
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @NoArgsConstructor
