@@ -71,8 +71,10 @@ public class AuthTokenController {
 
         String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
         if(authorizationCode == null && refreshToken != null){
+            log.info("authorizationCode == null && refreshToken != null");
             redisCommand.setValues(authorizationToken, redisCommand.getValues(refreshToken));
         } else if(authorizationCode != null && refreshToken == null){
+            log.info("authorizationCode != null && refreshToken == null");
             redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
         } else {
             log.info("NO IDEA");
