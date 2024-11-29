@@ -66,21 +66,19 @@ public class AuthTokenController {
         log.info("clientId:{}", clientId);
         log.info("clientSecret:{}", clientSecret);
 
-        String authorizationToken = UUID.randomUUID().toString();
-        log.info("authorizationToken:{}", authorizationToken);
+//        String authorizationToken = UUID.randomUUID().toString();
+//        log.info("authorizationToken:{}", authorizationToken);
 
-        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
+//        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
         if(authorizationCode == null && refreshToken != null){
             log.info("authorizationCode == null && refreshToken != null");
-            redisCommand.setValues(authorizationToken, redisCommand.getValues(refreshToken));
+            redisCommand.setValues(refreshToken, redisCommand.getValues(refreshToken));
         } else if(authorizationCode != null && refreshToken == null){
             log.info("authorizationCode != null && refreshToken == null");
-            redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
+            redisCommand.setValues(authorizationCode, redisCommand.getValues(authorizationCode));
         } else {
             log.info("NO IDEA");
         }
-        log.info("authorizationToken:{}", authorizationToken);
-        log.info("myRefreshToke:{}", myRefreshToken);
 			/*
 			 * {
 				"token_type": "Bearer",
