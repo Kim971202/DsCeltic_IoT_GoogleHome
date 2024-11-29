@@ -66,16 +66,20 @@ public class AuthTokenController {
         log.info("clientId:{}", clientId);
         log.info("clientSecret:{}", clientSecret);
 
-//        String authorizationToken = UUID.randomUUID().toString();
-//        log.info("authorizationToken:{}", authorizationToken);
+        String authorizationToken = UUID.randomUUID().toString();
+        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
 
-//        String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
+        log.info("authorizationToken:{}", authorizationToken);
+        log.info("myRefreshToken:{}", myRefreshToken);
+
         if(authorizationCode == null && refreshToken != null){
             log.info("authorizationCode == null && refreshToken != null");
             redisCommand.setValues(refreshToken, redisCommand.getValues(refreshToken));
+            authorizationCode = authorizationToken;
         } else if(authorizationCode != null && refreshToken == null){
             log.info("authorizationCode != null && refreshToken == null");
             redisCommand.setValues(authorizationCode, redisCommand.getValues(authorizationCode));
+            refreshToken = myRefreshToken;
         } else {
             log.info("NO IDEA");
         }
@@ -88,8 +92,8 @@ public class AuthTokenController {
 			 */
         return ResponseEntity.ok().body(TokenBody.builder()
                 .tokenType("Bearer")
-                .accessToken(authorizationToken)
-                .refreshToken(myRefreshToken)
+                .accessToken(authorizationCode)
+                .refreshToken(refreshToken)
                 .expiresIn(googleOauth2Expires) //구글기준 토큰유효시간
                 .build());
 
