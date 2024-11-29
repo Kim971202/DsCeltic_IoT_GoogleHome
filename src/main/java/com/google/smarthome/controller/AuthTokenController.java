@@ -81,6 +81,11 @@ public class AuthTokenController {
         if (authorizationCode == null && refreshToken != null) {
             log.info("authorizationCode == null && refreshToken != null");
 
+            if(refreshToken.length() < 36) {
+                log.error("유효하지 않은 refreshToken: {}", refreshToken);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid refresh token");
+            }
             // Redis에서 refreshToken으로 authorizationCode 조회
             String storedAuthorizationCode = redisCommand.getValues(refreshToken);
             if (storedAuthorizationCode == null) {
