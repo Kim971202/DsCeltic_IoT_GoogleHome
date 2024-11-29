@@ -80,7 +80,6 @@ public class AuthTokenController {
             log.info("NO IDEA");
         }
         log.info("authorizationToken:{}", authorizationToken);
-        System.out.println("redisCommand.getValues(authorizationCode): " + redisCommand.getValues(authorizationCode));
         log.info("myRefreshToke:{}", myRefreshToken);
 			/*
 			 * {
