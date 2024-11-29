@@ -82,14 +82,18 @@ public class AuthTokenController {
             log.info("authorizationCode == null && refreshToken != null");
 
             // Redis에서 refreshToken으로 authorizationCode 조회
-            String storedAuthorizationCode = redisCommand.getValues(refreshToken);
-            if (storedAuthorizationCode == null) {
+            authorizationCode = redisCommand.getValues(refreshToken);
+            if (authorizationCode == null) {
+                log.error("유효하지 않은 refreshToken: {}", refreshToken);
                 throw new IllegalArgumentException("Invalid refresh token");
             }
 
             // 새로운 authorizationCode 생성 및 저장
-            authorizationCode = newAuthorizationToken;
-            redisCommand.setValues(refreshToken, authorizationCode);
+            String newAuthorizationCode = UUID.randomUUID().toString();
+            redisCommand.setValues(refreshToken, newAuthorizationCode);
+
+            log.info("새 authorizationCode 생성: {}", newAuthorizationCode);
+            authorizationCode = newAuthorizationCode;
         } else if (authorizationCode != null && refreshToken == null) {
             log.info("authorizationCode != null && refreshToken == null");
 
