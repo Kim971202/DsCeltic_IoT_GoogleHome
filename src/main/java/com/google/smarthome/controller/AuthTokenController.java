@@ -65,10 +65,17 @@ public class AuthTokenController {
 
         log.info("clientId:{}", clientId);
         log.info("clientSecret:{}", clientSecret);
+
         String authorizationToken = UUID.randomUUID().toString();
         String myRefreshToken = Base64Utils.encodeToUrlSafeString(authorizationToken.getBytes("UTF-8"));
+        if(authorizationCode == null && refreshToken != null){
+            redisCommand.setValues(authorizationToken, redisCommand.getValues(refreshToken));
 
-        redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
+        } else if(authorizationCode != null && refreshToken == null){
+            redisCommand.setValues(authorizationToken, redisCommand.getValues(authorizationCode));
+        } else {
+            log.info("NO IDEA");
+        }
         log.info("authorizationToken:{}", authorizationToken);
         System.out.println("redisCommand.getValues(authorizationCode): " + redisCommand.getValues(authorizationCode));
         log.info("myRefreshToke:{}", myRefreshToken);
