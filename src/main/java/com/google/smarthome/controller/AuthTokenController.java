@@ -111,7 +111,7 @@ public class AuthTokenController {
 
             // Redis에서 authorizationCode로 refreshToken 조회
             String storedRefreshToken = redisCommand.getValues(authorizationCode);
-            if (storedRefreshToken != null) {
+            if (!storedRefreshToken.equals("false")) {
                 refreshToken = storedRefreshToken; // 이미 있는 refreshToken 재사용
             } else {
                 // 새로운 refreshToken 생성 및 저장
