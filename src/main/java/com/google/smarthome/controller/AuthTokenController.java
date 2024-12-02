@@ -50,36 +50,36 @@ public class AuthTokenController {
             @RequestHeader(name = "Authorization", required = false) String authorization,
             HttpServletRequest request) throws Exception {
 
-        log.debug("grantType:{}", grantType);
-        log.debug("authorizationCode:{}", authorizationCode);
-        log.debug("refreshToken:{}", refreshToken);
-        log.debug("redirectUri:{}", redirectUri);
-        log.debug("authorization:{}", authorization);
+        log.info("grantType:{}", grantType);
+        log.info("authorizationCode:{}", authorizationCode);
+        log.info("refreshToken:{}", refreshToken);
+        log.info("redirectUri:{}", redirectUri);
+        log.info("authorization:{}", authorization);
 
         //grantType에 따라 client id, secret 값을 꺼내는 위치가 다르기 때문에 동일한 변수를 사용할 수 있도록 처리.
         if( StringUtils.hasText(authorization)) { //basic 방식
-            log.debug("authorization basic 방식");
+            log.info("authorization basic 방식");
             String decodeValue = new String(Base64Utils.decodeFromString(authorization));
-            log.debug("decodeValue:{}", decodeValue);
+            log.info("decodeValue:{}", decodeValue);
 
             String[] arrDecode = decodeValue.split(":");
             clientId = arrDecode[0];
             clientSecret = arrDecode[1];
         }
-        log.debug("clientId:{}", clientId);
-        log.debug("clientSecret:{}", clientSecret);
+        log.info("clientId:{}", clientId);
+        log.info("clientSecret:{}", clientSecret);
 
         if( !googleOauth2ClientId.equals(clientId) || !googleOauth2ClientSecret.equals(clientSecret) ) {
-            log.debug("클라이언트 정보 잘못됨 clientId:{}, clientSecret:{}", clientId, clientSecret);
+            log.info("클라이언트 정보 잘못됨 clientId:{}, clientSecret:{}", clientId, clientSecret);
             return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
         }
 
         if( !"authorization_code".equals(grantType) && !"refresh_token".equals(grantType)) {
-            log.debug("grantType 코드 잘못됨:{}", grantType);
+            log.info("grantType 코드 잘못됨:{}", grantType);
             return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
         }
 
-
+        System.out.println("return null");
         return null;
     }
 
