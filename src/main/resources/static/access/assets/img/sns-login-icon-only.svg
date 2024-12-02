@@ -1,0 +1,9 @@
+<svg data-name="sns login icon only" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+    <path data-name="Buttons / sns login icon only background" style="fill:none" d="M0 0h48v48H0z"/>
+    <g style="fill:#fff;stroke:#e2e8f0;stroke-miterlimit:10">
+        <rect width="48" height="48" rx="24" style="stroke:none"/>
+        <rect x=".5" y=".5" width="47" height="47" rx="23.5" style="fill:none"/>
+    </g>
+    <path data-name="24_24" style="fill:none" d="M0 0h24v24H0z" transform="translate(12 12)"/>
+    <path d="M13.561 10.652 6.146 0H0v19.9h6.439V9.248L13.854 19.9H20V0h-6.439z" transform="translate(14 14)" style="fill:#03cf5d"/>
+</svg>

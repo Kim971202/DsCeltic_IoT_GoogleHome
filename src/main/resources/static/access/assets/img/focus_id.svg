@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="312" height="92" viewBox="0 0 312 92">
+    <path data-name="Text field / Text / Focus background" style="fill:none" d="M0 0h312v92H0z"/>
+    <g data-name="Focus">
+        <path data-name="_part / Field state / Focus background" style="fill:none" d="M0 0h312v48H0z" transform="translate(0 20)"/>
+        <g style="fill:#eff6ff;stroke:#60a5fa;stroke-miterlimit:10;stroke-width:2px" transform="translate(0 20)">
+            <rect width="312" height="48" rx="8" style="stroke:none"/>
+            <rect x="1" y="1" width="310" height="46" rx="7" style="fill:none"/>
+        </g>
+    </g>
+    <g data-name="Group 5">
+        <path data-name="Fill 1" d="M24 12A12 12 0 1 1 12 0a12 12 0 0 1 12 12" style="fill:#cbd5e1" transform="translate(272 32)"/>
+        <path data-name="Fill 3" d="M5.786 5 9.838.948a.555.555 0 0 0-.786-.785L5 4.214.949.163a.555.555 0 0 0-.786.785L4.215 5 .163 9.052a.555.555 0 1 0 .786.785L5 5.786l4.052 4.051a.555.555 0 1 0 .786-.785z" transform="translate(279 39)" style="fill:#64748b"/>
+    </g>
+    <path data-name="_part / 𝚃 Help text / guide background" style="fill:none" d="M0 0h240v16H0z" transform="translate(16 76)"/>
+    <text data-name="Help text" transform="translate(16 88)" style="font-family:Pretendard-Regular,Pretendard;font-size:11px;letter-spacing:.042em;fill:#64748b"><tspan x="0" y="0"> </tspan></text>
+    <g data-name="Cursor blink">
+        <path data-name="_part / Placeholder / Cursor blink background" style="fill:none" d="M0 0h2v20H0z" transform="translate(76 34)"/>
+        <path data-name="State" style="fill:#3b82f6" d="M0 0h2v20H0z" transform="translate(76 34)"/>
+    </g>
+    <g data-name="With value">
+        <path data-name="_part / Placeholder / With value background" style="fill:none" d="M0 0h58v24H0z" transform="translate(16 32)"/>
+        <text data-name="↳ 𝚃 Placeholder" transform="translate(16 50)" style="font-size:14px;letter-spacing:.007em;fill:#0f172a;font-family:Pretendard-Regular,Pretendard"><tspan x="0" y="0">Test455</tspan></text>
+    </g>
+    <g>
+        <path data-name="_part / Label / Essential background" style="fill:none" d="M0 0h63v16H0z"/>
+        <circle cx="2" cy="2" r="2" transform="translate(59)" style="fill:#3b82f6"/>
+        <g data-name="Group">
+            <text data-name="↳ 𝚃 Label" transform="translate(0 12)" style="fill:#0f172a;font-family:Pretendard-Regular,Pretendard;font-size:11px;letter-spacing:.042em"><tspan x="0" y="0">로그인</tspan></text>
+        </g>
+    </g>
+</svg>

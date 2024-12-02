@@ -1,0 +1,20 @@
+<svg data-name="with 1 icon" xmlns="http://www.w3.org/2000/svg" width="312" height="92" viewBox="0 0 312 92">
+    <path data-name="Text field / Text / with 1 icon background" style="fill:none" d="M0 0h312v92H0z"/>
+    <path data-name="_part / Field state / Default background" style="fill:none" d="M0 0h312v48H0z" transform="translate(0 22)"/>
+    <g style="fill:#fff;stroke:#e2e8f0;stroke-miterlimit:10" transform="translate(0 22)">
+        <rect width="312" height="48" rx="8" style="stroke:none"/>
+        <rect x=".5" y=".5" width="311" height="47" rx="7.5" style="fill:none"/>
+    </g>
+    <path data-name="_part / 𝚃 Help text / guide background" style="fill:none" d="M0 0h240v16H0z" transform="translate(16 76)"/>
+    <text data-name="Help text" transform="translate(16 88)" style="font-family:Pretendard-Regular,Pretendard;font-size:11px;letter-spacing:.042em;fill:#64748b"><tspan x="0" y="0"> </tspan></text>
+    <path data-name="Icons / common / 24 / watch background" style="fill:none" d="M0 0h24v24H0z" transform="translate(272 34)"/>
+    <path data-name="Combined Shape" d="M0 8.25C0 5.068 4.805 0 10.5 0 16.093 0 21 5.142 21 8.25c0 2.787-4.754 8.249-10.5 8.249S0 11.038 0 8.25zm1.75 0c0 1.574 3.631 6.513 8.751 6.513s8.75-4.939 8.75-6.513c0-1.889-3.787-6.513-8.75-6.513-5.056 0-8.751 4.57-8.751 6.513zm3.75.25a5 5 0 1 1 5 5 5.006 5.006 0 0 1-5-5zm1.818 0A3.182 3.182 0 1 0 10.5 5.274 3.208 3.208 0 0 0 7.318 8.5z" transform="translate(273.5 38)" style="fill:#334155"/>
+    <g data-name="No value">
+        <path data-name="_part / Placeholder / No value background" style="fill:none" d="M0 0h58v24H0z" transform="translate(16 34)"/>
+        <text data-name="↳ 𝚃 Placeholder" transform="translate(16 52)" style="fill:#94a3b8;font-size:14px;letter-spacing:.007em;font-family:Pretendard-Regular,Pretendard"><tspan x="0" y="0">비밀번호를 입력하세요.</tspan></text>
+    </g>
+    <g data-name="Default">
+        <path data-name="_part / Label / Default background" style="fill:none" d="M0 0h63v16H0z"/>
+        <text data-name="↳ 𝚃 Label" transform="translate(0 12)" style="fill:#0f172a;font-family:Pretendard-Regular,Pretendard;font-size:11px;letter-spacing:.042em"><tspan x="0" y="0">비밀번호</tspan></text>
+    </g>
+</svg>

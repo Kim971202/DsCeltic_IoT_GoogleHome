@@ -1,0 +1,270 @@
+/* 
+ *
+ *
+ *
+ *
+*/
+/* 전체화면 */
+.PRJ_Lo01IA-23-03 {
+    width: 360px;
+    height: 779px;
+    padding: 0 0 83px;
+    background-color: #f8fafc;
+  }
+
+  /* title */
+  .title1 {
+    width: 84px;
+    height: 40px;
+    margin: 64px 0 16px 0;
+    font-family: Pretendard;
+    font-size: 32px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: normal;
+    color: #0f172a;
+  }
+
+  /* 설명1 */
+  .explain1 {
+    width: 280px;
+    height: 24px;
+    margin: 16px 107px 0 0;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    color: #64748b;
+  }
+  
+  /* 설명2 */
+  .\- {
+    width: 194px;
+    height: 24px;
+    margin: 0 4px 0 0;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    color: #64748b;
+  }
+/* login */
+  .linkLogin {
+    width: 58px;
+    height: 24px;
+    margin: 0 0 0 4px;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    color: #60a5fa;
+  }
+
+  .Label1 {
+    width: 30px;
+    height: 16px;
+    margin: 0 4px 0 0;
+    font-family: Pretendard;
+    font-size: 11px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.45;
+    letter-spacing: 0.46px;
+    color: #0f172a;
+  }
+  .Oval {
+    width: 4px;
+    height: 4px;
+    margin: 0 0 12px 4px;
+    background-color: #3b82f6;
+  }
+  /* id inputbox */
+  .State {
+    width: 312px;
+    height: 48px;
+    margin: 4px 0 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: solid 2px #60a5fa;
+    background-color: #eff6ff;
+  }
+  
+  img.ico_delete_24 {
+    width: 24px;
+    height: 24px;
+    margin: 0 0 0 194px;
+    padding: 7px 7px 7px 7px;
+    object-fit: contain;
+  }
+
+  .-Placeholder {
+    width: 53px;
+    height: 20px;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: 0.1px;
+    color: #0f172a;
+  }
+
+  .State {
+    width: 312px;
+    height: 48px;
+    padding: 12px 16px 12px 16px;
+    border-radius: 8px;
+    border: solid 1px #e2e8f0;
+    background-color: #fff;
+  }
+  img.Icons-common-24-watch {
+    width: 24px;
+    height: 24px;
+    margin: 0 0 0 126px;
+    object-fit: contain;
+  }
+  .-Placeholder {
+    width: 130px;
+    height: 20px;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: 0.1px;
+    color: #94a3b8;
+  }
+/* id save */
+  .Rectangle {
+    width: 24px;
+    height: 24px;
+    margin: 8px 8px 24px 24px;
+    border-radius: 12px;
+    border: solid 1px #64748b;
+    background-color: #f8fafc;
+  }
+
+  span {
+    width: 62px;
+    height: 20px;
+    margin: 10px 10px 26px 8px;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: 0.1px;
+    color: #0f172a;
+  }
+/* 자동로그인 */
+  .Rectangle {
+    width: 24px;
+    height: 24px;
+    margin: 8px 8px 24px 29px;
+    padding: 7px 5px 7px 5px;
+    border-radius: 12px;
+    background-color: #60a5fa;
+  }
+  .Path-2 {
+    width: 14px;
+    height: 10px;
+    border: solid 2px #fff;
+  }
+  .\- {
+    width: 65px;
+    height: 20px;
+    margin: 10px 114px 26px 5px;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: 0.1px;
+    color: #0f172a;
+  }
+
+  /* login button */
+
+  .bg {
+    width: 312px;
+    height: 48px;
+    margin: 24px 24px 16px;
+    border-radius: 8px;
+    background-color: #60a5fa;
+  }
+  label {
+    width: 217.8px;
+    height: 24px;
+    margin: 12px 31.1px 12px 31.1px;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: #eff6ff;
+  }
+
+  /* find id */
+  .\- {
+    width: 58px;
+    height: 16px;
+    margin: 0 8px 0 0;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.33;
+    letter-spacing: 0.5px;
+    color: #64748b;
+  }
+
+  .Line-001 {
+    width: 1px;
+    height: 16px;
+    margin: 0 8px;
+    background-color: #cbd5e1;
+  }
+/* find password */
+  .\- {
+    width: 69px;
+    height: 16px;
+    margin: 0 0 0 8px;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.33;
+    letter-spacing: 0.5px;
+    color: #64748b;
+  }
+
+  .login-logo {
+    height: 5rem;
+    background: url(../img/dscs_admin_logo_70_220.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    margin-bottom: -0.5rem;
+    padding-top: 10px;
+  }
