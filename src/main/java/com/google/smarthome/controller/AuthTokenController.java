@@ -86,11 +86,11 @@ public class AuthTokenController {
         if (authorizationCode == null && refreshToken != null) {
             log.info("authorizationCode == null && refreshToken != null");
 
-            if(refreshToken.length() < 36) {
-                log.error("유효하지 않은 refreshToken: {}", refreshToken);
-                return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
+//            if(refreshToken.length() < 36) {
+//                log.error("유효하지 않은 refreshToken: {}", refreshToken);
+//                return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
+//            }
 
-            }
             // Redis에서 refreshToken으로 authorizationCode 조회
             String storedAuthorizationCode = redisCommand.getValues(refreshToken);
             if (storedAuthorizationCode == null) {
