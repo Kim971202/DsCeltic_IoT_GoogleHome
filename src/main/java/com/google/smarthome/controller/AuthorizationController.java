@@ -73,10 +73,10 @@ public class AuthorizationController {
         final String authorizationCode = UUID.randomUUID().toString();
         log.info("authorizationCode:{}", authorizationCode);
 
-        GoogleDTO googleDTO = new GoogleDTO();
-        googleDTO.setUserId(username);
-        googleDTO.setGoogleState(state);
-        googleMapper.updateGoogleAuthInfo(googleDTO);
+//        GoogleDTO googleDTO = new GoogleDTO();
+//        googleDTO.setUserId(username);
+//        googleDTO.setGoogleState(state);
+//        googleMapper.updateGoogleAuthInfo(googleDTO);
 
         redisCommand.setValues(authorizationCode, username);
 
