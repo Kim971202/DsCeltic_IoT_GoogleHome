@@ -66,4 +66,22 @@
             USER_ID = #{userId}
     </select>
 
+    <update id="updateGoogleAuthInfo" parameterType="com.google.smarthome.dto.GoogleDTO">
+        UPDATE
+            TBR_OPR_ACCOUNT
+        SET
+            GOOGLE_STATE = #{googleState}
+        WHERE
+            USER_ID = #{userId}
+    </update>
+
+    <select id="getGoogleAuthInfo" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
+        SELECT
+            COUNT(*) AS googleCount
+        FROM
+            TBR_OPR_ACCOUNT
+        WHERE
+            GOOGLE_STATE = #{googleState}
+    </select>
+
 </mapper>

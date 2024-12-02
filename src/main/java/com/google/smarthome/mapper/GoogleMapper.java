@@ -9,12 +9,10 @@ import java.util.List;
 public interface GoogleMapper {
 
     public GoogleDTO getInfoByDeviceId(String deviceId);
-
+    public GoogleDTO getGoogleAuthInfo(String deviceId);
+    public int updateGoogleAuthInfo(GoogleDTO value);
     public int updateDeviceStatus(GoogleDTO value);
-
     public GoogleDTO getAccountByUserId(String userId);
-
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
-
     public GoogleDTO getNicknameByDeviceId(GoogleDTO params);
 }

@@ -1,5 +1,6 @@
 package com.google.smarthome.controller;
 
+import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.utils.Constants;
 import com.google.smarthome.utils.CookieStorage;
@@ -72,12 +73,17 @@ public class AuthorizationController {
         final String authorizationCode = UUID.randomUUID().toString();
         log.info("authorizationCode:{}", authorizationCode);
 
+        GoogleDTO googleDTO = new GoogleDTO();
+        googleDTO.setUserId(username);
+        googleDTO.setGoogleState(state);
+        googleMapper.updateGoogleAuthInfo(googleDTO);
+
         redisCommand.setValues(authorizationCode, username);
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 
-     log.info("redirectUrl:{}", redirectUrl);
-     return "redirect:" + redirectUrl;
+         log.info("redirectUrl:{}", redirectUrl);
+         return "redirect:" + redirectUrl;
      }
 
      /**
