@@ -93,6 +93,8 @@ public class AuthTokenController {
 
             // Redis에서 refreshToken으로 authorizationCode 조회
             String storedAuthorizationCode = redisCommand.getValues(refreshToken);
+            System.out.println("storedAuthorizationCode: " + storedAuthorizationCode);
+
             if (storedAuthorizationCode == null) {
                 log.error("유효하지 않은 refreshToken: {}", refreshToken);
                 return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
