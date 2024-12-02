@@ -50,79 +50,37 @@ public class AuthTokenController {
             @RequestHeader(name = "Authorization", required = false) String authorization,
             HttpServletRequest request) throws Exception {
 
-        log.info("@PostMapping(\"/oauth2/token\") CALLED");
+        log.debug("grantType:{}", grantType);
+        log.debug("authorizationCode:{}", authorizationCode);
+        log.debug("refreshToken:{}", refreshToken);
+        log.debug("redirectUri:{}", redirectUri);
+        log.debug("authorization:{}", authorization);
 
-        log.info("grantType: {}", grantType);
-        log.info("authorizationCode: {}", authorizationCode);
-        log.info("refreshToken: {}", refreshToken);
-        log.info("redirectUri: {}", redirectUri);
-        log.info("authorization: {}", authorization);
+        //grantType에 따라 client id, secret 값을 꺼내는 위치가 다르기 때문에 동일한 변수를 사용할 수 있도록 처리.
+        if( StringUtils.hasText(authorization)) { //basic 방식
+            log.debug("authorization basic 방식");
+            String decodeValue = new String(Base64Utils.decodeFromString(authorization));
+            log.debug("decodeValue:{}", decodeValue);
 
-        // Authorization 헤더 디코딩 (Basic Auth)
-        if (StringUtils.hasText(authorization)) {
-            log.info("authorization basic 방식");
-            String decodedValue = new String(Base64Utils.decodeFromString(authorization.split(" ")[1]));
-            log.info("decodedValue:{}", decodedValue);
-            String[] arrDecode = decodedValue.split(":");
+            String[] arrDecode = decodeValue.split(":");
             clientId = arrDecode[0];
             clientSecret = arrDecode[1];
         }
+        log.debug("clientId:{}", clientId);
+        log.debug("clientSecret:{}", clientSecret);
 
-        log.info("clientId: {}", clientId);
-        log.info("clientSecret: {}", clientSecret);
-
-        // 새로운 Token 및 Refresh Token 생성
-        String newAuthorizationToken = UUID.randomUUID().toString();
-        String newRefreshToken = Base64Utils.encodeToUrlSafeString(newAuthorizationToken.getBytes("UTF-8"));
-
-        log.info("newAuthorizationToken: {}", newAuthorizationToken);
-        log.info("newRefreshToken: {}", newRefreshToken);
-
-        if (authorizationCode == null && refreshToken != null) {
-            log.info("authorizationCode == null && refreshToken != null");
-
-            if(refreshToken.length() < 36) {
-                log.error("짧은 refreshToken: {}", refreshToken);
-                return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
-
-            }
-            // Redis에서 refreshToken으로 authorizationCode 조회
-            String storedAuthorizationCode = redisCommand.getValues(refreshToken);
-            if (storedAuthorizationCode == null) {
-                log.error("유효하지 않은 refreshToken: {}", refreshToken);
-                return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
-            }
-
-            // 새로운 authorizationCode 생성 및 저장
-            String newAuthorizationCode = UUID.randomUUID().toString();
-            redisCommand.setValues(refreshToken, newAuthorizationCode);
-
-            log.info("새 authorizationCode 생성: {}", newAuthorizationCode);
-            authorizationCode = newAuthorizationCode;
-        } else if (authorizationCode != null && refreshToken == null) {
-            log.info("authorizationCode != null && refreshToken == null");
-
-            // Redis에서 authorizationCode로 refreshToken 조회
-            String storedRefreshToken = redisCommand.getValues(authorizationCode);
-            if (storedRefreshToken != null) {
-                refreshToken = storedRefreshToken; // 이미 있는 refreshToken 재사용
-            } else {
-                // 새로운 refreshToken 생성 및 저장
-                refreshToken = newRefreshToken;
-                redisCommand.setValues(authorizationCode, refreshToken);
-            }
-        } else {
-            log.info("NO IDEA");
-            throw new IllegalArgumentException("Invalid request: Both authorizationCode and refreshToken are null or invalid.");
+        if( !googleOauth2ClientId.equals(clientId) || !googleOauth2ClientSecret.equals(clientSecret) ) {
+            log.debug("클라이언트 정보 잘못됨 clientId:{}, clientSecret:{}", clientId, clientSecret);
+            return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
         }
 
-        // 응답 데이터 생성
-        return ResponseEntity.ok().body(TokenBody.builder()
-                .tokenType("Bearer")
-                .accessToken(authorizationCode)
-                .refreshToken(refreshToken)
-                .expiresIn(172800) // 2일 (초 단위)
-                .build());
+        if( !"authorization_code".equals(grantType) && !"refresh_token".equals(grantType)) {
+            log.debug("grantType 코드 잘못됨:{}", grantType);
+            return ResponseEntity.badRequest().body(Error.builder().error("invalid_grant").build());
+        }
+
+
+        return null;
     }
 
 
