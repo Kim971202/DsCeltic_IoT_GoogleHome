@@ -601,6 +601,30 @@ public class FulfillmentService {
                                     googleMapper.updateDeviceStatus(deviceStatus);
                                     handleDevice(userId, deviceId, mode, "powr");
                                     break;
+                                case "action.devices.commands.SetModes":
+                                    JSONObject params = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
+                                    for (String modeName : params.keySet()) {
+                                        String modeValue = params.getString(modeName);
+                                        log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
+                                        switch (modeValue) {
+                                            case "061":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("01");
+                                                break;
+                                            case "062":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("02");
+                                                break;
+                                            case "063":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("03");
+                                                break;
+                                        }
+
+                                        handleSetModes(userId, deviceId, modeName, modeValue);
+                                        googleMapper.updateDeviceStatus(deviceStatus);
+                                    }
+                                    break;
                                 default:
                                     isSuccess = false;
                                     errorString = "Unsupported command: " + commandName;
@@ -742,6 +766,16 @@ public class FulfillmentService {
 
         // 외부 시스템 호출 (예: Mobius)
         handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), "htTp");
+    }
+
+        // 모드를 설정하는 새로운 메서드
+    private void handleSetModes(String userId, String deviceId, String modeName, String modeValue) {
+        log.info("Setting mode for device " + deviceId + ": " + modeName + " = " + modeValue);
+        try {
+            handleDeviceWithMode(userId, deviceId, modeValue, "opMd");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void handleSetModes(String deviceId, JSONObject modeSettings) throws Exception {
