@@ -13,12 +13,12 @@
             b.USER_ID AS userId
         FROM
             TBR_OPR_DEVICE_STATUS a
-        INNER JOINT
+        INNER JOIN
             TBT_OPR_DEVICE_REGIST b
         ON
             a.DEVC_ID = b.DEVC_ID
         WHERE
-            DEVC_ID = #{deviceId}
+            a.DEVC_ID = #{deviceId}
     </select>
 
     <update id="updateDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
