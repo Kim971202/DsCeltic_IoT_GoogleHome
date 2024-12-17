@@ -172,6 +172,9 @@ public class FulfillmentService {
         log.info("handleExecute CALLED");
         log.info("requestBody: " + requestBody);
 
+        // states 객체 선언
+        JSONObject states = new JSONObject();
+
         JSONObject response = new JSONObject();
         response.put("requestId", requestBody.getString("requestId"));
 
@@ -217,9 +220,21 @@ public class FulfillmentService {
                                 case "action.devices.commands.ThermostatTemperatureSetpoint":
                                     double temp = execCommand.getJSONObject("params").getDouble("thermostatTemperatureSetpoint");
                                     log.info("Setting temperature of device " + deviceId + " to " + temp);
+
+                                    if (temp < 10 || temp > 80) {
+                                        throw new IllegalArgumentException("Temperature out of range: " + temp);
+                                    }
+                                    // 상태 업데이트
                                     deviceStatus.setTempStatus(String.valueOf(temp));
                                     googleMapper.updateDeviceStatus(deviceStatus);
                                     handleDevice(userId, deviceId, String.valueOf(temp), "htTp");
+
+                                    // 상태 반환 (TEST용)
+                                    log.info("Temperature successfully updated.");
+
+//                                    deviceStatus.setTempStatus(String.valueOf(temp));
+//                                    googleMapper.updateDeviceStatus(deviceStatus);
+//                                    handleDevice(userId, deviceId, String.valueOf(temp), "htTp");
                                     break;
                                 case "action.devices.commands.ThermostatSetMode":
                                     String mode = execCommand.getJSONObject("params").getString("thermostatMode");
@@ -275,6 +290,7 @@ public class FulfillmentService {
                         JSONObject commandResult = new JSONObject();
                         commandResult.put("ids", new JSONArray().put(deviceId));
                         commandResult.put("status", isSuccess ? "SUCCESS" : "ERROR");
+                        commandResult.put("states", states); // states 결과 추가
                         if (!isSuccess) {
                             commandResult.put("errorCode", "deviceTurnOnOffFailed");
                             commandResult.put("errorDetail", errorString);
