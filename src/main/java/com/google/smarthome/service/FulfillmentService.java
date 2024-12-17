@@ -56,7 +56,7 @@ public class FulfillmentService {
 
             // modelCode에 따라 보일러와 환기 기기를 구분
             if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
-                deviceType = "action.devices.types.BOILER";
+                deviceType = "action.devices.types.THERMOSTAT";
                 attributes.put("temperatureUnitForUX", "C")
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureRange", new JSONObject()
