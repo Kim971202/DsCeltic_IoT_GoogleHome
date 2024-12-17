@@ -590,12 +590,17 @@ public class FulfillmentService {
                                     states.put("temperatureSetpointCelsius", temperature);
                                     break;
 
-                                case "action.devices.commands.SetModes":
-                                    JSONObject modeSettings = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
-                                    handleSetModes(deviceId, modeSettings);
-                                    states.put("currentModeSettings", modeSettings);
+                                case "action.devices.commands.ThermostatSetMode":
+//                                    JSONObject modeSettings = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
+//                                    handleSetModes(deviceId, modeSettings);
+//                                    states.put("currentModeSettings", modeSettings);
+                                    String mode = execCommand.getJSONObject("params").getString("thermostatMode");
+                                    log.info("Setting mode of device " + deviceId + " to " + mode);
+                                    if (mode.equals("off")) deviceStatus.setPowrStatus("of");
+                                    else if (mode.equals("heat")) deviceStatus.setPowrStatus("on");
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, mode, "powr");
                                     break;
-
                                 default:
                                     isSuccess = false;
                                     errorString = "Unsupported command: " + commandName;
