@@ -61,7 +61,10 @@ public class FulfillmentService {
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureRange", new JSONObject()
                                 .put("minThresholdCelsius", 10)
-                                .put("maxThresholdCelsius", 80));
+                                .put("maxThresholdCelsius", 80))
+                        .put("availableThermostatModes", new JSONArray()
+                                .put("off")    // 전원 꺼짐
+                                .put("heat")); // 난방 모드);
 
                 // 보일러에 대한 settings 정의
                 String[][] settings = getBoilerSettings(modelCode);
