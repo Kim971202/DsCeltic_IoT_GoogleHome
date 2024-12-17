@@ -173,129 +173,6 @@ public class FulfillmentService {
         return modeFan;
     }
 
-//    public JSONObject handleExecute(JSONObject requestBody, List<String> deviceIds, String userId) {
-//        log.info("handleExecute CALLED");
-//        log.info("requestBody: " + requestBody);
-//
-//        JSONObject response = new JSONObject();
-//        response.put("requestId", requestBody.getString("requestId"));
-//
-//        JSONArray inputs = requestBody.getJSONArray("inputs");
-//        JSONArray commandsArray = new JSONArray();  // 실제 실행 결과를 저장할 배열
-//
-//        inputs.forEach(inputObj -> {
-//            JSONObject input = (JSONObject) inputObj;
-//            JSONArray execution = input.getJSONObject("payload").getJSONArray("commands");
-//
-//            execution.forEach(execObj -> {
-//                JSONObject command = (JSONObject) execObj;
-//                JSONArray devices = command.getJSONArray("devices");
-//
-//                devices.forEach(deviceObj -> {
-//                    JSONObject device = (JSONObject) deviceObj;
-//                    String deviceId = device.getString("id");
-//                    System.out.println("deviceId: " + deviceId);
-//                    JSONArray execCommands = command.getJSONArray("execution");
-//
-//                    execCommands.forEach(execCommandObj -> {
-//                        JSONObject execCommand = (JSONObject) execCommandObj;
-//                        String commandName = execCommand.getString("command");
-//                        boolean isSuccess = true;
-//                        String errorString = "";
-//
-//                        deviceStatus.setDeviceId(deviceId);
-//                        try {
-//                            switch (commandName) {
-//                                case "action.devices.commands.OnOff":
-//                                    boolean on = execCommand.getJSONObject("params").getBoolean("on");
-//                                    if (on) deviceStatus.setPowrStatus("on");
-//                                    else deviceStatus.setPowrStatus("of");
-//                                    log.info("=================================================================");
-//                                    log.info("Turning " + (on ? "on" : "off") + " device " + deviceId);
-//                                    log.info("=================================================================");
-//                                    System.out.println(deviceStatus);
-//                                    googleMapper.updateDeviceStatus(deviceStatus);
-//                                    handleDevice(userId, deviceId, (on ? "on" : "of"), "powr");
-//                                    break;
-//                                case "action.devices.commands.ThermostatTemperatureSetpoint":
-//                                    double temp = execCommand.getJSONObject("params").getDouble("thermostatTemperatureSetpoint");
-//                                    log.info("Setting temperature of device " + deviceId + " to " + temp);
-//                                    deviceStatus.setTempStatus(String.valueOf(temp));
-//                                    googleMapper.updateDeviceStatus(deviceStatus);
-//                                    handleDevice(userId, deviceId, String.valueOf(temp), "htTp");
-//                                    break;
-//                                case "action.devices.commands.ThermostatSetMode":
-//                                    String mode = execCommand.getJSONObject("params").getString("thermostatMode");
-//                                    log.info("Setting mode of device " + deviceId + " to " + mode);
-//                                    if (mode.equals("off")) deviceStatus.setPowrStatus("of");
-//                                    else if (mode.equals("heat")) deviceStatus.setPowrStatus("on");
-//                                    googleMapper.updateDeviceStatus(deviceStatus);
-//                                    handleDevice(userId, deviceId, mode, "powr");
-//                                    break;
-//                                case "action.devices.commands.SetModes":
-//                                    JSONObject params = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
-//                                    for (String modeName : params.keySet()) {
-//                                        String modeValue = params.getString(modeName);
-//                                        log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
-//                                        switch (modeValue) {
-//                                            case "061":
-//                                                deviceStatus.setModeValue("06");
-//                                                deviceStatus.setSleepCode("01");
-//                                                break;
-//                                            case "062":
-//                                                deviceStatus.setModeValue("06");
-//                                                deviceStatus.setSleepCode("02");
-//                                                break;
-//                                            case "063":
-//                                                deviceStatus.setModeValue("06");
-//                                                deviceStatus.setSleepCode("03");
-//                                                break;
-//                                        }
-//
-//                                        handleSetModes(userId, deviceId, modeName, modeValue);
-//                                        googleMapper.updateDeviceStatus(deviceStatus);
-//                                    }
-//                                    break;
-//                                case "action.devices.commands.SetTemperature":
-//                                    double temperature = execCommand.getJSONObject("params").getDouble("temperature");
-//                                    log.info("Setting temperature of device " + deviceId + " to " + temperature);
-//                                    deviceStatus.setTempStatus(String.valueOf(temperature));
-//                                    googleMapper.updateDeviceStatus(deviceStatus);
-//                                    handleDevice(userId, deviceId, String.valueOf(temperature), "htTp");
-//                                    break;
-//                                default:
-//                                    isSuccess = false;
-//                                    errorString = "Unsupported command: " + commandName;
-//                                    log.error("Unsupported command: " + commandName);
-//                            }
-//                        } catch (Exception e) {
-//                            isSuccess = false;
-//                            errorString = e.getMessage();
-//                            log.error("Error handling command: " + commandName, e);
-//                        }
-//
-//                        // 각 장치 및 명령에 대한 실행 결과를 commands 배열에 추가
-//                        JSONObject commandResult = new JSONObject();
-//                        commandResult.put("ids", new JSONArray().put(deviceId));
-//                        commandResult.put("status", isSuccess ? "SUCCESS" : "ERROR");
-//                        if (!isSuccess) {
-//                            commandResult.put("errorCode", "deviceTurnOnOffFailed");
-//                            commandResult.put("errorDetail", errorString);
-//                        }
-//                        commandsArray.put(commandResult);
-//                    });
-//                });
-//            });
-//        });
-//
-//        JSONObject payload = new JSONObject();
-//        payload.put("commands", commandsArray);  // 실제 실행 결과를 포함한 commands 배열
-//        response.put("payload", payload);
-//
-//        log.info("handleExecute response: " + response);
-//        return response;
-//    }
-
     public JSONObject handleExecute(JSONObject requestBody, List<String> deviceIds, String userId) {
         log.info("handleExecute CALLED");
         log.info("requestBody: " + requestBody);
@@ -304,64 +181,123 @@ public class FulfillmentService {
         response.put("requestId", requestBody.getString("requestId"));
 
         JSONArray inputs = requestBody.getJSONArray("inputs");
-        JSONArray commandsArray = new JSONArray(); // 실행 결과를 저장할 배열
+        JSONArray commandsArray = new JSONArray();  // 실제 실행 결과를 저장할 배열
 
         inputs.forEach(inputObj -> {
             JSONObject input = (JSONObject) inputObj;
-            JSONArray commands = input.getJSONObject("payload").getJSONArray("commands");
+            JSONArray execution = input.getJSONObject("payload").getJSONArray("commands");
 
-            commands.forEach(cmdObj -> {
-                JSONObject cmd = (JSONObject) cmdObj;
-                JSONArray devices = cmd.getJSONArray("devices");
-                JSONArray executions = cmd.getJSONArray("execution");
+            execution.forEach(execObj -> {
+                JSONObject command = (JSONObject) execObj;
+                JSONArray devices = command.getJSONArray("devices");
 
                 devices.forEach(deviceObj -> {
                     JSONObject device = (JSONObject) deviceObj;
                     String deviceId = device.getString("id");
+                    System.out.println("deviceId: " + deviceId);
+                    JSONArray execCommands = command.getJSONArray("execution");
 
-                    executions.forEach(execObj -> {
-                        JSONObject execution = (JSONObject) execObj;
-                        String commandName = execution.getString("command");
-                        JSONObject result = new JSONObject();
-                        result.put("ids", new JSONArray().put(deviceId));
-                        result.put("status", "SUCCESS");
+                    execCommands.forEach(execCommandObj -> {
+                        JSONObject execCommand = (JSONObject) execCommandObj;
+                        String commandName = execCommand.getString("command");
+                        boolean isSuccess = true;
+                        String errorString = "";
 
+                        System.out.println("commandName: " + commandName);
+
+                        deviceStatus.setDeviceId(deviceId);
                         try {
                             switch (commandName) {
                                 case "action.devices.commands.OnOff":
-                                    handleOnOffCommand(deviceId, execution.getJSONObject("params").getBoolean("on"));
+                                    boolean on = execCommand.getJSONObject("params").getBoolean("on");
+                                    if (on) deviceStatus.setPowrStatus("on");
+                                    else deviceStatus.setPowrStatus("of");
+                                    log.info("=================================================================");
+                                    log.info("Turning " + (on ? "on" : "off") + " device " + deviceId);
+                                    log.info("=================================================================");
+                                    System.out.println(deviceStatus);
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, (on ? "on" : "of"), "powr");
                                     break;
-
                                 case "action.devices.commands.ThermostatTemperatureSetpoint":
-                                    handleTemperatureSetpoint(deviceId, execution.getJSONObject("params").getDouble("thermostatTemperatureSetpoint"));
+                                    double temp = execCommand.getJSONObject("params").getDouble("thermostatTemperatureSetpoint");
+                                    log.info("Setting temperature of device " + deviceId + " to " + temp);
+                                    deviceStatus.setTempStatus(String.valueOf(temp));
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, String.valueOf(temp), "htTp");
                                     break;
-
+                                case "action.devices.commands.ThermostatSetMode":
+                                    String mode = execCommand.getJSONObject("params").getString("thermostatMode");
+                                    log.info("Setting mode of device " + deviceId + " to " + mode);
+                                    if (mode.equals("off")) deviceStatus.setPowrStatus("of");
+                                    else if (mode.equals("heat")) deviceStatus.setPowrStatus("on");
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, mode, "powr");
+                                    break;
                                 case "action.devices.commands.SetModes":
-                                    handleSetModes(deviceId, execution.getJSONObject("params").getJSONObject("updateModeSettings"));
-                                    break;
+                                    JSONObject params = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
+                                    for (String modeName : params.keySet()) {
+                                        String modeValue = params.getString(modeName);
+                                        log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
+                                        switch (modeValue) {
+                                            case "061":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("01");
+                                                break;
+                                            case "062":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("02");
+                                                break;
+                                            case "063":
+                                                deviceStatus.setModeValue("06");
+                                                deviceStatus.setSleepCode("03");
+                                                break;
+                                        }
 
+                                        handleSetModes(userId, deviceId, modeName, modeValue);
+                                        googleMapper.updateDeviceStatus(deviceStatus);
+                                    }
+                                    break;
+                                case "action.devices.commands.SetTemperature":
+                                    double temperature = execCommand.getJSONObject("params").getDouble("temperature");
+                                    log.info("Setting temperature of device " + deviceId + " to " + temperature);
+                                    deviceStatus.setTempStatus(String.valueOf(temperature));
+                                    googleMapper.updateDeviceStatus(deviceStatus);
+                                    handleDevice(userId, deviceId, String.valueOf(temperature), "htTp");
+                                    break;
                                 default:
+                                    isSuccess = false;
+                                    errorString = "Unsupported command: " + commandName;
                                     log.error("Unsupported command: " + commandName);
-                                    throw new UnsupportedOperationException("Command not supported: " + commandName);
                             }
                         } catch (Exception e) {
-                            log.error("Error executing command: " + commandName, e);
-                            result.put("status", "ERROR");
-                            result.put("errorCode", "commandExecutionFailed");
+                            isSuccess = false;
+                            errorString = e.getMessage();
+                            log.error("Error handling command: " + commandName, e);
                         }
-                        commandsArray.put(result);
+
+                        // 각 장치 및 명령에 대한 실행 결과를 commands 배열에 추가
+                        JSONObject commandResult = new JSONObject();
+                        commandResult.put("ids", new JSONArray().put(deviceId));
+                        commandResult.put("status", isSuccess ? "SUCCESS" : "ERROR");
+                        if (!isSuccess) {
+                            commandResult.put("errorCode", "deviceTurnOnOffFailed");
+                            commandResult.put("errorDetail", errorString);
+                        }
+                        commandsArray.put(commandResult);
                     });
                 });
             });
         });
 
         JSONObject payload = new JSONObject();
-        payload.put("commands", commandsArray);
+        payload.put("commands", commandsArray);  // 실제 실행 결과를 포함한 commands 배열
         response.put("payload", payload);
-        log.info("handleExecute response: " + response);
 
+        log.info("handleExecute response: " + response);
         return response;
     }
+
 
     // 전원 제어 명령
     private void handleOnOffCommand(String deviceId, boolean on) throws Exception {
