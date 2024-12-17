@@ -64,19 +64,11 @@ public class FulfillmentService {
                                 .put("maxThresholdCelsius", 80))
                         .put("availableThermostatModes", new JSONArray()
                                 .put("off")    // 전원 꺼짐
-                                .put("heat")); // 난방 모드);
-
-                // 보일러에 대한 settings 정의
-                String[][] settings = getBoilerSettings(modelCode);
-
-                JSONObject modeBoiler = createModeBoiler(settings);
-                availableModes.put(modeBoiler);
-                attributes.put("availableModes", availableModes);
+                                .put("heat")); // 난방 모드
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.TemperatureSetting")
-                        .put("action.devices.traits.Modes"));
+                        .put("action.devices.traits.TemperatureSetting"));
             }
             else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
