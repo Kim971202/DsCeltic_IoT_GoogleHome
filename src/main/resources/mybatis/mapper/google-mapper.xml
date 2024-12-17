@@ -6,12 +6,17 @@
 
     <select id="getInfoByDeviceId" parameterType="String" resultMap="google">
         SELECT
-            POWR AS powrStatus,
-            HTTP AS tempStatus,
-            DEVC_ID AS deviceId,
-            OPMD AS modeValue
+            a.POWR AS powrStatus,
+            a.HTTP AS tempStatus,
+            a.DEVC_ID AS deviceId,
+            a.OPMD AS modeValue,
+            b.USER_ID AS userId
         FROM
-            TBR_OPR_DEVICE_STATUS
+            TBR_OPR_DEVICE_STATUS a
+        INNER JOINT
+            TBT_OPR_DEVICE_REGIST b
+        ON
+            a.DEVC_ID = b.DEVC_ID
         WHERE
             DEVC_ID = #{deviceId}
     </select>
