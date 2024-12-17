@@ -376,10 +376,13 @@ public class FulfillmentService {
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);
-            deviceState.put("currentModeSettings", currentModeSettings);
-            deviceState.put("temperatureAmbientCelsius", 55);
-            deviceState.put("temperatureSetpointCelsius", 55);
-            deviceState.put("status", "SUCCESS");
+            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // 현재 모드 상태
+            deviceState.put("temperatureSetpointCelsius", Double.parseDouble(deviceStatus.getTempStatus())); // 목표 온도
+            deviceState.put("temperatureAmbientCelsius", 25.0); // 현재 온도
+//            deviceState.put("currentModeSettings", currentModeSettings);
+//            deviceState.put("temperatureAmbientCelsius", 55);
+//            deviceState.put("temperatureSetpointCelsius", 55);
+//            deviceState.put("status", "SUCCESS");
 
             devices.put(deviceId, deviceState);
         }
