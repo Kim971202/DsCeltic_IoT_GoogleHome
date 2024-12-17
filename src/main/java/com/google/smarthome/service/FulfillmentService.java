@@ -694,13 +694,15 @@ public class FulfillmentService {
             Map<String, Object> currentModeSettings = new HashMap<>();
             currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
 
+            System.out.println(Double.parseDouble(deviceStatus.getTempStatus()));
+
             boolean deviceOnOff = "on".equals(deviceStatus.getPowrStatus());
             deviceState.put("on", deviceOnOff);
             deviceState.put("online", true);
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off");
-            deviceState.put("temperatureSetpointCelsius", Double.parseDouble(deviceStatus.getTempStatus()));
-            deviceState.put("temperatureAmbientCelsius", 25.0);
+            deviceState.put("temperatureSetpointCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
+            deviceState.put("temperatureAmbientCelsius",  String.format("%.1f", 25.0));
 
             devices.put(deviceId, deviceState);
         }
