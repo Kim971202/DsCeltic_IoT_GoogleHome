@@ -587,9 +587,10 @@ public class FulfillmentService {
                                     break;
 
                                 case "action.devices.commands.SetTemperature":
-                                    double setTemp = execCommand.getJSONObject("params").getDouble("SetTemperature");
+                                    double setTemp = execCommand.getJSONObject("params").getDouble("temperature");
                                     handleTemperatureSetpoint(deviceId, setTemp);
-                                    states.put("temperatureSetpointCelsius", setTemp);
+                                    states.put("online", true);
+                                    states.put("thermostatTemperatureSetpoint", setTemp);
                                     break;
 
                                 case "action.devices.commands.TemperatureRelative":
