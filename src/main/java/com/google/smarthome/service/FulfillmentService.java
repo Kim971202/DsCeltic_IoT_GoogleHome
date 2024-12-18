@@ -515,8 +515,8 @@ public class FulfillmentService {
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.TemperatureSetting")
-//                        .put("action.devices.traits.TemperatureControl")
+//                        .put("action.devices.traits.TemperatureSetting")
+                        .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.Modes"));
             } else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
@@ -704,8 +704,8 @@ public class FulfillmentService {
             deviceState.put("online", true);
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off");
-            deviceState.put("thermostatTemperatureSetpoint", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
-            deviceState.put("thermostatTemperatureAmbient",  String.format("%.1f", 25.0));
+            deviceState.put("temperatureAmbientCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
+            deviceState.put("temperatureSetpointCelsius",  String.format("%.1f", 25.0));
 
             devices.put(deviceId, deviceState);
         }
