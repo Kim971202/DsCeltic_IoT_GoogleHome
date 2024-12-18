@@ -51,6 +51,11 @@ public class FulfillmentController {
         log.info("userId: " + userId);
 
         List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(userId);
+
+        for(GoogleDTO googleDTO : devices){
+            System.out.println("googleDTO.getDeviceId(): " + googleDTO.getDeviceId());
+        }
+
         if (devices == null || devices.isEmpty()) {
             log.error("No devices found for userId: " + userId);
             return new JSONObject().put("error", "No devices found").toString();

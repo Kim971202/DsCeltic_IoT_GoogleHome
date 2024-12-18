@@ -591,9 +591,6 @@ public class FulfillmentService {
                                     break;
 
                                 case "action.devices.commands.ThermostatSetMode":
-//                                    JSONObject modeSettings = execCommand.getJSONObject("params").getJSONObject("updateModeSettings");
-//                                    handleSetModes(deviceId, modeSettings);
-//                                    states.put("currentModeSettings", modeSettings);
                                     String mode = execCommand.getJSONObject("params").getString("thermostatMode");
                                     log.info("Setting mode of device " + deviceId + " to " + mode);
                                     if (mode.equals("off")) deviceStatus.setPowrStatus("of");
@@ -713,15 +710,25 @@ public class FulfillmentService {
         return response;
     }
 
+    // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
-        return new String[][]{
-                {"01", "실내온도", "Heating_Indoor_Temperature"},
-                {"02", "온돌난방", "Heating_Water_Temperature"},
-                {"03", "외출", "Away"},
-                {"05", "절약난방", "Economy_Heating"},
-                {"061", "취침", "Sleep1"},
-                {"07", "온수전용", "Hot_Water_Only"}
-        };
+        if (modelCode.equals("ESCeco13S")) {
+            return new String[][]  {
+                    {"01", "실내난방", "Heating_Indoor_Temperature"},
+                    {"02", "온돌난방", "Heating_Water_Temperature"},
+                    {"03", "외출모드", "Away"},
+                    {"05", "절약난방", "Economy_Heating"},
+                    {"061", "취침모드", "Sleep1"},
+                    {"07", "온수전용", "Hot_Water_Only"}
+            };
+        } else {
+            return new String[][]  {
+                    {"01", "실내난방", "Heating_Indoor_Temperature"},
+                    {"02", "난방수모드", "Heating_Water_Temperature"},
+                    {"03", "외출모드", "Away"}, // 외출/온수전용 같음
+                    {"08", "빠른온수모드", "FAST_WATER"}
+            };
+        }
     }
 
     private String[][] getVentSettings(String modelCode) {
