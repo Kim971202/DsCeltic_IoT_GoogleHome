@@ -572,6 +572,7 @@ public class FulfillmentService {
                     executions.forEach(execObj -> {
                         JSONObject execCommand = (JSONObject) execObj;
                         String commandName = execCommand.getString("command");
+                        log.info("commandName: " + commandName);
 
                         boolean isSuccess = true;
                         String errorString = "";
@@ -583,6 +584,12 @@ public class FulfillmentService {
                                     boolean on = execCommand.getJSONObject("params").getBoolean("on");
                                     handleOnOffCommand(deviceId, on);
                                     states.put("on", on);
+                                    break;
+
+                                case "action.devices.commands.TemperatureRelative":
+                                    System.out.println("action.devices.commands.TemperatureRelative");
+                                    double temp = execCommand.getJSONObject("params").getDouble("TemperatureRelative");
+                                    System.out.println("temp: " + temp);
                                     break;
 
                                 case "action.devices.commands.ThermostatTemperatureSetpoint":
@@ -697,8 +704,8 @@ public class FulfillmentService {
             deviceState.put("online", true);
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("temperatureAmbientCelsius",  String.format("%.1f", 25.0));
-            deviceState.put("temperatureSetpointCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
             deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off");
+            deviceState.put("temperatureSetpointCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
 
             devices.put(deviceId, deviceState);
         }
