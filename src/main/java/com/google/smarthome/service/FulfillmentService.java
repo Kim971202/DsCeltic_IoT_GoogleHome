@@ -698,6 +698,7 @@ public class FulfillmentService {
 
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
+        JSONObject states = new JSONObject();
 
         for (String deviceId : deviceIds) {
             deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
@@ -715,10 +716,12 @@ public class FulfillmentService {
             deviceState.put("temperatureSetpointCelsius",  String.format("%.1f", 25.0));
             deviceState.put("status",  "SUCCESS");
 
+            states.put(deviceId, deviceState);
             devices.put(deviceId, deviceState);
         }
 
-        payload.put("devices", devices);
+        payload.put("states", devices);
+        payload.put("devices", states);
         response.put("payload", payload);
         log.info("handleQuery response: " + response);
         return response;
