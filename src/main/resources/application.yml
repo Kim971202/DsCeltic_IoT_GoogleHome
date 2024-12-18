@@ -13,11 +13,11 @@ mybatis:
 
 logging:
   level:
-    com.zaxxer.hikari.HikariConfig: INFO
-    com.zaxxer.hikari: TRACE
-    root: info
-    org.springframework.web: DEBUG
-    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    root: INFO  # 기본 로그 레벨을 INFO로 설정
+    org.springframework: WARN  # Spring 관련 로그를 WARN으로 설정
+    org.hibernate: ERROR  # Hibernate 관련 로그를 ERROR로 설정
+    com.zaxxer.hikari: ERROR  # Hikari 관련 로그를 ERROR로 설정
+    org.apache.ibatis: ERROR  # MyBatis 관련 로그를 ERROR로 설정
   file:
     path: logs
     name: app.log
