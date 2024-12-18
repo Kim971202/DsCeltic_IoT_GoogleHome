@@ -503,7 +503,7 @@ public class FulfillmentService {
             String deviceType = "";
 
             if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
-                deviceType = "action.devices.types.THERMOSTAT";
+                deviceType = "action.devices.types.BOILER";
                 attributes.put("temperatureUnitForUX", "C")
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureRange", new JSONObject()
@@ -515,8 +515,8 @@ public class FulfillmentService {
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.TemperatureSetting")
+                        .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.Modes"));
             } else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
