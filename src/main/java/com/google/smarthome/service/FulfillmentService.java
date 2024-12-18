@@ -503,7 +503,7 @@ public class FulfillmentService {
             String deviceType = "";
 
             if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
-                deviceType = "action.devices.types.THERMOSTAT";
+                deviceType = "action.devices.types.BOILER";
                 attributes.put("temperatureUnitForUX", "C")
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureRange", new JSONObject()
