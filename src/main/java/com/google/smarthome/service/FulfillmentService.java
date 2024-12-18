@@ -515,6 +515,7 @@ public class FulfillmentService {
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
+                        .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.TemperatureSetting")
                         .put("action.devices.traits.Modes"));
             } else if (modelCode.equals("DCR-47/WF")) {
@@ -690,8 +691,6 @@ public class FulfillmentService {
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
             currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
-
-            System.out.println(Double.parseDouble(deviceStatus.getTempStatus()));
 
             boolean deviceOnOff = "on".equals(deviceStatus.getPowrStatus());
             deviceState.put("on", deviceOnOff);
