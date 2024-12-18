@@ -517,6 +517,7 @@ public class FulfillmentService {
                         .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.TemperatureSetting")
+                        .put("action.devices.traits.ThermostatTemperatureRelative")
                         .put("action.devices.traits.Modes"));
             } else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
