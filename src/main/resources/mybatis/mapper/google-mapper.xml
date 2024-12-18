@@ -61,8 +61,7 @@
 
     <select id="getNicknameByDeviceId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
         SELECT
-            DEVC_NICK AS deviceNickname,
-            ADDR_NICK AS addressNickname
+            DEVC_NICK AS deviceNickname
         FROM
             TBT_OPR_DEVICE_REGIST
         WHERE
