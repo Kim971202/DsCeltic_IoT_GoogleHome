@@ -719,8 +719,8 @@ public class FulfillmentService {
             states.put(deviceId, deviceState);
         }
 
-        payload.put("states", devices);
-        payload.put("devices", states);
+        payload.put("states", states);
+        payload.put("devices", devices);
         response.put("payload", payload);
         log.info("handleQuery response: " + response);
         return response;
