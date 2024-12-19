@@ -18,6 +18,7 @@ public class GoogleDTO implements Serializable {
     // Device
     private String powrStatus;
     private String tempStatus;
+    private String currentTemp;
 
     // User
     private String userId;

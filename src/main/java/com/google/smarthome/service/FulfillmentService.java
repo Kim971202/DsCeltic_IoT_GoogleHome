@@ -712,7 +712,7 @@ public class FulfillmentService {
             deviceState.put("currentModeSettings", currentModeSettings);
 //            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off");
             deviceState.put("temperatureAmbientCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
-            deviceState.put("temperatureSetpointCelsius",  String.format("%.1f", 25.0));
+            deviceState.put("temperatureSetpointCelsius",  String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp())));
             deviceState.put("status",  "SUCCESS");
 
             states.put(deviceId, deviceState);
