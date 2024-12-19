@@ -57,18 +57,20 @@ public class FulfillmentService {
             // modelCode에 따라 보일러와 환기 기기를 구분
             if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
                 deviceType = "action.devices.types.BOILER";
-                attributes.put("temperatureUnitForUX", "C")
+                attributes
                         .put("temperatureStepCelsius", 1)
+                        .put("temperatureUnitForUX", "C")
                         .put("temperatureRange", new JSONObject()
                                 .put("minThresholdCelsius", 10)
-                                .put("maxThresholdCelsius", 80))
-                        .put("availableThermostatModes", new JSONArray()
-                                .put("off")    // 전원 꺼짐
-                                .put("heat")); // 난방 모드
+                                .put("maxThresholdCelsius", 80));
+//                        .put("availableThermostatModes", new JSONArray()
+//                                .put("off")    // 전원 꺼짐
+//                                .put("heat")); // 난방 모드
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.TemperatureSetting"));
+                        .put("action.devices.traits.TemperatureControl")
+                        .put("action.devices.traits.Modes"));
             }
             else if (modelCode.equals("DCR-47/WF")) {
                 deviceType = "action.devices.types.FAN";
@@ -480,7 +482,7 @@ public class FulfillmentService {
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("temperatureAmbientCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
             deviceState.put("temperatureSetpointCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp())));
-            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // Current mode state
+//            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // Current mode state
 
             devices.put(deviceId, deviceState);
         }
