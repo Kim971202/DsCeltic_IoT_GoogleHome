@@ -456,42 +456,36 @@ public class FulfillmentService {
         log.info("handleQuery CALLED");
         log.info("requestBody: " + requestBody);
 
+        // Create the response and add requestId first
         JSONObject response = new JSONObject();
-        response.put("requestId", requestBody.getString("requestId"));
+        String requestId = requestBody.getString("requestId");
+        response.put("requestId", requestId);
 
+        // Initialize payload
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
 
         for (String deviceId : deviceIds) {
             deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
 
-            System.out.println("handleQuery++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            System.out.println("deviceStatus: " + deviceStatus);
-            System.out.println("handleQuery++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-            boolean deviceOnOff = false;
-
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
             currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
 
-            if (deviceStatus.getPowrStatus().equals("on")) {
-                deviceOnOff = true;
-            }
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            System.out.println("deviceOnOff: " + deviceOnOff);
-            System.out.println("deviceId: " + deviceId);
-            System.out.println("deviceStatus.getModeValue(): " + deviceStatus.getModeValue());
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            boolean deviceOnOff = deviceStatus.getPowrStatus().equals("on");
+
+            // Populate deviceState
             deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);
             deviceState.put("currentModeSettings", currentModeSettings);
-            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // 현재 모드 상태
-            deviceState.put("temperatureSetpointCelsius", Double.parseDouble(deviceStatus.getTempStatus())); // 목표 온도
-            deviceState.put("temperatureAmbientCelsius", 25.0); // 현재 온도
+            deviceState.put("temperatureAmbientCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus())));
+            deviceState.put("temperatureSetpointCelsius", String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp())));
+            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // Current mode state
+
             devices.put(deviceId, deviceState);
         }
 
+        // Add devices to payload and payload to response
         payload.put("devices", devices);
         response.put("payload", payload);
 
@@ -499,6 +493,7 @@ public class FulfillmentService {
 
         return response;
     }
+
 
     // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
