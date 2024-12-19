@@ -515,7 +515,7 @@ public class FulfillmentService {
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
-//                        .put("action.devices.traits.TemperatureSetting")
+                        .put("action.devices.traits.TemperatureSetting")
                         .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.Modes"));
             } else if (modelCode.equals("DCR-47/WF")) {
@@ -721,7 +721,6 @@ public class FulfillmentService {
         devices.put("states", states);
         payload.put("devices", devices);
         response.put("payload", payload);
-        response.put("agentUserId", "yohan971202");
         response.put("requestId", requestBody.getString("requestId"));
         log.info("handleQuery response: " + response);
         return response;
