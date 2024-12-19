@@ -98,7 +98,8 @@ public class FulfillmentService {
             params.setDeviceId(deviceId);
             GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 
-            device.put("name", new JSONObject().put("name", "대성" + "-" + deviceNick.getDeviceNickname()));
+//            device.put("name", new JSONObject().put("name", "대성" + "-" + deviceNick.getDeviceNickname()));
+            device.put("name", new JSONObject().put("name", "대성난방"));
             devices.put(device);
         }
 
