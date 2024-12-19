@@ -483,7 +483,7 @@ public class FulfillmentService {
             System.out.println("deviceId: " + deviceId);
             System.out.println("deviceStatus.getModeValue(): " + deviceStatus.getModeValue());
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            deviceState.put("on", deviceOnOff); // The device is ON
+//            deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);
 //            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // 현재 모드 상태
             deviceState.put("temperatureSetpointCelsius", Double.parseDouble(deviceStatus.getTempStatus())); // 목표 온도
