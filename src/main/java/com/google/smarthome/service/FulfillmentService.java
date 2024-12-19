@@ -61,10 +61,10 @@ public class FulfillmentService {
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureRange", new JSONObject()
                                 .put("minThresholdCelsius", 10)
-                                .put("maxThresholdCelsius", 80))
-                        .put("availableThermostatModes", new JSONArray()
-                                .put("off")    // 전원 꺼짐
-                                .put("heat")); // 난방 모드
+                                .put("maxThresholdCelsius", 80));
+//                        .put("availableThermostatModes", new JSONArray()
+//                                .put("off")    // 전원 꺼짐
+//                                .put("heat")); // 난방 모드
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
@@ -485,7 +485,7 @@ public class FulfillmentService {
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);
-            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // 현재 모드 상태
+//            deviceState.put("thermostatMode", deviceOnOff ? "heat" : "off"); // 현재 모드 상태
             deviceState.put("temperatureSetpointCelsius", Double.parseDouble(deviceStatus.getTempStatus())); // 목표 온도
             deviceState.put("temperatureAmbientCelsius", 25.0); // 현재 온도
             devices.put(deviceId, deviceState);
