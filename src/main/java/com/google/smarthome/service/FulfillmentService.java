@@ -672,9 +672,9 @@ public class FulfillmentService {
                 .subscribe(new Consumer<ResponseEntity<String>>() {
                     @Override
                     public void accept(ResponseEntity<String> response) {
-                        log.debug("send ReportStatusResult request: : {}", JSON.toJson(reportStatusResult, true));
-                        log.debug("send ReportStatusResult status code: {}", response.getStatusCode());
-                        log.debug("send ReportStatusResult response getBody: {}", response.getBody());
+                        log.info("send ReportStatusResult request: : {}", JSON.toJson(reportStatusResult, true));
+                        log.info("send ReportStatusResult status code: {}", response.getStatusCode());
+                        log.info("send ReportStatusResult response getBody: {}", response.getBody());
                     }
                 });
     }
