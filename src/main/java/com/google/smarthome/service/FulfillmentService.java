@@ -622,6 +622,7 @@ public class FulfillmentService {
     }
 
     public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) {
+        log.info("queryResponse: " + queryResponse);
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
 
