@@ -634,19 +634,32 @@ public class FulfillmentService {
         while (iter.hasNext()) {
             String deviceId = iter.next();
             Map<String, Object> stateValues = new HashMap<>();
-
+        
             stateValues.putAll(devices.get(deviceId));
-            if (!stateValues.containsKey("currentModeSettings")) {
-                stateValues.put("currentModeSettings", Map.of("mode_boiler", "외출모드"));
+        
+            // currentModeSettings 값 강제 설정
+            if (stateValues.containsKey("currentModeSettings")) {
+                Map<String, String> currentModeSettings = new HashMap<>();
+                currentModeSettings.put("mode_boiler", "외출모드");
+                stateValues.put("currentModeSettings", currentModeSettings);
+            } else {
+                // currentModeSettings가 없는 경우 기본값 추가
+                Map<String, String> currentModeSettings = new HashMap<>();
+                currentModeSettings.put("mode_boiler", "외출모드");
+                stateValues.put("currentModeSettings", currentModeSettings);
             }
-            // 400 오류 대응: INVALID_ARGUMENT 오류 처리
+        
+            // 오류 방지를 위해 불필요한 필드 제거
             stateValues.remove("status");
             stateValues.remove("updateModeSettings");
             stateValues.remove("fanSpeed");
             stateValues.remove("temperature");
-
+        
             states.put(deviceId, stateValues);
+
+            log.info("Final stateValues to send: {}", stateValues);
         }
+        
 
         // ReportStatusResult 객체 생성
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
