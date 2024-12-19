@@ -516,7 +516,9 @@ public class FulfillmentService {
 
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
-            currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
+            // currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
+            currentModeSettings.put("mode_boiler", "외출모드");
+
 
             boolean deviceOnOff = deviceStatus.getPowrStatus().equals("on");
 
