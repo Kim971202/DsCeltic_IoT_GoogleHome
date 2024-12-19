@@ -1,8 +1,10 @@
 package com.google.smarthome.controller;
 
 import com.google.smarthome.dto.GoogleDTO;
+import com.google.smarthome.dto.QueryResult;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.service.FulfillmentService;
+import com.google.smarthome.utils.JSON;
 import com.google.smarthome.utils.RedisCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,7 @@ public class FulfillmentController {
     RedisCommand redisCommand;
 
     @PostMapping("/access/api/fulfillment")
-    public ResponseEntity<?> handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
+    public String handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
         log.info("POST /api/fulfillment CALLED");
         log.info("Request Body: " + request);
 
@@ -60,8 +62,7 @@ public class FulfillmentController {
 
         if (devices == null || devices.isEmpty()) {
             log.error("No devices found for userId: " + userId);
-            return null;
-//            return new JSONObject().put("error", "No devices found").toString();
+            return new JSONObject().put("error", "No devices found").toString();
         }
 
         devices.forEach(device -> log.info("Device for userId {}: DeviceId: {}, DeviceModelCode: {}",
@@ -97,8 +98,7 @@ public class FulfillmentController {
             default:
                 response.put("error", "Unknown intent");
         }
-        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
-//        return response.toString();
+        return response.toString();
     }
 
 }
