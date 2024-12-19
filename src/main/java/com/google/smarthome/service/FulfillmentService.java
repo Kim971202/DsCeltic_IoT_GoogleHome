@@ -624,7 +624,7 @@ public class FulfillmentService {
     public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) {
         log.info("queryResponse");
         System.out.println(queryResponse);
-        
+
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
 
@@ -636,7 +636,9 @@ public class FulfillmentService {
             Map<String, Object> stateValues = new HashMap<>();
 
             stateValues.putAll(devices.get(deviceId));
-
+            if (!stateValues.containsKey("currentModeSettings")) {
+                stateValues.put("currentModeSettings", Map.of("mode_boiler", "외출모드"));
+            }
             // 400 오류 대응: INVALID_ARGUMENT 오류 처리
             stateValues.remove("status");
             stateValues.remove("updateModeSettings");
