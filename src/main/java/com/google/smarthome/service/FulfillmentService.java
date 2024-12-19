@@ -694,7 +694,6 @@ public class FulfillmentService {
     public JSONObject handleQuery(JSONObject requestBody, List<String> deviceIds) {
         log.info("handleQuery CALLED");
         JSONObject response = new JSONObject();
-        response.put("requestId", requestBody.getString("requestId"));
 
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
@@ -722,6 +721,8 @@ public class FulfillmentService {
         devices.put("states", states);
         payload.put("devices", devices);
         response.put("payload", payload);
+        response.put("agentUserId", "yohan971202");
+        response.put("requestId", requestBody.getString("requestId"));
         log.info("handleQuery response: " + response);
         return response;
     }
