@@ -719,7 +719,7 @@ public class FulfillmentService {
             states.put(deviceId, deviceState);
         }
 
-        payload.put("states", states);
+        devices.put("states", states);
         payload.put("devices", devices);
         response.put("payload", payload);
         log.info("handleQuery response: " + response);
