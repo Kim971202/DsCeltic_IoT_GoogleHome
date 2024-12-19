@@ -23,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -94,11 +91,36 @@ public class FulfillmentController {
                 break;
             case "action.devices.QUERY":
                 response = fulfillmentService.handleQuery(requestBody, deviceIds);
+
+                // --- 추가된 부분: sendDataBasedOnQueryResult 호출 ---
+                QueryResult.Response queryResponse = prepareQueryResponse(requestBody, response);
+                fulfillmentService.sendDataBasedOnQueryResult(userId, queryResponse);
                 break;
             default:
                 response.put("error", "Unknown intent");
         }
         return response.toString();
     }
+    private QueryResult.Response prepareQueryResponse(JSONObject requestBody, JSONObject queryResponse) {
+        QueryResult.Response response = new QueryResult.Response();
+        response.setRequestId(requestBody.getString("requestId"));
 
+        QueryResult.Response.Payload payload = new QueryResult.Response.Payload();
+        Map<String, Map<String, Object>> devicesMap = new LinkedHashMap<>();
+
+        JSONObject responseDevices = queryResponse.getJSONObject("payload").getJSONObject("devices");
+        for (String deviceId : responseDevices.keySet()) {
+            JSONObject state = responseDevices.getJSONObject(deviceId);
+            Map<String, Object> stateMap = new HashMap<>();
+
+            for (String key : state.keySet()) {
+                stateMap.put(key, state.get(key));
+            }
+            devicesMap.put(deviceId, stateMap);
+        }
+        payload.setDevices(devicesMap);
+        response.setPayload(payload);
+
+        return response;
+    }
 }

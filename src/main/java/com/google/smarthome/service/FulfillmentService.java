@@ -2,18 +2,32 @@ package com.google.smarthome.service;
 
 import com.google.smarthome.contant.MobiusResponse;
 import com.google.smarthome.dto.GoogleDTO;
+import com.google.smarthome.dto.QueryResult;
+import com.google.smarthome.dto.ReportStatusResult;
 import com.google.smarthome.mapper.GoogleMapper;
+import com.google.smarthome.utils.AcessTokenRequester;
 import com.google.smarthome.utils.JSON;
+import com.google.smarthome.utils.WebClientUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -24,6 +38,13 @@ public class FulfillmentService {
     @Autowired
     private MobiusService mobiusService;
     GoogleDTO deviceStatus;
+    private final AcessTokenRequester accessTokenRequester;
+
+    public FulfillmentService(GoogleMapper googleMapper, MobiusService mobiusService, AcessTokenRequester accessTokenRequester) {
+        this.googleMapper = googleMapper;
+        this.mobiusService = mobiusService;
+        this.accessTokenRequester = accessTokenRequester;
+    }
 
     public JSONObject handleSync(JSONObject requestBody, Map<String, String> deviceInfoMap, String userId) {
         log.info("handleSync CALLED");
@@ -597,6 +618,67 @@ public class FulfillmentService {
 
         return mobiusResponse.getResponseCode();
     }
+
+    public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) {
+        final String requestId = queryResponse.getRequestId();
+        Map<String, Object> states = new HashMap<>();
+
+        Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
+
+        Iterator<String> iter = devices.keySet().iterator();
+        while (iter.hasNext()) {
+            String deviceId = iter.next();
+            Map<String, Object> stateValues = new HashMap<>();
+
+            stateValues.putAll(devices.get(deviceId));
+
+            // 400 오류 대응: INVALID_ARGUMENT 오류 처리
+            stateValues.remove("status");
+            stateValues.remove("updateModeSettings");
+            stateValues.remove("fanSpeed");
+            stateValues.remove("temperature");
+
+            states.put(deviceId, stateValues);
+        }
+
+        // ReportStatusResult 객체 생성
+        ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
+                .requestId(requestId)
+                .agentUserId(agentUserId)
+                .payload(ReportStatusResult.Request.Payload.builder()
+                        .devices(ReportStatusResult.Request.Payload.Device.builder()
+                                .states(states)
+                                .build())
+                        .build())
+                .build();
+
+        // Google OAuth2 액세스 토큰 요청
+        String googleOuath2AccessToken = accessTokenRequester.getToken();
+        String baseUrl = "https://homegraph.googleapis.com";
+        String uri = "/v1/devices:reportStateAndNotification";
+        log.info("baseUrl:{}", baseUrl + uri);
+
+        // WebClient를 통한 Google Home Graph API 요청
+        WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(JSON.toJson(reportStatusResult))
+                .retrieve()
+                .toEntity(String.class)
+                .timeout(Duration.ofSeconds(5))
+                .onErrorReturn(WebClientRequestException.class, new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE))
+                .onErrorReturn(TimeoutException.class, new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT))
+                .onErrorReturn(WebClientResponseException.class, new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR))
+                .subscribe(new Consumer<ResponseEntity<String>>() {
+                    @Override
+                    public void accept(ResponseEntity<String> response) {
+                        log.debug("send ReportStatusResult request: : {}", JSON.toJson(reportStatusResult, true));
+                        log.debug("send ReportStatusResult status code: {}", response.getStatusCode());
+                        log.debug("send ReportStatusResult response getBody: {}", response.getBody());
+                    }
+                });
+    }
+
 }
 
 //package com.google.smarthome.service;
