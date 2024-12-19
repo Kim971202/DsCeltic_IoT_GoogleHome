@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +42,7 @@ public class FulfillmentController {
     RedisCommand redisCommand;
 
     @PostMapping("/access/api/fulfillment")
-    public String handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
         log.info("POST /api/fulfillment CALLED");
         log.info("Request Body: " + request);
 
@@ -58,7 +60,8 @@ public class FulfillmentController {
 
         if (devices == null || devices.isEmpty()) {
             log.error("No devices found for userId: " + userId);
-            return new JSONObject().put("error", "No devices found").toString();
+            return null;
+//            return new JSONObject().put("error", "No devices found").toString();
         }
 
         devices.forEach(device -> log.info("Device for userId {}: DeviceId: {}, DeviceModelCode: {}",
@@ -94,7 +97,8 @@ public class FulfillmentController {
             default:
                 response.put("error", "Unknown intent");
         }
-        return response.toString();
+        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
+//        return response.toString();
     }
 
 }
