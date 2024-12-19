@@ -516,8 +516,8 @@ public class FulfillmentService {
 
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
-            // currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
-            currentModeSettings.put("mode_boiler", "외출모드");
+            currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
+            // currentModeSettings.put("mode_boiler", "외출모드");
 
 
             boolean deviceOnOff = deviceStatus.getPowrStatus().equals("on");
@@ -640,12 +640,12 @@ public class FulfillmentService {
             // currentModeSettings 값 강제 설정
             if (stateValues.containsKey("currentModeSettings")) {
                 Map<String, String> currentModeSettings = new HashMap<>();
-                currentModeSettings.put("mode_boiler", "외출모드");
+                currentModeSettings.put("mode_boiler", "02");
                 stateValues.put("currentModeSettings", currentModeSettings);
             } else {
                 // currentModeSettings가 없는 경우 기본값 추가
                 Map<String, String> currentModeSettings = new HashMap<>();
-                currentModeSettings.put("mode_boiler", "외출모드");
+                currentModeSettings.put("mode_boiler", "02");
                 stateValues.put("currentModeSettings", currentModeSettings);
             }
         
