@@ -1,7 +1,6 @@
 package com.google.smarthome.service;
 
 import com.google.smarthome.contant.MobiusResponse;
-import com.google.smarthome.dto.FanSpeed;
 import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.utils.JSON;
@@ -53,6 +52,8 @@ public class FulfillmentService {
             JSONObject attributes = new JSONObject();
             JSONArray availableModes = new JSONArray();
             String deviceType = "";
+            String[][] settings = getBoilerSettings(modelCode);
+            availableModes.put(createMode(settings));
 
             // modelCode에 따라 보일러와 환기 기기를 구분
             if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
@@ -62,31 +63,29 @@ public class FulfillmentService {
                         .put("temperatureUnitForUX", "C")
                         .put("temperatureRange", new JSONObject()
                                 .put("minThresholdCelsius", 10)
-                                .put("maxThresholdCelsius", 80));
-//                        .put("availableThermostatModes", new JSONArray()
-//                                .put("off")    // 전원 꺼짐
-//                                .put("heat")); // 난방 모드
+                                .put("maxThresholdCelsius", 80))
+                        .put("availableModes", availableModes);
 
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.TemperatureControl")
                         .put("action.devices.traits.Modes"));
             }
-            else if (modelCode.equals("DCR-47/WF")) {
-                deviceType = "action.devices.types.FAN";
-
-                // 환기 기기에 대한 settings 정의
-                String[][] settings = getVentSettings(modelCode);
-
-                JSONObject modeFan = createModeFan(settings);
-                availableModes.put(modeFan);
-
-                attributes.put("availableModes", availableModes);
-
-                device.put("traits", new JSONArray()
-                        .put("action.devices.traits.OnOff")
-                        .put("action.devices.traits.Modes"));  // FanSpeed와 Modes 추가
-            }
+//            else if (modelCode.equals("DCR-47/WF")) {
+//                deviceType = "action.devices.types.FAN";
+//
+//                // 환기 기기에 대한 settings 정의
+//                String[][] settings = getVentSettings(modelCode);
+//
+//                JSONObject modeFan = createModeFan(settings);
+//                availableModes.put(modeFan);
+//
+//                attributes.put("availableModes", availableModes);
+//
+//                device.put("traits", new JSONArray()
+//                        .put("action.devices.traits.OnOff")
+//                        .put("action.devices.traits.Modes"));  // FanSpeed와 Modes 추가
+//            }
 
             // 공통으로 device에 추가할 값들
             device.put("id", deviceId);
@@ -108,6 +107,29 @@ public class FulfillmentService {
 
         log.info("handleSync response: " + response);
         return response;
+    }
+
+    private JSONObject createMode(String[][] settings) {
+
+        JSONObject mode = new JSONObject();
+        mode.put("name", "mode_boiler");
+        JSONArray nameValues = new JSONArray()
+                .put(new JSONObject().put("name_synonym", new JSONArray().put("보일러")).put("lang", "ko"))
+                .put(new JSONObject().put("name_synonym", new JSONArray().put("boiler")).put("lang", "en"));
+        mode.put("name_values", nameValues);
+
+        JSONArray settingsArray = new JSONArray();
+        for (String[] setting : settings) {
+            JSONObject settingObject = new JSONObject();
+            settingObject.put("setting_name", setting[0]);
+            settingObject.put("setting_values", new JSONArray()
+                    .put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[1])).put("lang", "ko"))
+                    .put(new JSONObject().put("setting_synonym", new JSONArray().put(setting[2])).put("lang", "en")));
+            settingsArray.put(settingObject);
+        }
+        mode.put("settings", settingsArray);
+        mode.put("ordered", false);
+        return mode;
     }
 
     // 보일러 모드 설정
