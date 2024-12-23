@@ -548,19 +548,18 @@ public class FulfillmentService {
     private String[][] getBoilerSettings(String modelCode) {
         if (modelCode.equals("ESCeco13S")) {
             return new String[][]  {
-                    {"01", "실내온도", "Heating_Indoor_Temperature"},
+                    {"01", "실내난방", "Heating_Indoor_Temperature"},
                     {"02", "온돌난방", "Heating_Water_Temperature"},
                     {"03", "외출", "Away"},
                     {"05", "절약난방", "Economy_Heating"},
                     {"061", "취침", "Sleep1"},
-                    {"07", "온수전용", "Hot_Water_Only"}
+                    {"07", "온수전용모드", "Hot_Water_Only"}
             };
         } else {
             return new String[][]  {
-                    {"01", "실내온도", "Heating_Indoor_Temperature"},
-                    {"02", "난방수온도", "Heating_Water_Temperature"},
-                    {"03", "외출", "Away"}, // 외출/온수전용 같음
-                    {"08", "빠른온수", "FAST_WATER"}
+                    {"01", "실내난방", "Heating_Indoor_Temperature"},
+                    {"03", "외출모드", "Away"}, // 외출/온수전용 같음
+                    {"08", "빠른온수모드", "FAST_WATER"}
             };
         }
     }
