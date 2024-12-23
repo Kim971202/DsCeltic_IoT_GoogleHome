@@ -1,0 +1,156 @@
+2024-12-02 13:38:53 - 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/dsct/.gradle/caches/modules-2/files-2.1/org.json/json/20220320/6df2c050972619466f6dcef7654ef9bcc01dfd0/json-20220320.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/dsct/.gradle/caches/modules-2/files-2.1/com.vaadin.external.google/android-json/0.0.20131108.vaadin1/fa26d351fe62a6a17f5cda1287c1c6110dec413f/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2024-12-02 13:38:53 - Starting SmarthomeApplicationTests using Java 11.0.17 on DESKTOP-33SVC3J with PID 24192 (started by dsct in C:\Users\dsct\Documents\smarthome)
+2024-12-02 13:38:53 - No active profile set, falling back to 1 default profile: "default"
+2024-12-02 13:38:53 - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@24b4d544
+2024-12-02 13:38:56 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:38:56 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:38:56 - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:38:56 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:38:56 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:38:56 - Finished Spring Data repository scanning in 22 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:39:01 - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-12-02 13:39:01 - 10 mappings in 'requestMappingHandlerMapping'
+2024-12-02 13:39:01 - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-12-02 13:39:01 - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-12-02 13:39:01 - Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2024-12-02 13:39:03 - Started SmarthomeApplicationTests in 10.738 seconds (JVM running for 13.955)
+2024-12-02 13:39:03 - Flushing all data from Redis on application startup...
+2024-12-02 13:39:05 - Flush complete.
+2024-12-02 13:39:05 - Closing org.springframework.web.context.support.GenericWebApplicationContext@24b4d544, started on Mon Dec 02 13:38:53 KST 2024
+2024-12-02 13:45:29 - Starting SmarthomeApplication using Java 11.0.17 on DESKTOP-33SVC3J with PID 24976 (C:\Users\dsct\Documents\smarthome\build\classes\java\main started by dsct in C:\Users\dsct\Documents\smarthome)
+2024-12-02 13:45:29 - No active profile set, falling back to 1 default profile: "default"
+2024-12-02 13:45:32 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:45:32 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:45:32 - Finished Spring Data repository scanning in 10 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:45:32 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:45:32 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:45:32 - Finished Spring Data repository scanning in 30 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:45:35 - Tomcat initialized with port(s): 8888 (http)
+2024-12-02 13:45:35 - Initializing ProtocolHandler ["http-nio-8888"]
+2024-12-02 13:45:35 - Starting service [Tomcat]
+2024-12-02 13:45:35 - Starting Servlet engine: [Apache Tomcat/9.0.64]
+2024-12-02 13:45:36 - Initializing Spring embedded WebApplicationContext
+2024-12-02 13:45:36 - Root WebApplicationContext: initialization completed in 6314 ms
+2024-12-02 13:45:41 - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-12-02 13:45:41 - 10 mappings in 'requestMappingHandlerMapping'
+2024-12-02 13:45:41 - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-12-02 13:45:41 - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-12-02 13:45:42 - Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2024-12-02 13:45:42 - Starting ProtocolHandler ["http-nio-8888"]
+2024-12-02 13:45:42 - Tomcat started on port(s): 8888 (http) with context path ''
+2024-12-02 13:45:42 - Started SmarthomeApplication in 14.678 seconds (JVM running for 15.762)
+2024-12-02 13:45:42 - Flushing all data from Redis on application startup...
+2024-12-02 13:45:44 - Flush complete.
+2024-12-02 13:45:44 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-12-02 13:45:44 - Initializing Servlet 'dispatcherServlet'
+2024-12-02 13:45:44 - Detected StandardServletMultipartResolver
+2024-12-02 13:45:44 - Detected AcceptHeaderLocaleResolver
+2024-12-02 13:45:44 - Detected FixedThemeResolver
+2024-12-02 13:45:44 - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@73835ecd
+2024-12-02 13:45:44 - Detected org.springframework.web.servlet.support.SessionFlashMapManager@38fe36d2
+2024-12-02 13:45:44 - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-12-02 13:45:44 - Completed initialization in 3 ms
+2024-12-02 13:45:44 - GET "/access/privacyPolicy.html", parameters={}
+2024-12-02 13:45:44 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:44 - Completed 200 OK
+2024-12-02 13:45:44 - GET "/access/assets/css/contents.css", parameters={}
+2024-12-02 13:45:44 - GET "/access/assets/css/swiper.min.css", parameters={}
+2024-12-02 13:45:44 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:44 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - GET "/access/assets/css/sb-admin-2.css", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - GET "/access/assets/css/sb-admin-2.min.css", parameters={}
+2024-12-02 13:45:45 - GET "/access/assets/img/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4.svg", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - GET "/access/assets/img/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%9C%A0%EA%B8%B0%EA%B0%84.svg", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - GET "/access/assets/img/%EC%B2%98%EB%A6%AC%EB%AA%A9%EC%A0%81.svg", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - GET "/access/assets/img/%EA%B3%A0%EC%B6%A9%EC%B2%98%EB%A6%AC.svg", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - Completed 200 OK
+2024-12-02 13:45:45 - GET "/favicon.ico", parameters={}
+2024-12-02 13:45:45 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:45:45 - Resource not found
+2024-12-02 13:45:45 - Completed 404 NOT_FOUND
+2024-12-02 13:45:45 - "ERROR" dispatch for GET "/error", parameters={}
+2024-12-02 13:45:45 - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2024-12-02 13:45:45 - Using 'application/json;q=0.8', given [image/avif, image/webp, image/apng, image/svg+xml, image/*, */*;q=0.8] and supported [application/json, application/*+json, application/json, application/*+json]
+2024-12-02 13:45:45 - Writing [{timestamp=Mon Dec 02 13:45:45 KST 2024, status=404, error=Not Found, path=/favicon.ico}]
+2024-12-02 13:45:45 - Exiting from "ERROR" dispatch, status 404
+2024-12-02 13:59:14 - Starting SmarthomeApplication using Java 11.0.17 on DESKTOP-33SVC3J with PID 2124 (C:\Users\dsct\Documents\smarthome\build\classes\java\main started by dsct in C:\Users\dsct\Documents\smarthome)
+2024-12-02 13:59:14 - No active profile set, falling back to 1 default profile: "default"
+2024-12-02 13:59:17 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:59:17 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:59:17 - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:59:17 - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-02 13:59:17 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-02 13:59:17 - Finished Spring Data repository scanning in 14 ms. Found 0 Redis repository interfaces.
+2024-12-02 13:59:19 - Tomcat initialized with port(s): 8888 (http)
+2024-12-02 13:59:19 - Initializing ProtocolHandler ["http-nio-8888"]
+2024-12-02 13:59:19 - Starting service [Tomcat]
+2024-12-02 13:59:19 - Starting Servlet engine: [Apache Tomcat/9.0.64]
+2024-12-02 13:59:20 - Initializing Spring embedded WebApplicationContext
+2024-12-02 13:59:20 - Root WebApplicationContext: initialization completed in 4665 ms
+2024-12-02 13:59:23 - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-12-02 13:59:23 - 10 mappings in 'requestMappingHandlerMapping'
+2024-12-02 13:59:23 - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-12-02 13:59:23 - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-12-02 13:59:23 - Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2024-12-02 13:59:24 - Starting ProtocolHandler ["http-nio-8888"]
+2024-12-02 13:59:24 - Tomcat started on port(s): 8888 (http) with context path ''
+2024-12-02 13:59:24 - Started SmarthomeApplication in 10.95 seconds (JVM running for 12.061)
+2024-12-02 13:59:24 - Flushing all data from Redis on application startup...
+2024-12-02 13:59:25 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-12-02 13:59:25 - Initializing Servlet 'dispatcherServlet'
+2024-12-02 13:59:25 - Detected StandardServletMultipartResolver
+2024-12-02 13:59:25 - Detected AcceptHeaderLocaleResolver
+2024-12-02 13:59:25 - Detected FixedThemeResolver
+2024-12-02 13:59:25 - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7314ca23
+2024-12-02 13:59:25 - Detected org.springframework.web.servlet.support.SessionFlashMapManager@11848ce3
+2024-12-02 13:59:25 - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-12-02 13:59:25 - Completed initialization in 2 ms
+2024-12-02 13:59:25 - GET "/access/privacyPolicy.html", parameters={}
+2024-12-02 13:59:25 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:25 - Completed 200 OK
+2024-12-02 13:59:25 - GET "/access/assets/css/contents.css", parameters={}
+2024-12-02 13:59:25 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:25 - GET "/access/assets/css/swiper.min.css", parameters={}
+2024-12-02 13:59:25 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:25 - GET "/access/assets/img/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%9C%A0%EA%B8%B0%EA%B0%84.svg", parameters={}
+2024-12-02 13:59:25 - GET "/access/assets/css/sb-admin-2.min.css", parameters={}
+2024-12-02 13:59:25 - GET "/access/assets/img/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4.svg", parameters={}
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - GET "/access/assets/css/sb-admin-2.css", parameters={}
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - GET "/access/assets/img/%EC%B2%98%EB%A6%AC%EB%AA%A9%EC%A0%81.svg", parameters={}
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - GET "/access/assets/img/%EA%B3%A0%EC%B6%A9%EC%B2%98%EB%A6%AC.svg", parameters={}
+2024-12-02 13:59:26 - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Completed 200 OK
+2024-12-02 13:59:26 - Flush complete.
