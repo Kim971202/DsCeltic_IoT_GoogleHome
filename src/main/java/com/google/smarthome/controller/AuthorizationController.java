@@ -54,7 +54,8 @@ public class AuthorizationController {
         cookieStorage.setCookie(request, "state", state, response);
         cookieStorage.setCookie(request, "redirect_uri", redirectUri, response);
 
-        return "redirect:/access/home.html";
+//        return "redirect:/access/home.html";
+        return "redirect:/access/googleLogin.html";
     }
 
     @GetMapping("/access/authorization_code")

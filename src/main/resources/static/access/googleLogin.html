@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f5f5f5;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+
+        #wrap {
+          width: 400px;
+          padding: 20px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+        .login-logo img {
+          width: 120px;
+          margin-bottom: 20px;
+        }
+
+        .title1 {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .explain1 {
+          font-size: 14px;
+          color: #666;
+          margin-bottom: 20px;
+        }
+
+        .form-item {
+          margin-bottom: 15px;
+          text-align: left;
+        }
+
+        .form-title {
+          font-size: 14px;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+
+        .form-title .form-required {
+          color: red;
+          font-size: 12px;
+        }
+
+        .ui-input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+
+        .ui-input:focus {
+          outline: none;
+          border-color: #007bff;
+        }
+
+        .ui-button {
+          width: 100%;
+          padding: 10px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .ui-button:hover {
+          background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div class="login-logo">
+        <img src="assets/img/img/logo-daesung.png" alt="대성쎌틱에너시스" />
+    </div>
+    <div class="title1">로그인</div>
+    <div class="explain1">서비스 이용을 위해 로그인이 필요합니다.</div>
+
+    <div class="form-list">
+        <div class="form-item">
+            <label class="form-title" for="memberIdInput">
+                아이디 <span class="form-required">필수항목</span>
+            </label>
+            <input
+                    type="text"
+                    id="memberIdInput"
+                    class="ui-input"
+                    placeholder="아이디를 입력하세요."
+            />
+        </div>
+
+        <div class="form-item">
+            <label class="form-title" for="memberPasswordInput">
+                비밀번호 <span class="form-required">필수항목</span>
+            </label>
+            <input
+                    type="password"
+                    id="memberPasswordInput"
+                    class="ui-input"
+                    placeholder="비밀번호를 입력하세요."
+            />
+        </div>
+    </div>
+
+    <button class="ui-button" onclick="doLogin()">로그인</button>
+</div>
+
+<script>
+    function doLogin() {
+      const memberId = document.getElementById("memberIdInput").value.trim();
+      const memberPassword = document.getElementById("memberPasswordInput").value.trim();
+
+      if (!memberId) {
+        alert("아이디를 입력하세요.");
+        return;
+      }
+
+      if (!memberPassword) {
+        alert("비밀번호를 입력하세요.");
+        return;
+      }
+
+      // 로그인 요청 처리
+      console.log("아이디:", memberId);
+      console.log("비밀번호:", memberPassword);
+    }
+</script>
+</body>
+</html>
