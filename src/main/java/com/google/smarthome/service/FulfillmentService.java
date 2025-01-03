@@ -540,6 +540,7 @@ public class FulfillmentService {
 
         // Google OAuth2 액세스 토큰 요청
         String googleOuath2AccessToken = accessTokenRequester.getToken();
+        log.info("googleOuath2AccessToken: " + googleOuath2AccessToken);
         String baseUrl = "https://homegraph.googleapis.com";
         String uri = "/v1/devices:reportStateAndNotification";
         log.info("baseUrl:{}", baseUrl + uri);
