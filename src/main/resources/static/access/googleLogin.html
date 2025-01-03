@@ -89,7 +89,7 @@
 <body>
 <div id="wrap">
     <div class="login-logo">
-        <img src="assets/img/img/logo-daesung.png" alt="대성쎌틱에너시스" />
+        <img src="assets/img/dscs_admin_logo_70_220.svg" alt="대성쎌틱에너시스" />
     </div>
     <div class="title1">로그인</div>
     <div class="explain1">서비스 이용을 위해 로그인이 필요합니다.</div>
@@ -125,23 +125,29 @@
 
 <script>
     function doLogin() {
-      const memberId = document.getElementById("memberIdInput").value.trim();
-      const memberPassword = document.getElementById("memberPasswordInput").value.trim();
+            const memberId = document.getElementById("memberIdInput").value.trim();
+            const memberPassword = document.getElementById("memberPasswordInput").value.trim();
 
-      if (!memberId) {
-        alert("아이디를 입력하세요.");
-        return;
-      }
+            if (!memberId) {
+                alert("아이디를 입력하세요.");
+                return;
+            }
 
-      if (!memberPassword) {
-        alert("비밀번호를 입력하세요.");
-        return;
-      }
+            if (!memberPassword) {
+                alert("비밀번호를 입력하세요.");
+                return;
+            }
 
-      // 로그인 요청 처리
-      console.log("아이디:", memberId);
-      console.log("비밀번호:", memberPassword);
-    }
+            // 첫 번째 URL 호출
+            const firstUrl = `https://daesungiot.co.kr/access/authorization_code?username=${encodeURIComponent(memberId)}&password=${encodeURIComponent(memberPassword)}`;
+            window.location.href = firstUrl;
+
+            // 두 번째 URL 호출 (1초 후)
+            setTimeout(() => {
+                const secondUrl = `https://daesungiot.co.kr/access/mobius_code?username=${encodeURIComponent(memberId)}&password=${encodeURIComponent(memberPassword)}`;
+                window.location.href = secondUrl;
+            }, 1000);
+        }
 </script>
 </body>
 </html>
