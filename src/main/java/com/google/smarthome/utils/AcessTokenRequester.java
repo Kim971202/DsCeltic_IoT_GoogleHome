@@ -41,7 +41,7 @@ public class AcessTokenRequester {
 
     private InputStream getServiceKeyValueOfTypeJson() throws Exception {
         //XXX google 체크. 운영배포용 json 파일 사용하고 있는지
-        return new ClassPathResource("json/dsiot-52315-930d15b50ba9.json").getInputStream();
+        return new ClassPathResource("json/dsiot-52315-d59d382966ee.json").getInputStream();
     }
 
     private List<String> getScope() {
@@ -56,4 +56,5 @@ public class AcessTokenRequester {
         return accessToken;
 
     }
+    
 }
