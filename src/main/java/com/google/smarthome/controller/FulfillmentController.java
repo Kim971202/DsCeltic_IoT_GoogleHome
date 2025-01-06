@@ -4,15 +4,10 @@ import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.dto.QueryResult;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.service.FulfillmentService;
-import com.google.smarthome.utils.JSON;
 import com.google.smarthome.utils.RedisCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.json.JSONObject;
@@ -22,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
