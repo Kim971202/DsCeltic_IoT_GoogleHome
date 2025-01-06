@@ -23,8 +23,7 @@ public class GoogleHomeGraphUpdater {
      * @param agentUserId The user ID associated with the devices.
      * @param deviceStates A map containing device states with device IDs as keys.
      */
-    
-    @PostMapping("/access/api/fulfillment")
+
     public static void reportDeviceState(String googleOAuth2AccessToken, String agentUserId, Map<String, Object> deviceStates) {
         String url = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
 
