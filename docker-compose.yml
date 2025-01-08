@@ -17,6 +17,8 @@ services:
       - SPRING_REDIS_PORT=6379
     networks:
       - dsceltic_iot_oauthserver_default
+    volumes:
+      - /home/ubuntu/DsCeltic_IoT_GoogleHome/logs:/app/logs  # 호스트 경로를 컨테이너 경로에 매핑
 
 networks:
   dsceltic_iot_oauthserver_default:
