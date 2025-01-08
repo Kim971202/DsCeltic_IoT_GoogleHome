@@ -1,27 +1,27 @@
 <configuration>
-    <property name="LOG_PATH" value="logs"/>
-
-    <!-- Console Appender -->
+    <!-- 콘솔 로그 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- File Appender -->
+    <!-- 파일 로그: 날짜별 로그 분리 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/smarthome.log</file>
+        <file>/app/logs/application.log</file> <!-- 기본 로그 파일 경로 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/smarthome.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <!-- 날짜별로 로그 파일 생성 -->
+            <fileNamePattern>/app/logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 로그 보관 기간 (1년 보관) -->
+            <maxHistory>365</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Root Logger -->
-    <root level="info">
+    <!-- Logger 설정 -->
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
