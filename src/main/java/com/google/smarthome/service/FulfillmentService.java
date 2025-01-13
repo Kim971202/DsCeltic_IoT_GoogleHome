@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -251,6 +252,7 @@ public class FulfillmentService {
                                 case "action.devices.commands.OnOff":
                                     boolean on = execCommand.getJSONObject("params").getBoolean("on");
                                     handleOnOffCommand(deviceId, on);
+                                    updateDeviceState(userId, deviceId, "on", on);
                                     states.put("on", on);
                                     break;
 
@@ -270,6 +272,7 @@ public class FulfillmentService {
                                 case "action.devices.commands.ThermostatTemperatureSetpoint":
                                     double temperature = execCommand.getJSONObject("params").getDouble("thermostatTemperatureSetpoint");
                                     handleTemperatureSetpoint(deviceId, temperature);
+                                    updateDeviceState(userId, deviceId, "temperatureSetpointCelsius", temperature);
                                     states.put("temperatureSetpointCelsius", temperature);
                                     break;
 
@@ -302,6 +305,7 @@ public class FulfillmentService {
                                         }
 
                                         handleSetModes(userId, deviceId, modeName, modeValue);
+                                        updateDeviceState(userId, deviceId, "currentModeSettings", params.toMap());
                                         googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
@@ -566,5 +570,54 @@ public class FulfillmentService {
                     }
                 });
     }
+
+    public void updateDeviceState(String userId, String deviceId, String attribute, Object value) {
+    log.info("Updating device state for UserId: {}, DeviceId: {}, Attribute: {}, Value: {}", userId, deviceId, attribute, value);
+
+    try {
+        // 기기의 상태를 갱신
+        deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+
+        switch (attribute) {
+            case "on":
+                deviceStatus.setPowrStatus((Boolean) value ? "on" : "of");
+                break;
+            case "temperatureSetpointCelsius":
+                deviceStatus.setTempStatus(String.valueOf(value));
+                break;
+            case "currentModeSettings":
+                if (value instanceof Map) {
+                    Map<String, String> modeSettings = (Map<String, String>) value;
+                    String modeValue = modeSettings.get("mode_boiler");
+                    deviceStatus.setModeValue(modeValue);
+                }
+                break;
+            default:
+                log.warn("Unsupported attribute: {}", attribute);
+                return;
+        }
+
+        // 데이터베이스 업데이트
+        googleMapper.updateDeviceStatus(deviceStatus);
+
+        // Google Home Graph API를 통해 상태 동기화
+        QueryResult.Response queryResponse = new QueryResult.Response();
+        queryResponse.setRequestId(UUID.randomUUID().toString()); // 고유 요청 ID 생성
+
+        QueryResult.Response.Payload payload = new QueryResult.Response.Payload();
+        Map<String, Map<String, Object>> devicesMap = new HashMap<>();
+        Map<String, Object> stateMap = new HashMap<>();
+        stateMap.put(attribute, value);
+        devicesMap.put(deviceId, stateMap);
+
+        payload.setDevices(devicesMap);
+        queryResponse.setPayload(payload);
+
+        sendDataBasedOnQueryResult(userId, queryResponse);
+
+    } catch (Exception e) {
+        log.error("Error updating device state", e);
+    }
+}
 
 }
