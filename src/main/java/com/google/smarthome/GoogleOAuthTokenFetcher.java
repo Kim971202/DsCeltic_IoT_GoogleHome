@@ -12,7 +12,7 @@ public class GoogleOAuthTokenFetcher {
 
     public static String fetchAccessToken(String clientId, String clientSecret, String authorizationCode, String redirectUri) {
         String tokenEndpoint = "https://oauth2.googleapis.com/token";
-        
+
         try {
             // Build request body
             String requestBody = "client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
@@ -50,7 +50,7 @@ public class GoogleOAuthTokenFetcher {
     public static void main(String[] args) {
         String clientId = "505891126739-5nst99tq7ib748ovv80s6tdd5c0epcp3.apps.googleusercontent.com";
         String clientSecret = "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";
-        String authorizationCode = "47079965-76fd-4402-8d76-b889552ff36e";
+        String authorizationCode = "ec77838a-9128-48c1-bd2b-665ea0a469df"; // 올바른 authorizationCode
         String redirectUri = "https://oauth-redirect.googleusercontent.com/r/dsiot-52315";
 
         fetchAccessToken(clientId, clientSecret, authorizationCode, redirectUri);

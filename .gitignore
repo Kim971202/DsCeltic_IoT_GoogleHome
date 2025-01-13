@@ -37,3 +37,5 @@ out/
 
 ### VS Code ###
 .vscode/
+logs/smarthome.log
+logging.file.path_IS_UNDEFINED/logging.file.name_IS_UNDEFINED
