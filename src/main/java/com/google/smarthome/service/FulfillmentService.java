@@ -89,7 +89,9 @@ public class FulfillmentService {
                 device.put("traits", new JSONArray()
                         .put("action.devices.traits.OnOff")
                         .put("action.devices.traits.TemperatureControl")
-                        .put("action.devices.traits.Modes"));
+                        .put("action.devices.traits.Modes"))
+                        // willReportState 속성을 추가
+                        .put("willReportState", true);
             }
 //            else if (modelCode.equals("DCR-47/WF")) {
 //                deviceType = "action.devices.types.FAN";
