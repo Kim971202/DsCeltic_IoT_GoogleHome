@@ -517,21 +517,39 @@ public class FulfillmentService {
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
 
         Iterator<String> iter = devices.keySet().iterator();
-		while(iter.hasNext()) {
-			String deviceId = iter.next();
-			Map<String, Object> stateValues = new HashMap<>();
-
-			stateValues.putAll(devices.get(deviceId));
-
-			//400. Request contains an invalid argument. INVALID_ARGUMENT 오류 발생 대응처리.
-			stateValues.remove("status");
-			stateValues.remove("updateModeSettings");
-			stateValues.remove("fanSpeed");
-			stateValues.remove("temperature");
-
-			states.put(deviceId, stateValues);
-		}
-
+        while (iter.hasNext()) {
+            String deviceId = iter.next();
+            Map<String, Object> stateValues = new HashMap<>();
+    
+            stateValues.putAll(devices.get(deviceId));
+    
+            // `currentModeSettings` 값 처리
+            if (stateValues.containsKey("currentModeSettings")) {
+                Object currentModeSettings = stateValues.get("currentModeSettings");
+                try {
+                    if (currentModeSettings instanceof String) {
+                        // 문자열 JSON으로 변환
+                        Map<String, Object> parsedSettings = new ObjectMapper().readValue((String) currentModeSettings, Map.class);
+                        stateValues.put("currentModeSettings", parsedSettings);
+                    } else if (!(currentModeSettings instanceof Map)) {
+                        log.warn("Unexpected currentModeSettings type: {}", currentModeSettings.getClass());
+                        stateValues.put("currentModeSettings", Map.of());
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to parse currentModeSettings for deviceId {}: {}", deviceId, currentModeSettings, e);
+                    stateValues.put("currentModeSettings", Map.of());
+                }
+            }
+    
+            // 오류 방지를 위해 불필요한 필드 제거
+            stateValues.remove("status");
+            stateValues.remove("updateModeSettings");
+            stateValues.remove("fanSpeed");
+            stateValues.remove("temperature");
+    
+            states.put(deviceId, stateValues);
+        }
+        
         System.out.println(states);
         System.out.println(JSON.toJson(states));
 
@@ -554,7 +572,7 @@ public class FulfillmentService {
         WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
                 .uri(uri)
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(reportStatusResult)
+                .bodyValue(JSON.toJson(reportStatusResult))
                 .retrieve()
                 .toEntity(String.class)
                 .timeout(Duration.ofSeconds(5))
@@ -564,7 +582,7 @@ public class FulfillmentService {
                 .subscribe(new Consumer<ResponseEntity<String>>() {
                     @Override
                     public void accept(ResponseEntity<String> response) {
-                        log.info("send ReportStatusResult request: : {}", reportStatusResult);
+                        log.info("send ReportStatusResult request: : {}", JSON.toJson(reportStatusResult, true));
                         log.info("send ReportStatusResult status code: {}", response.getStatusCode());
                         log.info("send ReportStatusResult response getBody: {}", response.getBody());
                     }
