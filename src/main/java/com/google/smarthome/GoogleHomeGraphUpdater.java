@@ -104,18 +104,18 @@ public class GoogleHomeGraphUpdater {
 
     public static void main(String[] args) {
         // Example usage
-        String googleOAuth2AccessToken = "ya29.c.c0ASRK0GYgkjxwJVMechWoD7bw_nGhMdEyis7SSgJVifCx3JYcGYwXm92id4QUrbUIV2PjVdm28ukylmAix7w9fzZAZqD40cfXxFd2j3R8x99IPto7GD10YkBXq4h5c0aveaWKIr2kh2QGXJNguEARvximWNMzABRSz_kaTIwVdy8tidD4FddlKQeJ5mf3OfoudVyjwtaZY0pDX39M5nerjT0E-1HfNgCz1OUgKi2VJ_KflZBUyr3YCPc4B6qe8HFZD8LNdE9YG61uAN9sPtR33v5nBORHcq1d2nC3_8mQO3udH11R-DwdocY87JzYKWYffrtGmCVAWeCGHEHE6KwYs3yZX_ry-5AIBeCHnrw0k7vscQvHiM_Tg_PLE385AJntb3eYVuRpzju8nfe2aQQ9sIitlOu3f8cIMqh0MrcMvl_davOXZkpiQ1RqkWRMpUc4r92kiZQRmx6Q2d2wzZjrcf-St-M715S11OacoWOu9zxojR_kBW2obqkSWVpQtlJRRWpmxvBBJa3ye7ewsuS_kmtpdZcfuzRisdlty7kS3QjXV0xJt4u1M6YY-vtSlR4buFWfs27BlBnfj_ucjya5bWY0jiQwe4WdBFJzksnuo3UX4t3X7b4VvYzbUa-5zhjJ2nY-0rRvtMkMuca8Bq1w6WtqF4JI8avU9YlRfwUZ2wFeh5n6d8YdQk_nhVwicOOI6VzefBoFmUpgdV4Yyp9Xkuszzr8fSvqoZqWjc_Ver1Jwwniv_VxQigov9qch57tw6I61Y0WhsVyRhe2uSy5pnj64OS0uzjj2hU_jpYw_yxyXMp2mfnYVMbRYMU8QuOVIdUed1uldUbd19VlgYhJ4Z8xo6ZSjdYVM71Zs1pt5RljgIyv-S5ZQcnmJm__3siOx7_4U3Q6glfvOk6tofhY_c2SSn9uag5BY8OUXlX3_aYMI4Y06V5mWF195wcs4qZFRzX4aMqIeqvjMJOj1Jl0Smo681mFfFhO0ym7tapbFWJRwwXItIjBYedI";
+        String googleOAuth2AccessToken = "ya29.c.c0ASRK0GYfsKB8ov8lZE2P_Z27G9hVDfBHffwJzY38MTB4DCLpn8vVuOh5i_jsbCjlCeZdXpKQ7cArtL5smaEbYC7OLE5IULBd130pwP74gKxttpVmWBsy-9flViZbwrAlnYlcmk6csWuPR0ixZdwV5WLPjL8FH94uud2ByTb07CVaVRx8yrlnpBAPpKhw6U_O3SucsF5nLpXG2S-KJju4KcvHIFtCxMkpZMvvcmHbtfqcIKOdCu_DfDTCtD2unaX_6r77AxucXWQsG1zEgBPnvLeAraQspKddHx6Y3ENf_HffJtTry2uq1jHQDSPVRngqtLcgbRQOHokyMxGHA3YdINBrsheYG5AQ9NyeeOHbRY6zCMOeC5YyHU7cE385Pyfp_1bI_t9bBlIhVhB-z4FnS1Re0UgzIvtgdtZbrxsfI2YFhpgSV9cgrgWuFQf5ZlX-y3M0_bs3qQms6vmqQn3S4w581-wwb2zRb1Ik2U_xIZYxRYtjB-r3lUYOd4oi7w29ehsFZZ2c7w47d4m96vgj9gpW-zuink5Z_80So7pmIquIg-JYJq3Owdpt89tijp5Y0bbt4k9h5eQiuc4R8nFjVSwBZQdQu16p0y_MMxkS3k5inn8d4nfRdFQ_63yBe46zRRZrwlnWBz9cg5t-Bf0aknB1R9I7tdguo1W4djZgQX8kyIZxgymXbivgBf2brfMWXMrfUMwxwsw6Y4InukVV7xctBa3_sal6Bb-O9qgyhVWX9O6YoUUUUk4U5qJt3fROumvjuqv07YrxtMgpzBlvi7J72QjS-Ofw_a5swuFXzh6M4mJ5Z1kfif8pc1iukzYtuYrxJ0yr_qqx07hVkZqYwJY48W5qWRnJU83u_sz21Bh9Xcha4ghYxzhccjQbSxd8nZaF89wl1XvuYSsdo1W9rR5u9ZbvUclvRyvyXn5FRVVxdUVlgMsY_VssRdJRy5plW0BYFUUYmjxy7a7-4JxpOXizMrU5_JY21eive04BJambtSV4WZfQSta";
 
         String agentUserId = "yohan2025";
 
         Map<String, Object> deviceStates = Map.of(
-            "0.2.481.1.1.2045534365636f313353.20202020343833464441413731333145", Map.of(
-                "currentModeSettings", Map.of("mode_boiler", "02"),
-                "online", true,
-                "temperatureAmbientCelsius", 30.0,
-                "temperatureSetpointCelsius", 30.0,
-                "on", false
-            ),
+            // "0.2.481.1.1.2045534365636f313353.20202020343833464441413731333145", Map.of(
+            //     "currentModeSettings", Map.of("mode_boiler", "02"),
+            //     "online", true,
+            //     "temperatureAmbientCelsius", 30.0,
+            //     "temperatureSetpointCelsius", 30.0,
+            //     "on", false
+            // ),
             "0.2.481.1.1.204443522d39312f5746.20202020343431613834613134643730", Map.of(
                 "currentModeSettings", Map.of("mode_boiler", "02"),
                 "online", true,

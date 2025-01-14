@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.UUID;
 
@@ -74,10 +73,10 @@ public class AuthorizationController {
         final String authorizationCode = UUID.randomUUID().toString();
         log.info("authorizationCode:{}", authorizationCode);
 
-//        GoogleDTO googleDTO = new GoogleDTO();
-//        googleDTO.setUserId(username);
-//        googleDTO.setGoogleState(state);
-//        googleMapper.updateGoogleAuthInfo(googleDTO);
+       GoogleDTO googleDTO = new GoogleDTO();
+       googleDTO.setUserId(username);
+       googleDTO.setGoogleState(state);
+       googleMapper.updateGoogleAuthInfo(googleDTO);
 
         redisCommand.setValues(authorizationCode, username);
 
@@ -112,7 +111,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 엑세스 토큰 가져오기dvdvdvdvdv
+     * 엑세스 토큰 가져오기
      */
     @SuppressWarnings("unchecked")
     private String getToken(MultiValueMap<String, String> params) {

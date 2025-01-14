@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FulfillmentController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FulfillmentController.class);
-
     @Autowired
     private GoogleMapper googleMapper;
     @Autowired
