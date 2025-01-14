@@ -40,26 +40,32 @@ public class AppServerController {
     public void receiveCin(@RequestBody String jsonBody) throws Exception{
         log.info("AppServer Received JSON: " + jsonBody);
 
+        String accessToken = getTokeString();
+
         String deviceId = common.readCon(jsonBody, "deviceId");
-        
+        log.info("Extracted deviceId: " + deviceId);
         GoogleDTO result = googleMapper.getInfoByDeviceId(deviceId);
 
-        boolean powerOnOff = false;
-        if(result.getPowrStatus().equals("on")) powerOnOff = true;
+        boolean powerOnOff = "on".equals(result.getPowrStatus());
+        log.info("Device power status: " + result.getPowrStatus());
 
         Map<String, Object> deviceStates = Map.of(
-            result.getDeviceId(), Map.of(
-                "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
-                "online", true,
-                "temperatureAmbientCelsius", Float.parseFloat(result.getCurrentTemp()),
-                "temperatureSetpointCelsius", Float.parseFloat(result.getTempStatus()),
-                "on", powerOnOff
-            )
-        );
-        
-        reportDeviceState("yohan2025", deviceStates);
-        requestSync(getTokeString(), "yohan2025");
-    }
+                result.getDeviceId(), Map.of(
+                        "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
+                        "online", true,
+                        "temperatureAmbientCelsius", Float.parseFloat(result.getCurrentTemp()),
+                        "temperatureSetpointCelsius", Float.parseFloat(result.getTempStatus()),
+                        "on", powerOnOff));
+
+        // Log the constructed device state
+        log.info("Constructed device state: " + deviceStates);
+
+        // Request Google to sync devices
+        requestSync(accessToken, "yohan2025");
+
+        // Report device state to Google
+        reportDeviceState(accessToken, "yohan2025", deviceStates);
+    }    
 
     private String getTokeString(){
         // AcessTokenRequester 인스턴스 생성 및 호출
@@ -106,11 +112,9 @@ public class AppServerController {
         }
     }
 
-    public void reportDeviceState(String agentUserId, Map<String, Object> deviceStates) {
+    public void reportDeviceState(String googleOAuth2AccessToken, String agentUserId, Map<String, Object> deviceStates) {
         String url = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
         
-        String googleOAuth2AccessToken = getTokeString();
-
         // Payload structure
         Map<String, Object> payload = Map.of(
             "requestId", UUID.randomUUID().toString(),
@@ -124,6 +128,8 @@ public class AppServerController {
             // Convert payload to JSON
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(payload);
+    
+            log.info("Body: " + requestBody);
 
             // Create HTTP request
             HttpRequest request = HttpRequest.newBuilder()

@@ -19,12 +19,12 @@ public class AcessTokenRequester {
             GoogleCredential credentials = getCredentials();
 
             if( trueIfHasToken() ) {
-                log.info("getAccessToken: " + credentials.getAccessToken());
-                log.info("getExpiresInSeconds: " + credentials.getExpiresInSeconds());
+                // log.info("getAccessToken: " + credentials.getAccessToken());
+                // log.info("getExpiresInSeconds: " + credentials.getExpiresInSeconds());
 
-                log.info("before: {}", accessToken);
+                // log.info("before: {}", accessToken);
                 accessToken = credentials.getAccessToken();
-                log.info("after: {}", accessToken);
+                // log.info("after: {}", accessToken);
             }
         } catch (Exception e) {
             log.debug("", e);
