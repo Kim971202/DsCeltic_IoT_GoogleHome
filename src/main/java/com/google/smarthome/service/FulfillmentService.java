@@ -1,5 +1,7 @@
 package com.google.smarthome.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.smarthome.contant.MobiusResponse;
 import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.dto.QueryResult;
@@ -23,6 +25,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -505,7 +508,7 @@ public class FulfillmentService {
         return mobiusResponse.getResponseCode();
     }
 
-    public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) {
+    public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) throws JsonProcessingException {
         log.info("queryResponse");
         System.out.println(queryResponse);
 
@@ -513,28 +516,28 @@ public class FulfillmentService {
         Map<String, Object> states = new HashMap<>();
 
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
-
         Iterator<String> iter = devices.keySet().iterator();
         while (iter.hasNext()) {
             String deviceId = iter.next();
-            Map<String, Object> stateValues = new HashMap<>();
-            stateValues.putAll(devices.get(deviceId));
+            Map<String, Object> stateValues = new HashMap<>(devices.get(deviceId));
 
-            // 불필요한 필드 제거
-            stateValues.remove("status");
-            stateValues.remove("updateModeSettings");
-            stateValues.remove("fanSpeed");
-            stateValues.remove("temperature");
+            // currentModeSettings 강제 변환
+            if (stateValues.containsKey("currentModeSettings")) {
+                Object currentModeSettings = stateValues.get("currentModeSettings");
+                if (currentModeSettings instanceof Map) {
+                    stateValues.put("currentModeSettings", new LinkedHashMap<>((Map) currentModeSettings));
+                }
+            }
 
-            // 로그 추가: states에 추가하기 전 상태 출력
+            // 상태값 검증
             log.info("Processed stateValues for deviceId {}: {}", deviceId, stateValues);
             states.put(deviceId, stateValues);
         }
 
-        // ReportStatusResult.Request 생성 전에 states 출력
-        log.info("Final stateValues to send: {}", states);
+        // ReportStatusResult 생성 전 상태 확인
+        log.info("States before creating ReportStatusResult: {}", states);
 
-        // ReportStatusResult 생성
+        // ReportStatusResult 생성 및 직렬화 확인
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(requestId)
                 .agentUserId(agentUserId)
@@ -545,10 +548,11 @@ public class FulfillmentService {
                         .build())
                 .build();
 
-        // JSON 변환 결과 로그
-        String serializedReport = JSON.toJson(reportStatusResult);
-        log.info("Serialized ReportStatusResult: {}", serializedReport);
-        
+        // ObjectMapper로 직렬화 확인
+        ObjectMapper objectMapper = new ObjectMapper();
+        String serializedReport = objectMapper.writeValueAsString(reportStatusResult);
+        log.info("Serialized ReportStatusResult using ObjectMapper: {}", serializedReport);
+
         // Google OAuth2 액세스 토큰 요청
         String googleOuath2AccessToken = accessTokenRequester.getToken();
         log.info("googleOuath2AccessToken: " + googleOuath2AccessToken);
