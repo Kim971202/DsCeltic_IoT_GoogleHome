@@ -510,55 +510,43 @@ public class FulfillmentService {
 
     public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) throws JsonProcessingException {
         log.info("queryResponse");
-        System.out.println(queryResponse);
+        System.out.println(queryResponse.toString());
 
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
 
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
+
         Iterator<String> iter = devices.keySet().iterator();
-        while (iter.hasNext()) {
-            String deviceId = iter.next();
-            Map<String, Object> stateValues = new HashMap<>(devices.get(deviceId));
+		while(iter.hasNext()) {
+			String deviceId = iter.next();
+			Map<String, Object> stateValues = new HashMap<>();
 
-            // currentModeSettings 강제 변환
-            if (stateValues.containsKey("currentModeSettings")) {
-                Object currentModeSettings = stateValues.get("currentModeSettings");
-                if (currentModeSettings instanceof Map) {
-                    stateValues.put("currentModeSettings", new LinkedHashMap<>((Map) currentModeSettings));
-                }
-            }
+			stateValues.putAll(devices.get(deviceId));
 
-            // 상태값 검증
-            log.info("Processed stateValues for deviceId {}: {}", deviceId, stateValues);
-            states.put(deviceId, stateValues);
-        }
+			//400. Request contains an invalid argument. INVALID_ARGUMENT 오류 발생 대응처리.
+			stateValues.remove("status");
+			stateValues.remove("updateModeSettings");
+			stateValues.remove("fanSpeed");
+			stateValues.remove("temperature");
 
-        // ReportStatusResult 생성 전 상태 확인
-        log.info("States before creating ReportStatusResult: {}", states);
+			states.put(deviceId, stateValues);
+		}
 
-        // ReportStatusResult 생성 및 직렬화 확인
-        ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
-                .requestId(requestId)
-                .agentUserId(agentUserId)
-                .payload(ReportStatusResult.Request.Payload.builder()
-                        .devices(ReportStatusResult.Request.Payload.Device.builder()
-                                .states(states)
-                                .build())
-                        .build())
-                .build();
+		ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
+				.requestId(requestId)
+				.agentUserId(agentUserId)
+				.payload(ReportStatusResult.Request.Payload.builder()
+						.devices(ReportStatusResult.Request.Payload.Device.builder()
+								.states(states)
+								.build())
+						.build())
+				.build();
 
-        // ObjectMapper로 직렬화 확인
-        ObjectMapper objectMapper = new ObjectMapper();
-        String serializedReport = objectMapper.writeValueAsString(reportStatusResult);
-        log.info("Serialized ReportStatusResult using ObjectMapper: {}", serializedReport);
-
-        // Google OAuth2 액세스 토큰 요청
-        String googleOuath2AccessToken = accessTokenRequester.getToken();
-        log.info("googleOuath2AccessToken: " + googleOuath2AccessToken);
-        String baseUrl = "https://homegraph.googleapis.com";
-        String uri = "/v1/devices:reportStateAndNotification";
-        log.info("baseUrl:{}", baseUrl + uri);
+		String googleOuath2AccessToken = accessTokenRequester.getToken();
+		String baseUrl = "https://homegraph.googleapis.com";
+		String uri = baseUrl + "/v1/devices:reportStateAndNotification";
+		log.info("baseUrl:{}", uri);
 
         // WebClient를 통한 Google Home Graph API 요청
         WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
