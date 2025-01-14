@@ -139,10 +139,10 @@ public class AppServerController {
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(reportStatusResult);
 
-            log.info("Sending ReportStatusResult request:");
-            log.info("URL: " + url);
-            log.info("Headers: Authorization=Bearer " + googleOAuth2AccessToken + ", Content-Type=application/json");
-            log.info("Body: " + requestBody);
+            // log.info("Sending ReportStatusResult request:");
+            // log.info("URL: " + url);
+            // log.info("Headers: Authorization=Bearer " + googleOAuth2AccessToken + ", Content-Type=application/json");
+            log.info("requestBody Body: " + requestBody);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))

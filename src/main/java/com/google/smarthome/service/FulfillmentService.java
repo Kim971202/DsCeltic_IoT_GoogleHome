@@ -507,17 +507,17 @@ public class FulfillmentService {
 
             stateValues.putAll(devices.get(deviceId));
 
-            // currentModeSettings 값 강제 설정
-            if (stateValues.containsKey("currentModeSettings")) {
-                Map<String, String> currentModeSettings = new HashMap<>();
-                currentModeSettings.put("mode_boiler", "02");
-                stateValues.put("currentModeSettings", currentModeSettings);
-            } else {
-                // currentModeSettings가 없는 경우 기본값 추가
-                Map<String, String> currentModeSettings = new HashMap<>();
-                currentModeSettings.put("mode_boiler", "02");
-                stateValues.put("currentModeSettings", currentModeSettings);
-            }
+            // // currentModeSettings 값 강제 설정
+            // if (stateValues.containsKey("currentModeSettings")) {
+            //     Map<String, String> currentModeSettings = new HashMap<>();
+            //     currentModeSettings.put("mode_boiler", "02");
+            //     stateValues.put("currentModeSettings", currentModeSettings);
+            // } else {
+            //     // currentModeSettings가 없는 경우 기본값 추가
+            //     Map<String, String> currentModeSettings = new HashMap<>();
+            //     currentModeSettings.put("mode_boiler", "02");
+            //     stateValues.put("currentModeSettings", currentModeSettings);
+            // }
 
             // 오류 방지를 위해 불필요한 필드 제거
             stateValues.remove("status");
