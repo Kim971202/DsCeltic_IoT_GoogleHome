@@ -501,7 +501,7 @@ public class FulfillmentService {
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
 
-        Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
+		Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
 
         Iterator<String> iter = devices.keySet().iterator();
 		while(iter.hasNext()) {
@@ -517,6 +517,8 @@ public class FulfillmentService {
 			stateValues.remove("temperature");
 
 			states.put(deviceId, stateValues);
+
+            log.info("Processed stateValues for deviceId {}: {}", deviceId, stateValues);
 		}
         
         log.info("Final stateValues to send: {}", states);
@@ -636,6 +638,5 @@ public class FulfillmentService {
         log.error("Error updating device state", e);
     }
 }
-
 
 }
