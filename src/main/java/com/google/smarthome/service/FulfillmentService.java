@@ -510,12 +510,12 @@ public class FulfillmentService {
 
     public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) throws JsonProcessingException {
         log.info("queryResponse");
-
+    
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
-
+    
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
-
+    
         Iterator<String> iter = devices.keySet().iterator();
         while (iter.hasNext()) {
             String deviceId = iter.next();
@@ -527,8 +527,12 @@ public class FulfillmentService {
             if (stateValues.containsKey("currentModeSettings")) {
                 Object currentModeSettings = stateValues.get("currentModeSettings");
                 try {
-                    if (currentModeSettings instanceof String) {
-                        // 문자열 JSON으로 변환
+                    if (currentModeSettings instanceof JSONObject) {
+                        // JSONObject를 Map으로 변환
+                        Map<String, Object> parsedSettings = new ObjectMapper().readValue(currentModeSettings.toString(), Map.class);
+                        stateValues.put("currentModeSettings", parsedSettings);
+                    } else if (currentModeSettings instanceof String) {
+                        // 문자열 JSON 처리
                         Map<String, Object> parsedSettings = new ObjectMapper().readValue((String) currentModeSettings, Map.class);
                         stateValues.put("currentModeSettings", parsedSettings);
                     } else if (!(currentModeSettings instanceof Map)) {
@@ -541,7 +545,7 @@ public class FulfillmentService {
                 }
             }
     
-            // 오류 방지를 위해 불필요한 필드 제거
+            // 불필요한 필드 제거
             stateValues.remove("status");
             stateValues.remove("updateModeSettings");
             stateValues.remove("fanSpeed");
@@ -549,25 +553,25 @@ public class FulfillmentService {
     
             states.put(deviceId, stateValues);
         }
-        
+    
         System.out.println(states);
         System.out.println(JSON.toJson(states));
-
-		ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
-				.requestId(requestId)
-				.agentUserId(agentUserId)
-				.payload(ReportStatusResult.Request.Payload.builder()
-						.devices(ReportStatusResult.Request.Payload.Device.builder()
-								.states(states)
-								.build())
-						.build())
-				.build();
-
-		String googleOuath2AccessToken = accessTokenRequester.getToken();
-		String baseUrl = "https://homegraph.googleapis.com";
-		String uri = baseUrl + "/v1/devices:reportStateAndNotification";
-		log.info("baseUrl:{}", uri);
-
+    
+        ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
+                .requestId(requestId)
+                .agentUserId(agentUserId)
+                .payload(ReportStatusResult.Request.Payload.builder()
+                        .devices(ReportStatusResult.Request.Payload.Device.builder()
+                                .states(states)
+                                .build())
+                        .build())
+                .build();
+    
+        String googleOuath2AccessToken = accessTokenRequester.getToken();
+        String baseUrl = "https://homegraph.googleapis.com";
+        String uri = baseUrl + "/v1/devices:reportStateAndNotification";
+        log.info("baseUrl:{}", uri);
+    
         // WebClient를 통한 Google Home Graph API 요청
         WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
                 .uri(uri)
@@ -588,6 +592,7 @@ public class FulfillmentService {
                     }
                 });
     }
+    
 
     public void updateDeviceState(String userId, String deviceId, String attribute, Object value) {
         log.info("Updating device state for UserId: {}, DeviceId: {}, Attribute: {}, Value: {}", userId, deviceId,
