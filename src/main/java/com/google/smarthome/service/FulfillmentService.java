@@ -510,7 +510,6 @@ public class FulfillmentService {
 
     public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) throws JsonProcessingException {
         log.info("queryResponse");
-        System.out.println(queryResponse.toString());
 
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
@@ -532,6 +531,9 @@ public class FulfillmentService {
 
 			states.put(deviceId, stateValues);
 		}
+        
+        System.out.println(states);
+        System.out.println(JSON.toJson(states));
 
 		ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
 				.requestId(requestId)
