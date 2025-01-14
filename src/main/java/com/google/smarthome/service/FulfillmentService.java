@@ -22,6 +22,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -502,33 +503,50 @@ public class FulfillmentService {
 
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
 
-        for (String deviceId : devices.keySet()) {
-            Map<String, Object> stateValues = new HashMap<>();
+        Iterator<String> iter = devices.keySet().iterator();
+		while(iter.hasNext()) {
+			String deviceId = iter.next();
+			Map<String, Object> stateValues = new HashMap<>();
 
-            stateValues.putAll(devices.get(deviceId));
+			stateValues.putAll(devices.get(deviceId));
 
-            // // currentModeSettings 값 강제 설정
-            // if (stateValues.containsKey("currentModeSettings")) {
-            //     Map<String, String> currentModeSettings = new HashMap<>();
-            //     currentModeSettings.put("mode_boiler", "02");
-            //     stateValues.put("currentModeSettings", currentModeSettings);
-            // } else {
-            //     // currentModeSettings가 없는 경우 기본값 추가
-            //     Map<String, String> currentModeSettings = new HashMap<>();
-            //     currentModeSettings.put("mode_boiler", "02");
-            //     stateValues.put("currentModeSettings", currentModeSettings);
-            // }
+			//400. Request contains an invalid argument. INVALID_ARGUMENT 오류 발생 대응처리.
+			stateValues.remove("status");
+			stateValues.remove("updateModeSettings");
+			stateValues.remove("fanSpeed");
+			stateValues.remove("temperature");
 
-            // 오류 방지를 위해 불필요한 필드 제거
-            stateValues.remove("status");
-            stateValues.remove("updateModeSettings");
-            stateValues.remove("fanSpeed");
-            stateValues.remove("temperature");
+			states.put(deviceId, stateValues);
+		}
+        
+        log.info("Final stateValues to send: {}", states);
+        // for (String deviceId : devices.keySet()) {
+        //     Map<String, Object> stateValues = new HashMap<>();
 
-            states.put(deviceId, stateValues);
+        //     stateValues.putAll(devices.get(deviceId));
 
-            log.info("Final stateValues to send: {}", stateValues);
-        }
+        //     // currentModeSettings 값 강제 설정
+        //     if (stateValues.containsKey("currentModeSettings")) {
+        //         Map<String, String> currentModeSettings = new HashMap<>();
+        //         currentModeSettings.put("mode_boiler", "02");
+        //         stateValues.put("currentModeSettings", currentModeSettings);
+        //     } else {
+        //         // currentModeSettings가 없는 경우 기본값 추가
+        //         Map<String, String> currentModeSettings = new HashMap<>();
+        //         currentModeSettings.put("mode_boiler", "02");
+        //         stateValues.put("currentModeSettings", currentModeSettings);
+        //     }
+
+        //     // 오류 방지를 위해 불필요한 필드 제거
+        //     stateValues.remove("status");
+        //     stateValues.remove("updateModeSettings");
+        //     stateValues.remove("fanSpeed");
+        //     stateValues.remove("temperature");
+
+        //     states.put(deviceId, stateValues);
+
+        //     log.info("Final stateValues to send: {}", stateValues);
+        // }
         
 
         // ReportStatusResult 객체 생성
