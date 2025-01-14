@@ -531,7 +531,7 @@ public class FulfillmentService {
 
 			states.put(deviceId, stateValues);
 		}
-        
+
         System.out.println(states);
         System.out.println(JSON.toJson(states));
 
@@ -554,7 +554,7 @@ public class FulfillmentService {
         WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
                 .uri(uri)
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(JSON.toJson(reportStatusResult))
+                .bodyValue(reportStatusResult)
                 .retrieve()
                 .toEntity(String.class)
                 .timeout(Duration.ofSeconds(5))
@@ -564,7 +564,7 @@ public class FulfillmentService {
                 .subscribe(new Consumer<ResponseEntity<String>>() {
                     @Override
                     public void accept(ResponseEntity<String> response) {
-                        log.info("send ReportStatusResult request: : {}", JSON.toJson(reportStatusResult, true));
+                        log.info("send ReportStatusResult request: : {}", reportStatusResult);
                         log.info("send ReportStatusResult status code: {}", response.getStatusCode());
                         log.info("send ReportStatusResult response getBody: {}", response.getBody());
                     }
