@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.smarthome.dto.GoogleDTO;
+import com.google.smarthome.dto.ReportStatusResult;
 import com.google.smarthome.mapper.GoogleMapper;
 import com.google.smarthome.utils.AcessTokenRequester;
 import com.google.smarthome.utils.Common;
@@ -48,6 +49,8 @@ public class AppServerController {
 
         boolean powerOnOff = "on".equals(result.getPowrStatus());
         log.info("Device power status: " + result.getPowrStatus());
+
+        System.out.println();
 
         Map<String, Object> deviceStates = Map.of(
                 result.getDeviceId(), Map.of(
@@ -116,43 +119,46 @@ public class AppServerController {
         String url = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
         
         // Payload structure
-        Map<String, Object> payload = Map.of(
-            "requestId", UUID.randomUUID().toString(),
-            "agentUserId", agentUserId,
-            "payload", Map.of(
-                "devices", Map.of("states", deviceStates)
-            )
-        );
-
-        try {
-            // Convert payload to JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            String requestBody = objectMapper.writeValueAsString(payload);
-    
-            log.info("Body: " + requestBody);
-
-            // Create HTTP request
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Authorization", "Bearer " + googleOAuth2AccessToken)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+       // ReportStatusResult 객체 생성
+        ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
+                .requestId(UUID.randomUUID().toString())
+                .agentUserId(agentUserId)
+                .payload(ReportStatusResult.Request.Payload.builder()
+                        .devices(ReportStatusResult.Request.Payload.Device.builder()
+                                .states(deviceStates)
+                                .build())
+                        .build())
                 .build();
 
-            // Send request
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestBody = objectMapper.writeValueAsString(reportStatusResult);
+
+            log.info("Sending ReportStatusResult request:");
+            log.info("URL: " + url);
+            log.info("Headers: Authorization=Bearer " + googleOAuth2AccessToken + ", Content-Type=application/json");
+            log.info("Body: " + requestBody);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + googleOAuth2AccessToken)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // Handle response
             if (response.statusCode() == 200) {
-                System.out.println("Device state updated successfully: " + response.body());
+                log.info("Device state updated successfully: " + response.body());
             } else {
-                System.err.println("Failed to update device state. Status Code: " + response.statusCode());
-                System.err.println("Response: " + response.body());
+                log.error("Failed to update device state. Status Code: " + response.statusCode());
+                log.error("Response: " + response.body());
             }
         } catch (Exception e) {
-            System.err.println("Error reporting device state: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error reporting device state: " + e.getMessage(), e);
         }
     }
+
+
 }

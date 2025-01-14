@@ -417,7 +417,6 @@ public class FulfillmentService {
         return response;
     }
 
-
     // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
         if (modelCode.equals("ESCeco13S")) {
@@ -619,5 +618,6 @@ public class FulfillmentService {
         log.error("Error updating device state", e);
     }
 }
+
 
 }
