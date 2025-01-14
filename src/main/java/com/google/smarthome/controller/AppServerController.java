@@ -58,7 +58,7 @@ public class AppServerController {
         );
         
         reportDeviceState("yohan2025", deviceStates);
-
+        requestSync(getTokeString(), "yohan2025");
     }
 
     private String getTokeString(){
@@ -68,6 +68,42 @@ public class AppServerController {
         String token = tokenRequester.getToken(); // 토큰 가져오기
         System.out.println("Access Token: " + token); // 토큰 출력
         return token;
+    }
+
+    public void requestSync(String googleOAuth2AccessToken, String agentUserId) {
+        String url = "https://homegraph.googleapis.com/v1/devices:requestSync";
+    
+        try {
+            // RequestSync Payload
+            Map<String, Object> payload = Map.of("agentUserId", agentUserId);
+    
+            // JSON 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestBody = objectMapper.writeValueAsString(payload);
+    
+            // HTTP 요청 생성
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + googleOAuth2AccessToken)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+    
+            // 요청 보내기
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+            // 응답 처리
+            if (response.statusCode() == 200) {
+                System.out.println("RequestSync called successfully: " + response.body());
+            } else {
+                System.err.println("RequestSync failed. Status Code: " + response.statusCode());
+                System.err.println("Response: " + response.body());
+            }
+        } catch (Exception e) {
+            System.err.println("Error requesting sync: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void reportDeviceState(String agentUserId, Map<String, Object> deviceStates) {
