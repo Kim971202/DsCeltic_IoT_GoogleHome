@@ -1,5 +1,6 @@
 package com.google.smarthome.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.smarthome.dto.GoogleDTO;
 import com.google.smarthome.dto.QueryResult;
 import com.google.smarthome.mapper.GoogleMapper;
@@ -33,7 +34,7 @@ public class FulfillmentController {
     RedisCommand redisCommand;
 
     @PostMapping("/access/api/fulfillment")
-    public String handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) {
+    public String handleFulfillment(@RequestBody String request, HttpServletRequest httpRequest) throws JsonProcessingException {
         log.info("POST /api/fulfillment CALLED");
         log.info("Request Body: " + request);
 
