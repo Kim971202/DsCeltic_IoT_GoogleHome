@@ -587,15 +587,17 @@ public class FulfillmentService {
                                 .build())
                         .build())
                 .build();
-
-        String googleOuath2AccessToken = accessTokenRequester.getToken();
-        System.out.println("googleOuath2AccessToken: " + googleOuath2AccessToken);
+                
+        AcessTokenRequester tokenRequester = new AcessTokenRequester();
+        tokenRequester.request();
+        String token = tokenRequester.getToken();
+        log.info("sendDataBasedOnQueryResult Token: " + token);
         String baseUrl = "https://homegraph.googleapis.com";
         String uri = baseUrl + "/v1/devices:reportStateAndNotification";
         log.info("baseUrl:{}", uri);
 
         // WebClient를 통한 Google Home Graph API 요청
-        WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
+        WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, token)
                 .uri(uri)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(JSON.toJson(reportStatusResult))
