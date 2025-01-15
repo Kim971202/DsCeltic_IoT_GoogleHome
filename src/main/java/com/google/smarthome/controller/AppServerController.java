@@ -84,8 +84,10 @@ public class AppServerController {
                 result.getDeviceId(), Map.of(
                         "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
                         "online", true,
-                        "temperatureAmbientCelsius", Double.parseDouble(result.getCurrentTemp()),
-                        "temperatureSetpointCelsius", Double.parseDouble(result.getTempStatus()),
+                        "temperatureAmbientCelsius",
+                        Double.parseDouble(String.format("%.1f", Double.parseDouble(result.getCurrentTemp()))),
+                        "temperatureSetpointCelsius",
+                        Double.parseDouble(String.format("%.1f", Double.parseDouble(result.getTempStatus()))),
                         "on", powerOnOff));
 
         log.info("Constructed device state: " + deviceStates);
@@ -122,26 +124,24 @@ public class AppServerController {
         try {
             // 요청 본문 생성
             Map<String, Object> payload = Map.of(
-                "requestId", java.util.UUID.randomUUID().toString(),
-                "agentUserId", agentUserId,
-                "inputs", List.of(Map.of(
-                    "payload", Map.of(
-                        "devices", deviceIds.stream()
-                            .map(id -> Map.of("id", id))
-                            .collect(Collectors.toList()) // Updated for Java 8 compatibility
-                    )
-                ))
-            );
+                    "requestId", java.util.UUID.randomUUID().toString(),
+                    "agentUserId", agentUserId,
+                    "inputs", List.of(Map.of(
+                            "payload", Map.of(
+                                    "devices", deviceIds.stream()
+                                            .map(id -> Map.of("id", id))
+                                            .collect(Collectors.toList()) // Updated for Java 8 compatibility
+                            ))));
 
             String requestBody = objectMapper.writeValueAsString(payload);
 
             // HTTP 요청 생성
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(QUERY_URL))
-                .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
+                    .uri(URI.create(QUERY_URL))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
 
             // HTTP 클라이언트 생성 및 요청 전송
             HttpClient client = HttpClient.newHttpClient();
