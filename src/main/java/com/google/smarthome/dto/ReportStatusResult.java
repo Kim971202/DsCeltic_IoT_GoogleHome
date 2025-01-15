@@ -25,6 +25,7 @@ public class ReportStatusResult {
             @NoArgsConstructor @AllArgsConstructor
             public static class Device {
                 private Map<String, Object> states;
+                private Map<String, Object> notifications;
             }
         }
     }

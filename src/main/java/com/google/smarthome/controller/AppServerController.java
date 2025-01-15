@@ -44,7 +44,7 @@ public class AppServerController {
 
     private static final long REPORT_INTERVAL_SECONDS = 30; // 상태 보고 주기: 30초
     private Instant lastReportTime = Instant.MIN;
-    
+
     @Autowired
     private Common common;
 
@@ -155,6 +155,7 @@ public class AppServerController {
                 .payload(ReportStatusResult.Request.Payload.builder()
                         .devices(ReportStatusResult.Request.Payload.Device.builder()
                                 .states(deviceStates)
+                                .notifications(deviceStates)
                                 .build())
                         .build())
                 .build();
