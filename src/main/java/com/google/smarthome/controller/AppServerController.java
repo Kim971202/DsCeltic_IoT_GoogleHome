@@ -149,13 +149,20 @@ public class AppServerController {
     public void reportDeviceState(String googleOAuth2AccessToken, String agentUserId,
             Map<String, Object> deviceStates) {
 
+                Map<String, Object> deviceNotifications = Map.of(
+                    "0.2.481.1.1.204443522d39312f5746.20202020343431613834613134643730", Map.of(
+                            "on", false,
+                            "temperatureSetpointCelsius", 26.0
+                    )
+            );
+                
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(UUID.randomUUID().toString())
                 .agentUserId(agentUserId)
                 .payload(ReportStatusResult.Request.Payload.builder()
                         .devices(ReportStatusResult.Request.Payload.Device.builder()
                                 .states(deviceStates)
-                                .notifications(deviceStates)
+                                .notifications(deviceNotifications)
                                 .build())
                         .build())
                 .build();
