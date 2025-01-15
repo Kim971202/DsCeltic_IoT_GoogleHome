@@ -101,10 +101,10 @@ public class AppServerController {
         requestSync(accessToken, "yohan2025");
 
         // Google과 동기화 요청
-        List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
-        devicesQuery(accessToken, "yohan2025", deviceIds);
+        // List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
+        // devicesQuery(accessToken, "yohan2025", deviceIds);
 
-        devicesSync(accessToken, "yohan2025");
+        // devicesSync(accessToken, "yohan2025");
     }
 
     private String getTokeString() {
