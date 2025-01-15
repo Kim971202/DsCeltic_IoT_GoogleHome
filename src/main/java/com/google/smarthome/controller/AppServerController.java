@@ -68,7 +68,7 @@ public class AppServerController {
         // deviceId 추출
         String deviceId = common.readCon(jsonBody, "deviceId");
         log.info("Extracted deviceId: " + deviceId);
-        if(!deviceId.equals("0.2.481.1.1.204443522d39312f5746.20202020343431613834613134643730")){
+        if(!deviceId.equals("0.2.481.1.1.2045534365636f313353.20202020413445353743333042304141")){
             return;
         }
         // DB에서 기기 상태 가져오기
