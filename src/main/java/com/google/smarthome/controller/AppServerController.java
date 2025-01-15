@@ -91,8 +91,8 @@ public class AppServerController {
         // Google에 상태 보고
         reportDeviceState(accessToken, "yohan2025", deviceStates);
 
-         // Google과 동기화 요청
-         requestSync(accessToken, "yohan2025");
+        // Google과 동기화 요청
+        // requestSync(accessToken, "yohan2025");
     }
 
     private String getTokeString() {
