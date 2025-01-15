@@ -84,11 +84,11 @@ public class AppServerController {
 
         log.info("Constructed device state: " + deviceStates);
 
-        // Google과 동기화 요청
-        requestSync(accessToken, "yohan2025");
-
         // Google에 상태 보고
         reportDeviceState(accessToken, "yohan2025", deviceStates);
+
+         // Google과 동기화 요청
+         requestSync(accessToken, "yohan2025");
     }
 
     private String getTokeString() {
@@ -135,7 +135,6 @@ public class AppServerController {
 
     public void reportDeviceState(String googleOAuth2AccessToken, String agentUserId,
             Map<String, Object> deviceStates) {
-        String url = "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
 
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(UUID.randomUUID().toString())
@@ -170,38 +169,6 @@ public class AppServerController {
                         log.info("send ReportStatusResult response getBody: {}", response.getBody());
                     }
                 });
-
-        // try {
-        // ObjectMapper objectMapper = new ObjectMapper();
-        // String requestBody = objectMapper.writeValueAsString(reportStatusResult);
-
-        // // log.info("Sending ReportStatusResult request:");
-        // // log.info("URL: " + url);
-        // // log.info("Headers: Authorization=Bearer " + googleOAuth2AccessToken + ",
-        // Content-Type=application/json");
-        // log.info("requestBody Body: " + requestBody);
-
-        // HttpRequest request = HttpRequest.newBuilder()
-        // .uri(URI.create(url))
-        // .header("Authorization", "Bearer " + googleOAuth2AccessToken)
-        // .header("Content-Type", "application/json")
-        // .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-        // .build();
-
-        // HttpClient client = HttpClient.newHttpClient();
-        // HttpResponse<String> response = client.send(request,
-        // HttpResponse.BodyHandlers.ofString());
-
-        // if (response.statusCode() == 200) {
-        // log.info("Device state updated successfully: " + response.body());
-        // } else {
-        // log.error("Failed to update device state. Status Code: " +
-        // response.statusCode());
-        // log.error("Response: " + response.body());
-        // }
-        // } catch (Exception e) {
-        // log.error("Error reporting device state: " + e.getMessage(), e);
-        // }
     }
 }
 
