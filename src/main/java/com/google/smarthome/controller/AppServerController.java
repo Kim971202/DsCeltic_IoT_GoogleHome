@@ -89,7 +89,7 @@ public class AppServerController {
                         "temperatureSetpointCelsius",
                         Double.parseDouble(String.format("%.1f", Double.parseDouble(result.getTempStatus()))),
                         "on", powerOnOff));
-        
+
         log.info("Constructed device state: " + deviceStates);
 
         // Google에 상태 보고
@@ -101,6 +101,8 @@ public class AppServerController {
         // Google과 동기화 요청
         List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
         devicesQuery(accessToken, "yohan2025", deviceIds);
+
+        devicesSync(accessToken, "yohan2025");
     }
 
     private String getTokeString() {
@@ -116,6 +118,44 @@ public class AppServerController {
         }
     }
 
+    public String devicesSync(String accessToken, String agentUserId) {
+        String SYNC_URL = "https://homegraph.googleapis.com/v1/devices:sync";
+    
+        try {
+            // 요청 본문 생성
+            Map<String, String> payload = Map.of(
+                "requestId", UUID.randomUUID().toString(),
+                "agentUserId", agentUserId
+            );
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestBody = objectMapper.writeValueAsString(payload);
+    
+            // HTTP 요청 생성
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(SYNC_URL))
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+    
+            // HTTP 클라이언트 생성 및 요청 전송
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+            if (response.statusCode() == 200) {
+                log.info("Devices sync successful: " + response.body());
+                return response.body(); // JSON 응답 반환
+            } else {
+                log.error("Devices sync failed. Status Code: " + response.statusCode());
+                log.error("Response: " + response.body());
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Error during devices.sync: " + e.getMessage(), e);
+            return null;
+        }
+    }
+    
     public String devicesQuery(String accessToken, String agentUserId, List<String> deviceIds) {
 
         String QUERY_URL = "https://homegraph.googleapis.com/v1/devices:query";
