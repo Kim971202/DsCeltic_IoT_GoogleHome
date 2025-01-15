@@ -414,6 +414,7 @@ public class FulfillmentService {
             // Populate deviceState
             deviceState.put("on", deviceOnOff); // The device is ON
             deviceState.put("online", true);
+            deviceState.put("onlineStatusDetails", "OK");
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("temperatureAmbientCelsius", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
             deviceState.put("temperatureSetpointCelsius", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));

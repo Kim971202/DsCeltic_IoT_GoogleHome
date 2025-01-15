@@ -89,7 +89,7 @@ public class AppServerController {
                         "temperatureSetpointCelsius",
                         Double.parseDouble(String.format("%.1f", Double.parseDouble(result.getTempStatus()))),
                         "on", powerOnOff));
-
+        
         log.info("Constructed device state: " + deviceStates);
 
         // Google에 상태 보고
