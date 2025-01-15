@@ -68,7 +68,9 @@ public class AppServerController {
         // deviceId 추출
         String deviceId = common.readCon(jsonBody, "deviceId");
         log.info("Extracted deviceId: " + deviceId);
-
+        if(deviceId.equals("0.2.481.1.1.204443522d39312f5746.20202020343431613834613134643730")){
+            return;
+        }
         // DB에서 기기 상태 가져오기
         log.info("Querying device state from DB for deviceId: " + deviceId);
         GoogleDTO result = googleMapper.getInfoByDeviceId(deviceId);
