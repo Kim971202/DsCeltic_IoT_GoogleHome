@@ -129,6 +129,20 @@ public class FulfillmentService {
             // device.put("name", new JSONObject().put("name", "대성" + "-" +
             // deviceNick.getDeviceNickname()));
             device.put("name", new JSONObject().put("name", "대성보일러" + "-" + deviceNick.getDeviceNickname()));
+
+            // GoogleDTO에서 기기 상태 정보 가져오기
+            GoogleDTO deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+            if (deviceStatus != null) {
+                JSONObject customData = new JSONObject();
+                customData.put("powerStatus", "on".equals(deviceStatus.getPowrStatus()));
+                customData.put("ambientTemperature", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
+                customData.put("setpointTemperature", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
+                customData.put("currentMode", deviceStatus.getModeValue());
+                device.put("customData", customData);
+            } else {
+                log.warn("Device status not found for deviceId: " + deviceId);
+            }
+
             devices.put(device);
         }
 
@@ -416,8 +430,10 @@ public class FulfillmentService {
             deviceState.put("online", true);
             deviceState.put("onlineStatusDetails", "OK");
             deviceState.put("currentModeSettings", currentModeSettings);
-            deviceState.put("temperatureAmbientCelsius", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
-            deviceState.put("temperatureSetpointCelsius", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
+            deviceState.put("temperatureAmbientCelsius",
+                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
+            deviceState.put("temperatureSetpointCelsius",
+                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
             deviceState.put("status", "SUCCESS");
 
             devices.put(deviceId, deviceState);
@@ -509,55 +525,59 @@ public class FulfillmentService {
         return mobiusResponse.getResponseCode();
     }
 
-    public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse) throws JsonProcessingException {
+    public void sendDataBasedOnQueryResult(String agentUserId, QueryResult.Response queryResponse)
+            throws JsonProcessingException {
         log.info("queryResponse");
-    
+
         final String requestId = queryResponse.getRequestId();
         Map<String, Object> states = new HashMap<>();
-    
+
         Map<String, Map<String, Object>> devices = queryResponse.getPayload().getDevices();
-    
+
         Iterator<String> iter = devices.keySet().iterator();
         while (iter.hasNext()) {
             String deviceId = iter.next();
             Map<String, Object> stateValues = new HashMap<>();
-    
+
             stateValues.putAll(devices.get(deviceId));
-    
+
             // `currentModeSettings` 값 처리
             if (stateValues.containsKey("currentModeSettings")) {
                 Object currentModeSettings = stateValues.get("currentModeSettings");
                 try {
                     if (currentModeSettings instanceof JSONObject) {
                         // JSONObject를 Map으로 변환
-                        Map<String, Object> parsedSettings = new ObjectMapper().readValue(currentModeSettings.toString(), Map.class);
+                        Map<String, Object> parsedSettings = new ObjectMapper()
+                                .readValue(currentModeSettings.toString(), Map.class);
                         stateValues.put("currentModeSettings", parsedSettings);
                     } else if (currentModeSettings instanceof String) {
                         // 문자열 JSON 처리
-                        Map<String, Object> parsedSettings = new ObjectMapper().readValue((String) currentModeSettings, Map.class);
+                        Map<String, Object> parsedSettings = new ObjectMapper().readValue((String) currentModeSettings,
+                                Map.class);
                         stateValues.put("currentModeSettings", parsedSettings);
                     } else if (!(currentModeSettings instanceof Map)) {
                         log.warn("Unexpected currentModeSettings type: {}", currentModeSettings.getClass());
                         stateValues.put("currentModeSettings", Map.of());
                     }
                 } catch (Exception e) {
-                    log.error("Failed to parse currentModeSettings for deviceId {}: {}", deviceId, currentModeSettings, e);
+                    log.error("Failed to parse currentModeSettings for deviceId {}: {}", deviceId, currentModeSettings,
+                            e);
                     stateValues.put("currentModeSettings", Map.of());
                 }
             }
-    
+
             // 불필요한 필드 제거
             stateValues.remove("status");
             stateValues.remove("updateModeSettings");
             stateValues.remove("fanSpeed");
             stateValues.remove("temperature");
-    
+
             states.put(deviceId, stateValues);
         }
-    
+
         System.out.println(states);
         System.out.println(JSON.toJson(states));
-    
+
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(requestId)
                 .agentUserId(agentUserId)
@@ -567,12 +587,12 @@ public class FulfillmentService {
                                 .build())
                         .build())
                 .build();
-    
+
         String googleOuath2AccessToken = accessTokenRequester.getToken();
         String baseUrl = "https://homegraph.googleapis.com";
         String uri = baseUrl + "/v1/devices:reportStateAndNotification";
         log.info("baseUrl:{}", uri);
-    
+
         // WebClient를 통한 Google Home Graph API 요청
         WebClientUtils.getSslClient(baseUrl, MediaType.APPLICATION_JSON_VALUE, HttpMethod.POST, googleOuath2AccessToken)
                 .uri(uri)
@@ -593,7 +613,6 @@ public class FulfillmentService {
                     }
                 });
     }
-    
 
     public void updateDeviceState(String userId, String deviceId, String attribute, Object value) {
         log.info("Updating device state for UserId: {}, DeviceId: {}, Attribute: {}, Value: {}", userId, deviceId,
