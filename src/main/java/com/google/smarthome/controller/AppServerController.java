@@ -121,7 +121,10 @@ public class AppServerController {
         String url = "https://homegraph.googleapis.com/v1/devices:requestSync";
 
         try {
-            Map<String, Object> payload = Map.of("agentUserId", agentUserId);
+            Map<String, Object> payload = Map.of(
+                "agentUserId", agentUserId,
+                "async", false
+                );
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(payload);
 
@@ -155,7 +158,6 @@ public class AppServerController {
                 .payload(ReportStatusResult.Request.Payload.builder()
                         .devices(ReportStatusResult.Request.Payload.Device.builder()
                                 .states(deviceStates)
-                                .notifications(deviceStates)
                                 .build())
                         .build())
                 .build();
