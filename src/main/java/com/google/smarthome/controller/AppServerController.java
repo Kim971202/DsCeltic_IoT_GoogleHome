@@ -84,8 +84,8 @@ public class AppServerController {
                 result.getDeviceId(), Map.of(
                         "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
                         "online", true,
-                        "temperatureAmbientCelsius", Float.parseFloat(result.getCurrentTemp()),
-                        "temperatureSetpointCelsius", Float.parseFloat(result.getTempStatus()),
+                        "temperatureAmbientCelsius", Double.parseDouble(result.getCurrentTemp()),
+                        "temperatureSetpointCelsius", Double.parseDouble(result.getTempStatus()),
                         "on", powerOnOff));
 
         log.info("Constructed device state: " + deviceStates);
