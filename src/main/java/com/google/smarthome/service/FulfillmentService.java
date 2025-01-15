@@ -592,6 +592,7 @@ public class FulfillmentService {
         tokenRequester.request();
         String token = tokenRequester.getToken();
         log.info("sendDataBasedOnQueryResult Token: " + token);
+        
         String baseUrl = "https://homegraph.googleapis.com";
         String uri = baseUrl + "/v1/devices:reportStateAndNotification";
         log.info("baseUrl:{}", uri);

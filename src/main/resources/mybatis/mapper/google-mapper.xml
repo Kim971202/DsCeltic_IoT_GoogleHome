@@ -7,10 +7,10 @@
     <select id="getInfoByDeviceId" parameterType="String" resultMap="google">
         SELECT
             a.POWR AS powrStatus,
-            a.HTTP AS tempStatus,
+            a.WTTP AS tempStatus, <!-- HTTP-->
             a.DEVC_ID AS deviceId,
             a.OPMD AS modeValue,
-            a.CHTP AS currentTemp,
+            a.CWTP AS currentTemp, <!-- CWTP-->
             b.USER_ID AS userId
         FROM
             TBR_OPR_DEVICE_STATUS a
@@ -26,7 +26,7 @@
         UPDATE
             TBR_OPR_DEVICE_STATUS
         <set>
-            <if test="tempStatus != null">HTTP = #{tempStatus},</if>
+            <if test="tempStatus != null">WTTP = #{tempStatus},</if> <!-- HTTP-->
             <if test="powrStatus != null">POWR = #{powrStatus},</if>
             <if test="modeValue != null">OPMD = #{modeValue},</if>
             <if test="sleepCode != null">SLCD = #{sleepCode},</if>
