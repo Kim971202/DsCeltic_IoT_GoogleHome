@@ -76,15 +76,6 @@ public class AppServerController {
         }
         log.info("Retrieved state from DB: " + result);
 
-        // 상태 전송 주기 확인
-        Instant now = Instant.now();
-        if (Duration.between(lastReportTime, now).getSeconds() < REPORT_INTERVAL_SECONDS) {
-            log.warn("Skipping state report. Last report was less than " + REPORT_INTERVAL_SECONDS + " seconds ago.");
-            return;
-        }
-        lastReportTime = now;
-
-
         // 기기 상태 생성
         boolean powerOnOff = "on".equals(result.getPowrStatus());
         Map<String, Object> deviceStates = Map.of(
