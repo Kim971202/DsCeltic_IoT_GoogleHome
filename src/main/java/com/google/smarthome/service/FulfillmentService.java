@@ -88,7 +88,7 @@ public class FulfillmentService {
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureUnitForUX", "C")
                         .put("temperatureRange", new JSONObject()
-                                .put("minThresholdCelsius", 10)
+                                .put("minThresholdCelsius", 40)
                                 .put("maxThresholdCelsius", 80))
                         .put("availableModes", availableModes);
 
@@ -592,7 +592,7 @@ public class FulfillmentService {
         tokenRequester.request();
         String token = tokenRequester.getToken();
         log.info("sendDataBasedOnQueryResult Token: " + token);
-        
+
         String baseUrl = "https://homegraph.googleapis.com";
         String uri = baseUrl + "/v1/devices:reportStateAndNotification";
         log.info("baseUrl:{}", uri);
