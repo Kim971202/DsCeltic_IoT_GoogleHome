@@ -6,10 +6,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -89,10 +91,14 @@ public class AppServerController {
         log.info("Constructed device state: " + deviceStates);
 
         // Google에 상태 보고
-        reportDeviceState(accessToken, "yohan2025", deviceStates);
+        // reportDeviceState(accessToken, "yohan2025", deviceStates);
 
         // Google과 동기화 요청
         // requestSync(accessToken, "yohan2025");
+
+        // Google과 동기화 요청
+        List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
+        devicesQuery(accessToken, "yohan2025", deviceIds);
     }
 
     private String getTokeString() {
@@ -104,6 +110,55 @@ public class AppServerController {
             return token;
         } catch (Exception e) {
             log.error("Error retrieving access token: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public String devicesQuery(String accessToken, String agentUserId, List<String> deviceIds) {
+
+        String QUERY_URL = "https://homegraph.googleapis.com/v1/devices:query";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // 요청 본문 생성
+            Map<String, Object> payload = Map.of(
+                "requestId", java.util.UUID.randomUUID().toString(),
+                "agentUserId", agentUserId,
+                "inputs", List.of(Map.of(
+                    "payload", Map.of(
+                        "devices", deviceIds.stream()
+                            .map(id -> Map.of("id", id))
+                            .collect(Collectors.toList()) // Updated for Java 8 compatibility
+                    )
+                ))
+            );
+
+            String requestBody = objectMapper.writeValueAsString(payload);
+
+            // HTTP 요청 생성
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(QUERY_URL))
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+            // HTTP 클라이언트 생성 및 요청 전송
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // 응답 반환
+            if (response.statusCode() == 200) {
+                System.out.println("Query Response: " + response.body());
+                return response.body();
+            } else {
+                System.err.println("Query failed. Status Code: " + response.statusCode());
+                System.err.println("Response: " + response.body());
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error during devices.query: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
