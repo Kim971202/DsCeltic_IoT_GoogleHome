@@ -91,10 +91,10 @@ public class AppServerController {
         log.info("Constructed device state: " + deviceStates);
 
         // Google에 상태 보고
-        // reportDeviceState(accessToken, "yohan2025", deviceStates);
+        reportDeviceState(accessToken, "yohan2025", deviceStates);
 
         // Google과 동기화 요청
-        // requestSync(accessToken, "yohan2025");
+        requestSync(accessToken, "yohan2025");
 
         // Google과 동기화 요청
         List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
