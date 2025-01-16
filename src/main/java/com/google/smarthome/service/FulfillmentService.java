@@ -388,7 +388,7 @@ public class FulfillmentService {
         deviceStatus.setDeviceId(deviceId);
         deviceStatus.setTempStatus(String.valueOf(temperature));
         googleMapper.updateDeviceStatus(deviceStatus);
-        handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), "htTp");
+        handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), "wtTp"); //htTp
     }
 
     // 모드 설정 명령
@@ -456,7 +456,7 @@ public class FulfillmentService {
                     { "02", "온돌난방", "Heating_Water_Temperature" },
                     { "03", "외출", "Away" },
                     { "05", "절약난방", "Economy_Heating" },
-                    { "061", "취침", "Sleep1" },
+//                    { "061", "취침", "Sleep1" },
                     { "07", "온수전용모드", "Hot_Water_Only" }
             };
         } else {
