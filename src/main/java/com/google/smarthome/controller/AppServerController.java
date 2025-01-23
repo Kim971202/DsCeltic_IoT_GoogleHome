@@ -44,9 +44,6 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AppServerController {
 
-    private static final long REPORT_INTERVAL_SECONDS = 30; // 상태 보고 주기: 30초
-    private Instant lastReportTime = Instant.MIN;
-
     @Autowired
     private Common common;
 
@@ -68,9 +65,12 @@ public class AppServerController {
         // deviceId 추출
         String deviceId = common.readCon(jsonBody, "deviceId");
         log.info("Extracted deviceId: " + deviceId);
+
+        // 해당 device가 구글에 등록된 Device 인지 확인 하는 로직
         if(!deviceId.equals("0.2.481.1.1.2045534365636f313353.20202020413445353743333042304141")){
             return;
         }
+
         // DB에서 기기 상태 가져오기
         log.info("Querying device state from DB for deviceId: " + deviceId);
         GoogleDTO result = googleMapper.getInfoByDeviceId(deviceId);
@@ -99,12 +99,6 @@ public class AppServerController {
 
         // Google과 동기화 요청
         requestSync(accessToken, "yohan2025");
-
-        // Google과 동기화 요청
-        // List<String> deviceIds = deviceStates.keySet().stream().collect(Collectors.toList());
-        // devicesQuery(accessToken, "yohan2025", deviceIds);
-
-        // devicesSync(accessToken, "yohan2025");
     }
 
     private String getTokeString() {
@@ -272,144 +266,3 @@ public class AppServerController {
                 });
     }
 }
-
-// public class AppServerController {
-
-// @Autowired
-// private Common common;
-
-// @Autowired
-// private GoogleMapper googleMapper;
-
-// @PostMapping(value = "/AppServerToGoogle")
-// @ResponseBody
-// public void receiveCin(@RequestBody String jsonBody) throws Exception{
-// log.info("AppServer Received JSON: " + jsonBody);
-
-// String accessToken = getTokeString();
-
-// String deviceId = common.readCon(jsonBody, "deviceId");
-// log.info("Extracted deviceId: " + deviceId);
-
-// GoogleDTO result = new GoogleDTO();
-// result = googleMapper.getInfoByDeviceId(deviceId);
-// boolean powerOnOff = "on".equals(result.getPowrStatus());
-// log.info("Device power status: " + result.getPowrStatus());
-
-// Map<String, Object> deviceStates = Map.of(
-// result.getDeviceId(), Map.of(
-// "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
-// "online", true,
-// "temperatureAmbientCelsius", Float.parseFloat(result.getCurrentTemp()),
-// "temperatureSetpointCelsius", Float.parseFloat(result.getTempStatus()),
-// "on", powerOnOff));
-
-// // Log the constructed device state
-// log.info("Constructed device state: " + deviceStates);
-
-// // Request Google to sync devices
-// requestSync(accessToken, "yohan2025");
-
-// // Report device state to Google
-// reportDeviceState(accessToken, "yohan2025", deviceStates);
-// }
-
-// private String getTokeString(){
-// // AcessTokenRequester 인스턴스 생성 및 호출
-// AcessTokenRequester tokenRequester = new AcessTokenRequester();
-// tokenRequester.request(); // 토큰 요청
-// String token = tokenRequester.getToken(); // 토큰 가져오기
-// System.out.println("Access Token: " + token); // 토큰 출력
-// return token;
-// }
-
-// public void requestSync(String googleOAuth2AccessToken, String agentUserId) {
-// String url = "https://homegraph.googleapis.com/v1/devices:requestSync";
-
-// try {
-// // RequestSync Payload
-// Map<String, Object> payload = Map.of("agentUserId", agentUserId);
-
-// // JSON 변환
-// ObjectMapper objectMapper = new ObjectMapper();
-// String requestBody = objectMapper.writeValueAsString(payload);
-
-// // HTTP 요청 생성
-// HttpRequest request = HttpRequest.newBuilder()
-// .uri(URI.create(url))
-// .header("Authorization", "Bearer " + googleOAuth2AccessToken)
-// .header("Content-Type", "application/json")
-// .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-// .build();
-
-// // 요청 보내기
-// HttpClient client = HttpClient.newHttpClient();
-// HttpResponse<String> response = client.send(request,
-// HttpResponse.BodyHandlers.ofString());
-
-// // 응답 처리
-// if (response.statusCode() == 200) {
-// System.out.println("RequestSync called successfully: " + response.body());
-// } else {
-// System.err.println("RequestSync failed. Status Code: " +
-// response.statusCode());
-// System.err.println("Response: " + response.body());
-// }
-// } catch (Exception e) {
-// System.err.println("Error requesting sync: " + e.getMessage());
-// e.printStackTrace();
-// }
-// }
-
-// public void reportDeviceState(String googleOAuth2AccessToken, String
-// agentUserId, Map<String, Object> deviceStates) {
-// String url =
-// "https://homegraph.googleapis.com/v1/devices:reportStateAndNotification";
-
-// // Payload structure
-// // ReportStatusResult 객체 생성
-// ReportStatusResult.Request reportStatusResult =
-// ReportStatusResult.Request.builder()
-// .requestId(UUID.randomUUID().toString())
-// .agentUserId(agentUserId)
-// .payload(ReportStatusResult.Request.Payload.builder()
-// .devices(ReportStatusResult.Request.Payload.Device.builder()
-// .states(deviceStates)
-// .build())
-// .build())
-// .build();
-
-// try {
-// ObjectMapper objectMapper = new ObjectMapper();
-// String requestBody = objectMapper.writeValueAsString(reportStatusResult);
-
-// log.info("Sending ReportStatusResult request:");
-// log.info("URL: " + url);
-// log.info("Headers: Authorization=Bearer " + googleOAuth2AccessToken + ",
-// Content-Type=application/json");
-// log.info("Body: " + requestBody);
-
-// HttpRequest request = HttpRequest.newBuilder()
-// .uri(URI.create(url))
-// .header("Authorization", "Bearer " + googleOAuth2AccessToken)
-// .header("Content-Type", "application/json")
-// .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-// .build();
-
-// HttpClient client = HttpClient.newHttpClient();
-// HttpResponse<String> response = client.send(request,
-// HttpResponse.BodyHandlers.ofString());
-
-// if (response.statusCode() == 200) {
-// log.info("Device state updated successfully: " + response.body());
-// } else {
-// log.error("Failed to update device state. Status Code: " +
-// response.statusCode());
-// log.error("Response: " + response.body());
-// }
-// } catch (Exception e) {
-// log.error("Error reporting device state: " + e.getMessage(), e);
-// }
-// }
-
-// }
