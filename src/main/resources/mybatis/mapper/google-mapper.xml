@@ -75,7 +75,8 @@
         UPDATE
             TBR_OPR_ACCOUNT
         SET
-            GOOGLE_STATE = #{googleState}
+            GOOGLE_STATE = #{googleState},
+            GOOGLE_HOME_STATUS = '00'
         WHERE
             USER_ID = #{userId}
     </update>
