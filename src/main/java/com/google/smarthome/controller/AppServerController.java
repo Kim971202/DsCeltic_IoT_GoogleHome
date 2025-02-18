@@ -67,7 +67,9 @@ public class AppServerController {
         log.info("Extracted deviceId: " + deviceId);
 
         // TBR_OPR_ACCOUNT 테이블의 GOOGLE_HOME_STATUS가 00인 사용자의 기기만 허용
-        googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount();
+        System.out.println("googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount(): " + 
+        googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount());
+        
         if(googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount().equals("0")){
             log.info("등록되지 않은 기기 입니다 => " + deviceId);
             return;
