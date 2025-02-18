@@ -35,6 +35,7 @@ public class GoogleDTO implements Serializable {
 
     private String deviceId;
     private String deviceModelCode;
+    private String deviceCount;
 
     // Method to convert single deviceId to a list
     public List<String> getDeviceIds() {

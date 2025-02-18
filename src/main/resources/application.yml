@@ -3,7 +3,8 @@ spring:
     static-path-pattern: /**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.31.50.223:3306/ds_iot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    # url: jdbc:mysql://172.31.50.223:3306/ds_iot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://3.37.23.88:3306/ds_iot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: dsiotAppServer
     password: bZGPt9zQZ7aAtv+T]6}(*EfDONfO.R
 server:

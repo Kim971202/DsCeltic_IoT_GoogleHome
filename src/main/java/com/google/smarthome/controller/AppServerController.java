@@ -66,8 +66,10 @@ public class AppServerController {
         String deviceId = common.readCon(jsonBody, "deviceId");
         log.info("Extracted deviceId: " + deviceId);
 
-        // 해당 device가 구글에 등록된 Device 인지 확인 하는 로직
-        if(!deviceId.equals("0.2.481.1.1.2045534365636f313353.20202020413445353743333042304141")){
+        // TBR_OPR_ACCOUNT 테이블의 GOOGLE_HOME_STATUS가 00인 사용자의 기기만 허용
+        googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount();
+        if(googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount().equals("0")){
+            log.info("등록되지 않은 기기 입니다 => " + deviceId);
             return;
         }
 

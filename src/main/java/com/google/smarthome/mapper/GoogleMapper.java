@@ -15,4 +15,5 @@ public interface GoogleMapper {
     public GoogleDTO getAccountByUserId(String userId);
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
     public GoogleDTO getNicknameByDeviceId(GoogleDTO params);
+    public GoogleDTO checkGoogleRegistDevice(String deviceId);
 }
