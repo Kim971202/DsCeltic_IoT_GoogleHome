@@ -35,7 +35,6 @@ public class AuthorizationController {
     @Autowired
     RedisCommand redisCommand;
 
-
     @GetMapping("/oauth2/authorize")
     public String authorize(
             HttpServletRequest request,
@@ -53,15 +52,15 @@ public class AuthorizationController {
         cookieStorage.setCookie(request, "state", state, response);
         cookieStorage.setCookie(request, "redirect_uri", redirectUri, response);
 
-//        return "redirect:/access/home.html";
+        // return "redirect:/access/home.html";
         return "redirect:/access/googleLogin.html";
     }
 
     @GetMapping("/access/authorization_code")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public String authorizationCode(HttpServletRequest request,
-                                    @RequestParam(name = "username", required = false) String username,
-                                    @RequestParam(name = "password", required = false) String password) throws Exception {
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "password", required = false) String password) throws Exception {
 
         log.info("@GetMapping({\"/authorization_code\"})\n");
 
@@ -73,20 +72,22 @@ public class AuthorizationController {
         final String authorizationCode = UUID.randomUUID().toString();
         log.info("authorizationCode:{}", authorizationCode);
 
-       GoogleDTO googleDTO = new GoogleDTO();
-       googleDTO.setUserId(username);
-       googleDTO.setGoogleState(state);
-       googleMapper.updateGoogleAuthInfo(googleDTO);
-
+        GoogleDTO googleDTO = new GoogleDTO();
+        googleDTO.setUserId(username);
+        googleDTO.setGoogleState(state);
+        System.out.println("googleDTO.getUserId(): " + googleDTO.getUserId());
+        System.out.println("googleDTO.getGoogleState(): " + googleDTO.getGoogleState());
+        // googleMapper.updateGoogleAuthInfo(googleDTO);
+        System.out.println("googleMapper.updateGoogleAuthInfo(googleDTO): " + googleMapper.updateGoogleAuthInfo(googleDTO));;
         redisCommand.setValues(authorizationCode, username);
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 
-         log.info("redirectUrl:{}", redirectUrl);
-         return "redirect:" + redirectUrl;
-     }
+        log.info("redirectUrl:{}", redirectUrl);
+        return "redirect:" + redirectUrl;
+    }
 
-     /**
+    /**
      * Authorization 코드 요청에 의한 엑세스 토큰 발급
      */
     @ResponseBody
@@ -119,9 +120,11 @@ public class AuthorizationController {
         log.info("String getToken(MultiValueMap<String, String> params)");
 
         try {
-            Map<String,String> response = restTemplate.postForObject("https://daesungiot.co.kr" + "/oauth/token", params, Map.class);
+            Map<String, String> response = restTemplate.postForObject("https://daesungiot.co.kr" + "/oauth/token",
+                    params, Map.class);
             log.info("app /oauth/token response: {}", JSON.toJson(response, true));
-            if(response != null) return response.get("access_token");
+            if (response != null)
+                return response.get("access_token");
         } catch (Exception e) {
             log.error("", e);
         }
@@ -147,7 +150,8 @@ public class AuthorizationController {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity,
+                String.class);
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             // 액세스 토큰 처리
