@@ -16,12 +16,11 @@ logging:
   file:
     path: /app/logs
   level:
-    root: INFO                  # 기본 로그 레벨을 INFO로 설정
-    org.springframework: WARN   # Spring 관련 로그를 WARN으로 설정
-    org.hibernate: ERROR        # Hibernate 관련 로그를 ERROR로 설정
-    com.zaxxer.hikari: ERROR    # Hikari 관련 로그를 ERROR로 설정
-    org.apache.ibatis: DEBUG    # MyBatis 관련 로그를 ERROR로 설정
-    org.mybatis: DEBUG
+    root: INFO
+    org.mybatis: WARN
+    org.apache.ibatis: WARN
+    org.mybatis.spring: WARN
+    com.google.smarthome: INFO
 
 redis:
   host: ${SPRING_REDIS_HOST:localhost}
