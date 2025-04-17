@@ -1,4 +1,8 @@
 spring:
+  application:
+    name: smarthome          # 애플리케이션 이름 설정 (콘솔 패턴에 사용)
+  main:
+    banner-mode: off         # Spring Boot 배너 비활성화
   mvc:
     static-path-pattern: /**
   datasource:
@@ -7,20 +11,25 @@ spring:
     url: jdbc:mysql://3.37.23.88:3306/ds_iot?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: dsiotAppServer
     password: bZGPt9zQZ7aAtv+T]6}(*EfDONfO.R
+
 server:
   port: 8888
+
 mybatis:
   config-location: classpath:mybatis-config.xml
 
 logging:
   file:
     path: /app/logs
+  pattern:
+    console: "${spring.application.name}  | %d{yyyy-MM-dd HH:mm:ss} - %msg%n"
   level:
-    root: INFO
-    org.mybatis: WARN
-    org.apache.ibatis: WARN
-    org.mybatis.spring: WARN
-    com.google.smarthome: INFO
+    root: WARN                             # 전체 WARN/ERROR 이상만
+    org.springframework: WARN              # 스프링 프레임워크 WARN/ERROR
+    org.springframework.boot: WARN         # 스프링 부트 WARN/ERROR
+    org.mybatis.spring: DEBUG              # MyBatis‑Spring DEBUG
+    org.apache.ibatis: DEBUG               # MyBatis core DEBUG
+    com.google.smarthome: INFO             # 애플리케이션 자체 로그 INFO 이상
 
 redis:
   host: ${SPRING_REDIS_HOST:localhost}
@@ -38,7 +47,7 @@ custom:
       project_id: dsiot-52315
       client_id: 505891126739-acrkfeg05di1guvb6bpunj3cofb1lp41.apps.googleusercontent.com
       client_secret: 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
-      #초단위(48시간)
+      # 초단위(48시간)
       expires: 172800
-      #초단위(24시간)
-#      expires: 86400
+      # 초단위(24시간)
+      # expires: 86400
