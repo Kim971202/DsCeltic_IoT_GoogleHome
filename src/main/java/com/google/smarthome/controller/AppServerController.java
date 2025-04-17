@@ -71,7 +71,7 @@ public class AppServerController {
         googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount());
         
         if(googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount().equals("0")){
-            log.info("등록되지 않은 기기 입니다 => " + deviceId);
+//            log.info("등록되지 않은 기기 입니다 => " + deviceId);
             return;
         }
 
