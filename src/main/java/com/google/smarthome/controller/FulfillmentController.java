@@ -46,7 +46,7 @@ public class FulfillmentController {
 
         String realUserId = googleMapper.getUserIdByAuthorizationCode(googleAuth).getUserId();
         List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
-        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(realUserId);
+        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(householdList);
 
 
         for(GoogleDTO googleDTO : devices){
