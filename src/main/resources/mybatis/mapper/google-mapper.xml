@@ -131,7 +131,7 @@
         SELECT
             GRP_ID AS groupId
         FROM
-            TBR_OPR_ACCOUNT
+            TBD_USER_INVITE_GROUP
         WHERE
             USER_ID = #{userId}
     </select>
