@@ -45,7 +45,7 @@
             USER_ID = #{userId}
     </select>
 
-    <select id="getDeviceIdByUserId" parameterType="String" resultMap="google">
+    <select id="getDeviceIdByUserId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
         SELECT
             a.USER_ID AS userId,
             a.DEVC_ID AS deviceId,
