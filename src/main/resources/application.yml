@@ -21,6 +21,7 @@ logging:
     org.hibernate: ERROR  # Hibernate 관련 로그를 ERROR로 설정
     com.zaxxer.hikari: ERROR  # Hikari 관련 로그를 ERROR로 설정
     org.apache.ibatis: ERROR  # MyBatis 관련 로그를 ERROR로 설정
+    org.mybatis: DEBUG
 
 redis:
   host: ${SPRING_REDIS_HOST:localhost}
