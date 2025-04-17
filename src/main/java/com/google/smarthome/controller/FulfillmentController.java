@@ -61,7 +61,7 @@ public class FulfillmentController {
         }
 
         devices.forEach(device -> log.info("Device for userId {}: DeviceId: {}, DeviceModelCode: {}",
-                userId, device.getDeviceId(), device.getDeviceModelCode()));
+                device.getUserId(), device.getDeviceId(), device.getDeviceModelCode()));
 
         JSONObject requestBody = new JSONObject(request);
         String intent = requestBody.getJSONArray("inputs").getJSONObject(0).getString("intent");

@@ -123,7 +123,6 @@ public class FulfillmentService {
 
             // GoogleDTO에서 기기 닉네임 가져오기
             GoogleDTO params = new GoogleDTO();
-            params.setUserId(userId);
             params.setDeviceId(deviceId);
             GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 

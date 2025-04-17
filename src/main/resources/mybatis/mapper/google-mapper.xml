@@ -70,8 +70,6 @@
             TBT_OPR_DEVICE_REGIST
         WHERE
             DEVC_ID = #{deviceId}
-        AND
-            USER_ID = #{userId}
     </select>
 
     <update id="updateGoogleAuthInfo" parameterType="com.google.smarthome.dto.GoogleDTO">
