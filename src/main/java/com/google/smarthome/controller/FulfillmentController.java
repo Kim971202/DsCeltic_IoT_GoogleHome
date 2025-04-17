@@ -50,7 +50,7 @@ public class FulfillmentController {
             System.out.println("googleDTO.getDeviceId(): " + googleDTO.getDeviceId());
         }
 
-        if (devices == null || devices.isEmpty()) {
+        if (devices.isEmpty()) {
             log.error("No devices found for userId: " + userId);
             return new JSONObject().put("error", "No devices found").toString();
         }
@@ -94,6 +94,7 @@ public class FulfillmentController {
         }
         return response.toString();
     }
+
     private QueryResult.Response prepareQueryResponse(JSONObject requestBody, JSONObject queryResponse) {
         QueryResult.Response response = new QueryResult.Response();
         response.setRequestId(requestBody.getString("requestId"));

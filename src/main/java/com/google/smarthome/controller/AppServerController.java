@@ -98,11 +98,12 @@ public class AppServerController {
 
         log.info("Constructed device state: " + deviceStates);
 
+        // 세대주
         // Google에 상태 보고
-        reportDeviceState(accessToken, "yohan1202", deviceStates);
+        reportDeviceState(accessToken, "AllUserName", deviceStates);
 
         // Google과 동기화 요청
-        requestSync(accessToken, "yohan1202");
+        requestSync(accessToken, "AllUserName");
     }
 
     private String getTokeString() {

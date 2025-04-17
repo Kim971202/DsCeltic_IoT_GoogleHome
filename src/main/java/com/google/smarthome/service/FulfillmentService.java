@@ -59,7 +59,8 @@ public class FulfillmentService {
         response.put("requestId", requestBody.getString("requestId"));
 
         JSONObject payload = new JSONObject();
-        payload.put("agentUserId", userId);
+//        payload.put("agentUserId", userId);
+        payload.put("agentUserId", "AllUserName");
 
         JSONArray devices = new JSONArray();
 
@@ -580,7 +581,8 @@ public class FulfillmentService {
 
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(requestId)
-                .agentUserId(agentUserId)
+//                .agentUserId(agentUserId)
+                .agentUserId("AllUserName")
                 .payload(ReportStatusResult.Request.Payload.builder()
                         .devices(ReportStatusResult.Request.Payload.Device.builder()
                                 .states(states)

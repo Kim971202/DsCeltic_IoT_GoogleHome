@@ -78,8 +78,10 @@ public class AuthorizationController {
         System.out.println("googleDTO.getUserId(): " + googleDTO.getUserId());
         System.out.println("googleDTO.getGoogleState(): " + googleDTO.getGoogleState());
         // googleMapper.updateGoogleAuthInfo(googleDTO);
-        System.out.println("googleMapper.updateGoogleAuthInfo(googleDTO): " + googleMapper.updateGoogleAuthInfo(googleDTO));;
-        redisCommand.setValues(authorizationCode, username);
+        System.out.println("googleMapper.updateGoogleAuthInfo(googleDTO): " + googleMapper.updateGoogleAuthInfo(googleDTO));
+
+//        redisCommand.setValues(authorizationCode, username);
+        redisCommand.setValues(authorizationCode, "AllUserName");
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 
