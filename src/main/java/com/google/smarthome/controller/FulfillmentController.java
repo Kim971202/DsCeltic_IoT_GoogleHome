@@ -48,6 +48,7 @@ public class FulfillmentController {
         List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
         List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(householdList);
 
+        System.out.println(devices);
 
         for(GoogleDTO googleDTO : devices){
             System.out.println("googleDTO.getDeviceId(): " + googleDTO.getDeviceId());
