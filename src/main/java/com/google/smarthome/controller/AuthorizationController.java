@@ -75,11 +75,9 @@ public class AuthorizationController {
         GoogleDTO googleDTO = new GoogleDTO();
         googleDTO.setUserId(username);
         googleDTO.setGoogleState(state);
-        System.out.println("googleDTO.getUserId(): " + googleDTO.getUserId());
-        System.out.println("googleDTO.getGoogleState(): " + googleDTO.getGoogleState());
-        // googleMapper.updateGoogleAuthInfo(googleDTO);
-        System.out.println("googleMapper.updateGoogleAuthInfo(googleDTO): " + googleMapper.updateGoogleAuthInfo(googleDTO));
-
+        googleDTO.setAuthorizationCode(authorizationCode);
+        googleMapper.updateGoogleAuthInfo(googleDTO);
+        googleMapper.updateUserAuthInfo(googleDTO);
 //        redisCommand.setValues(authorizationCode, username);
         redisCommand.setValues(authorizationCode, "AllUserName");
 

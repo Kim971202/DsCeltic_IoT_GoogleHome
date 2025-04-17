@@ -44,7 +44,10 @@ public class FulfillmentController {
         String userId = redisCommand.getValues(googleAuth);
         log.info("userId: " + userId);
 
-        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(userId);
+        String realUserId = googleMapper.getUserIdByAuthorizationCode(googleAuth).getUserId();
+        List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
+        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(realUserId);
+
 
         for(GoogleDTO googleDTO : devices){
             System.out.println("googleDTO.getDeviceId(): " + googleDTO.getDeviceId());
