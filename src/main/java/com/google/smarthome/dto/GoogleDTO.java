@@ -20,6 +20,8 @@ public class GoogleDTO implements Serializable {
     private String tempStatus;
     private String currentTemp;
 
+    private String online;
+
     // User
     private String userId;
     private String groupId;

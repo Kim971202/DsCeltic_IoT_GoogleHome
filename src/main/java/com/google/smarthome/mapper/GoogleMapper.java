@@ -16,6 +16,7 @@ public interface GoogleMapper {
     public GoogleDTO getUserIdByAuthorizationCode(String authorizationCode);
     public GoogleDTO getAccountByUserId(String userId);
     public GoogleDTO getNicknameByDeviceId(GoogleDTO params);
+    public GoogleDTO getOnlineStatus();
     public GoogleDTO checkGoogleRegistDevice(String deviceId);
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
     public List<GoogleDTO> getGroupIdByUserId(String userId);

@@ -131,4 +131,10 @@
             USER_ID = #{userId}
     </select>
 
+    <select id="getOnlineStatus" resultMap="google">
+        SELECT
+            ON_LINE AS online
+        FROM
+            GOOGLE_TEST_TABLE
+    </select>
 </mapper>

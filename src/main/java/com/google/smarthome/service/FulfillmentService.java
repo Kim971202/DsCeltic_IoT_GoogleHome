@@ -284,7 +284,9 @@ public class FulfillmentService {
                                 case "action.devices.commands.SetTemperature":
                                     double setTemp = execCommand.getJSONObject("params").getDouble("temperature");
                                     handleTemperatureSetpoint(deviceId, setTemp);
-                                    states.put("online", true);
+                                    boolean online;
+                                    online = googleMapper.getOnlineStatus().getOnline().equals("true");
+                                    states.put("online", online);
                                     states.put("thermostatTemperatureSetpoint", setTemp);
                                     break;
 
@@ -428,7 +430,9 @@ public class FulfillmentService {
 
             // Populate deviceState
             deviceState.put("on", deviceOnOff); // The device is ON
-            deviceState.put("online", true);
+            boolean online;
+            online = googleMapper.getOnlineStatus().getOnline().equals("true");
+            deviceState.put("online", online);
             deviceState.put("onlineStatusDetails", "OK");
             deviceState.put("currentModeSettings", currentModeSettings);
             deviceState.put("temperatureAmbientCelsius",
