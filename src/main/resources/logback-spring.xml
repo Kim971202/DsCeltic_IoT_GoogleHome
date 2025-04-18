@@ -1,28 +1,36 @@
 <configuration>
-    <!-- 콘솔 로그 -->
+
+    <!-- 공통: 콘솔 Appender 정의 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 파일 로그: 날짜별 로그 분리 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/app/logs/application.log</file> <!-- 기본 로그 파일 경로 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 날짜별로 로그 파일 생성 -->
-            <fileNamePattern>/app/logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 로그 보관 기간 (1년 보관) -->
-            <maxHistory>365</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <!-- 운영·개발 환경 (test 프로파일이 아닐 때) 에만 파일 Appender 활성화 -->
+    <springProfile name="!test">
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/app/logs/application.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/app/logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>365</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
 
-    <!-- Logger 설정 -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- 테스트 환경 (test 프로파일일 때) 에는 콘솔만 -->
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
 </configuration>
