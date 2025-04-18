@@ -430,8 +430,7 @@ public class FulfillmentService {
 
             // Populate deviceState
             deviceState.put("on", deviceOnOff); // The device is ON
-            boolean online;
-            online = googleMapper.getOnlineStatus().getOnline().equals("true");
+            boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
             deviceState.put("online", online);
             deviceState.put("onlineStatusDetails", "OK");
             deviceState.put("currentModeSettings", currentModeSettings);

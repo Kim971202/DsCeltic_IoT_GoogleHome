@@ -82,13 +82,13 @@ public class AppServerController {
             return;
         }
         log.info("Retrieved state from DB: " + result);
-
+        boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
         // 기기 상태 생성
         boolean powerOnOff = "on".equals(result.getPowrStatus());
         Map<String, Object> deviceStates = Map.of(
                 result.getDeviceId(), Map.of(
                         "currentModeSettings", Map.of("mode_boiler", result.getModeValue()),
-                        "online", true,
+                        "online", online,
                         "temperatureAmbientCelsius",
                         Double.parseDouble(String.format("%.1f", Double.parseDouble(result.getCurrentTemp()))),
                         "temperatureSetpointCelsius",
