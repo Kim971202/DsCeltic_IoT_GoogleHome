@@ -98,7 +98,6 @@ public class AppServerController {
 
         log.info("Constructed device state: " + deviceStates);
 
-        // 세대주
         // Google에 상태 보고
         reportDeviceState(accessToken, "yohan1202", deviceStates);
 
@@ -220,6 +219,7 @@ public class AppServerController {
                     .build();
 
             HttpClient client = HttpClient.newHttpClient();
+            System.out.println(request);
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
