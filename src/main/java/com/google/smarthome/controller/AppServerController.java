@@ -210,6 +210,7 @@ public class AppServerController {
             Map<String, Object> payload = Map.of("agentUserId", agentUserId);
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(payload);
+            System.out.println(requestBody);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
