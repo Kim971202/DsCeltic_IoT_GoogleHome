@@ -409,7 +409,7 @@ public class FulfillmentService {
 
     public JSONObject handleQuery(JSONObject requestBody, List<String> deviceIds) {
         log.info("handleQuery CALLED");
-        log.info("requestBody: " + requestBody);
+        log.info("requestBody: {}", requestBody);
 
         // Create the response and add requestId first
         JSONObject response = new JSONObject();
@@ -420,26 +420,38 @@ public class FulfillmentService {
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
 
-        for (String deviceId : deviceIds) {
-            deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+        // Extract the devices array from the request payload
+        JSONArray inputs = requestBody.getJSONArray("inputs");
+        JSONObject input0 = inputs.getJSONObject(0);
+        JSONObject requestPayload = input0.getJSONObject("payload");
+        JSONArray requestDevices = requestPayload.getJSONArray("devices");
 
+        // Iterate over deviceIds in order
+        for (int i = 0; i < deviceIds.size(); i++) {
+            String deviceId = deviceIds.get(i);
+
+            // Corresponding request device object
+            JSONObject reqDev = requestDevices.getJSONObject(i);
+            JSONObject customData = reqDev.getJSONObject("customData");
+
+            // Parse customData values
+            boolean online = customData.optBoolean("online", false);
+            boolean deviceOnOff = customData.optBoolean("powerStatus", false);
+            double ambient = customData.optDouble("ambientTemperature", 0.0);
+            double setpoint = customData.optDouble("setpointTemperature", 0.0);
+            String mode = customData.optString("currentMode", "");
+
+            // Build state
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
-            currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
-            // currentModeSettings.put("mode_boiler", "외출모드");
+            currentModeSettings.put("mode_boiler", mode);
 
-            boolean deviceOnOff = deviceStatus.getPowrStatus().equals("on");
-
-            // Populate deviceState
-            deviceState.put("on", deviceOnOff); // The device is ON
-            boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
+            deviceState.put("on", deviceOnOff);
             deviceState.put("online", online);
             deviceState.put("onlineStatusDetails", "OK");
             deviceState.put("currentModeSettings", currentModeSettings);
-            deviceState.put("temperatureAmbientCelsius",
-                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
-            deviceState.put("temperatureSetpointCelsius",
-                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
+            deviceState.put("temperatureAmbientCelsius", ambient);
+            deviceState.put("temperatureSetpointCelsius", setpoint);
             deviceState.put("status", "SUCCESS");
 
             devices.put(deviceId, deviceState);
@@ -449,10 +461,56 @@ public class FulfillmentService {
         payload.put("devices", devices);
         response.put("payload", payload);
 
-        log.info("handleQuery response: " + response);
-
+        log.info("handleQuery response: {}", response);
         return response;
     }
+
+//    public JSONObject handleQuery(JSONObject requestBody, List<String> deviceIds) {
+//        log.info("handleQuery CALLED");
+//        log.info("requestBody: " + requestBody);
+//
+//        // Create the response and add requestId first
+//        JSONObject response = new JSONObject();
+//        String requestId = requestBody.getString("requestId");
+//        response.put("requestId", requestId);
+//
+//        // Initialize payload
+//        JSONObject payload = new JSONObject();
+//        JSONObject devices = new JSONObject();
+//
+//        for (String deviceId : deviceIds) {
+//            deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+//
+//            JSONObject deviceState = new JSONObject();
+//            Map<String, Object> currentModeSettings = new HashMap<>();
+//            currentModeSettings.put("mode_boiler", deviceStatus.getModeValue());
+//            // currentModeSettings.put("mode_boiler", "외출모드");
+//
+//            boolean deviceOnOff = deviceStatus.getPowrStatus().equals("on");
+//            boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
+//
+//            // Populate deviceState
+//            deviceState.put("on", deviceOnOff); // The device is ON
+//            deviceState.put("online", online);
+//            deviceState.put("onlineStatusDetails", "OK");
+//            deviceState.put("currentModeSettings", currentModeSettings);
+//            deviceState.put("temperatureAmbientCelsius",
+//                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
+//            deviceState.put("temperatureSetpointCelsius",
+//                    Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
+//            deviceState.put("status", "SUCCESS");
+//
+//            devices.put(deviceId, deviceState);
+//        }
+//
+//        // Add devices to payload and payload to response
+//        payload.put("devices", devices);
+//        response.put("payload", payload);
+//
+//        log.info("handleQuery response: " + response);
+//
+//        return response;
+//    }
 
     // 보일러 설정에 따라 settings 배열 생성
     private String[][] getBoilerSettings(String modelCode) {
