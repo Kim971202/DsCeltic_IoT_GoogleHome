@@ -71,7 +71,6 @@ public class AppServerController {
         googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount());
         
         if(googleMapper.checkGoogleRegistDevice(deviceId).getDeviceCount().equals("0")){
-//            log.info("등록되지 않은 기기 입니다 => " + deviceId);
             return;
         }
 
@@ -210,7 +209,6 @@ public class AppServerController {
             Map<String, Object> payload = Map.of("agentUserId", agentUserId);
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(payload);
-            System.out.println(requestBody);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
