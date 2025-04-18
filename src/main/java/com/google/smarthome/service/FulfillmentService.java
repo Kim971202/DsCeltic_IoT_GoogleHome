@@ -135,7 +135,9 @@ public class FulfillmentService {
             GoogleDTO deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
             if (deviceStatus != null) {
                 JSONObject customData = new JSONObject();
+                boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
                 customData.put("powerStatus", "on".equals(deviceStatus.getPowrStatus()));
+                customData.put("online", online);
                 customData.put("ambientTemperature", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getCurrentTemp()))));
                 customData.put("setpointTemperature", Double.parseDouble(String.format("%.1f", Double.parseDouble(deviceStatus.getTempStatus()))));
                 customData.put("currentMode", deviceStatus.getModeValue());
