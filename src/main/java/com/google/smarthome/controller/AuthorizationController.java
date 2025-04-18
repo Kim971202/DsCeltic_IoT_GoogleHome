@@ -77,9 +77,9 @@ public class AuthorizationController {
         googleDTO.setGoogleState(state);
         googleDTO.setAuthorizationCode(authorizationCode);
         googleMapper.updateGoogleAuthInfo(googleDTO);
-        googleMapper.updateUserAuthInfo(googleDTO);
-//        redisCommand.setValues(authorizationCode, username);
-        redisCommand.setValues(authorizationCode, "AllUserName");
+//        googleMapper.updateUserAuthInfo(googleDTO);
+        redisCommand.setValues(authorizationCode, username);
+//        redisCommand.setValues(authorizationCode, "AllUserName");
 
         String redirectUrl = redirectUri + "?code=" + authorizationCode + "&state=" + state;
 

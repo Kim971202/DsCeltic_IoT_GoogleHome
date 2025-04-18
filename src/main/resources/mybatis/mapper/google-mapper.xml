@@ -57,10 +57,7 @@
         ON
             a.DEVC_ID = b.DEVC_ID
         WHERE
-            USER_ID IN
-            <foreach collection="list" item="item" open="(" separator="," close=")">
-                #{item.groupId}
-            </foreach>
+            USER_ID = #{userId}
     </select>
 
     <select id="getNicknameByDeviceId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">

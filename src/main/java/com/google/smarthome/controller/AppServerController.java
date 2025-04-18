@@ -100,10 +100,10 @@ public class AppServerController {
 
         // 세대주
         // Google에 상태 보고
-        reportDeviceState(accessToken, "AllUserName", deviceStates);
+        reportDeviceState(accessToken, "yohan1202", deviceStates);
 
         // Google과 동기화 요청
-        requestSync(accessToken, "AllUserName");
+        requestSync(accessToken, "yohan1202");
     }
 
     private String getTokeString() {

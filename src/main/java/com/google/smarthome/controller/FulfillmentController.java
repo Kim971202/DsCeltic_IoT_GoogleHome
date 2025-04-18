@@ -44,10 +44,10 @@ public class FulfillmentController {
         String userId = redisCommand.getValues(googleAuth);
         log.info("userId: " + userId);
 
-        String realUserId = googleMapper.getUserIdByAuthorizationCode(googleAuth).getUserId();
-        List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
-        System.out.println("householdList: " + householdList);
-        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(householdList);
+//        String realUserId = googleMapper.getUserIdByAuthorizationCode(googleAuth).getUserId();
+//        List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
+//        System.out.println("householdList: " + householdList);
+        List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(userId);
 
         System.out.println("devices: " + devices);
 
@@ -61,7 +61,7 @@ public class FulfillmentController {
         }
 
         devices.forEach(device -> log.info("Device for userId {}: DeviceId: {}, DeviceModelCode: {}",
-                device.getUserId(), device.getDeviceId(), device.getDeviceModelCode()));
+                userId, device.getDeviceId(), device.getDeviceModelCode()));
 
         JSONObject requestBody = new JSONObject(request);
         String intent = requestBody.getJSONArray("inputs").getJSONObject(0).getString("intent");

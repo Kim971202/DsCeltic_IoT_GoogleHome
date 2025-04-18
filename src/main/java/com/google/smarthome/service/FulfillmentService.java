@@ -59,8 +59,8 @@ public class FulfillmentService {
         response.put("requestId", requestBody.getString("requestId"));
 
         JSONObject payload = new JSONObject();
-//        payload.put("agentUserId", userId);
-        payload.put("agentUserId", "AllUserName");
+        payload.put("agentUserId", userId);
+//        payload.put("agentUserId", "AllUserName");
 
         JSONArray devices = new JSONArray();
 
@@ -123,6 +123,7 @@ public class FulfillmentService {
 
             // GoogleDTO에서 기기 닉네임 가져오기
             GoogleDTO params = new GoogleDTO();
+            params.setUserId(userId);
             params.setDeviceId(deviceId);
             GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 
@@ -580,8 +581,8 @@ public class FulfillmentService {
 
         ReportStatusResult.Request reportStatusResult = ReportStatusResult.Request.builder()
                 .requestId(requestId)
-//                .agentUserId(agentUserId)
-                .agentUserId("AllUserName")
+                .agentUserId(agentUserId)
+//                .agentUserId("AllUserName")
                 .payload(ReportStatusResult.Request.Payload.builder()
                         .devices(ReportStatusResult.Request.Payload.Device.builder()
                                 .states(states)
