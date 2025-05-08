@@ -469,7 +469,7 @@ public class FulfillmentService {
             return new String[][] {
                     { "01", "실내난방", "Heating_Indoor_Temperature" },
                     { "03", "외출모드", "Away" }, // 외출/온수전용 같음
-                    { "08", "빠른온수모드", "FAST_WATER" }
+//                    { "08", "빠른온수모드", "FAST_WATER" }  ON/OFF로 수정 하였으므로 제거
             };
         }
     }
