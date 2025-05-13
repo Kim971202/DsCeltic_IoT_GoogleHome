@@ -71,6 +71,7 @@ public class FulfillmentService {
             String modelCode   = entry.getValue();
 
             List<GoogleDTO> extraList = googleMapper.getEachRoomDeviceIdList(originalId);
+            System.out.println(extraList);
             if (extraList != null) {
                 for (GoogleDTO extra : extraList) {
                     String subDeviceId = extra.getDeviceId();
