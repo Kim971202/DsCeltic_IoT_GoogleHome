@@ -84,6 +84,8 @@ public class FulfillmentService {
         for (Map.Entry<String, String> entry : extendedMap.entrySet()) {
             String deviceId = entry.getKey(); // deviceId
             String modelCode = entry.getValue(); // modelCode
+            System.out.println("deviceId: " + deviceId);
+            System.out.println("modelCode: " + modelCode);
 
             log.info("Processing device with ID: " + deviceId + " and Model Code: " + modelCode);
 

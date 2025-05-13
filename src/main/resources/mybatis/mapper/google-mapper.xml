@@ -52,7 +52,7 @@
         ON
             a.PR_ID = b.DEVC_ID
         WHERE
-            a.PR_ID = #{deviceId}
+            a.SUB_ID = #{deviceId}
     </select>
 
     <update id="updateDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
