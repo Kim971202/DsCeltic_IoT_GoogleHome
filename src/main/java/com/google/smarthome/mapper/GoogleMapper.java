@@ -22,4 +22,5 @@ public interface GoogleMapper {
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
     public List<GoogleDTO> getEachRoomDeviceIdByUserId(String deviceId);
     public List<GoogleDTO> getGroupIdByUserId(String userId);
+    public List<GoogleDTO> getEachRoomDeviceIdList(String deviceId);
 }

@@ -63,7 +63,24 @@ public class FulfillmentService {
 
         JSONArray devices = new JSONArray();
 
+        // 1) deviceInfoMap 복제
+        Map<String, String> extendedMap = new LinkedHashMap<>(deviceInfoMap);
+
         for (Map.Entry<String, String> entry : deviceInfoMap.entrySet()) {
+            String originalId  = entry.getKey();
+            String modelCode   = entry.getValue();
+
+            List<GoogleDTO> extraList = googleMapper.getEachRoomDeviceIdList(originalId);
+            if (extraList != null) {
+                for (GoogleDTO extra : extraList) {
+                    String subDeviceId = extra.getDeviceId();
+                    // 중복 방지를 위해 이미 key가 없을 때만 추가하거나, 무조건 덮어쓰기
+                    extendedMap.put(subDeviceId, modelCode);
+                }
+            }
+        }
+
+        for (Map.Entry<String, String> entry : extendedMap.entrySet()) {
             String deviceId = entry.getKey(); // deviceId
             String modelCode = entry.getValue(); // modelCode
 
@@ -121,24 +138,24 @@ public class FulfillmentService {
             device.put("attributes", attributes);
 
             // GoogleDTO에서 기기 닉네임 가져오기
-            GoogleDTO params = new GoogleDTO();
-            params.setUserId(userId);
-            params.setDeviceId(deviceId);
-            GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
+//            GoogleDTO params = new GoogleDTO();
+//            params.setUserId(userId);
+//            params.setDeviceId(deviceId);
+//            GoogleDTO deviceNick = googleMapper.getNicknameByDeviceId(params);
 
             // device.put("name", new JSONObject().put("name", "대성" + "-" +
             // deviceNick.getDeviceNickname()));
-            device.put("name", new JSONObject().put("name", "대성보일러" + "-" + deviceNick.getDeviceNickname()));
+//            device.put("name", new JSONObject().put("name", "대성보일러" + "-" + deviceNick.getDeviceNickname()));
+            int i = 1;
+            device.put("name", new JSONObject().put("name", "대성보일러" + "-" + i));
+            ++i;
 
             // GoogleDTO에서 기기 상태 정보 가져오기
-            GoogleDTO deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
-            GoogleDTO extraDeviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
-
-            // 둘 중 하나라도 null이 아니면 non-null한 쪽으로 대입
-            if (deviceStatus == null) {
-                deviceStatus = extraDeviceStatus;
-            } else if (extraDeviceStatus != null) {
-                deviceStatus = extraDeviceStatus;
+            GoogleDTO deviceStatus;
+            if(deviceId.contains("4d4332363030")){
+                deviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
+            } else {
+                deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
             }
 
             if (deviceStatus != null) {
@@ -153,7 +170,6 @@ public class FulfillmentService {
             } else {
                 log.warn("Device status not found for deviceId: " + deviceId);
             }
-
             devices.put(device);
         }
 
