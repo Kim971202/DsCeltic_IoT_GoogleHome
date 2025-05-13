@@ -63,7 +63,7 @@ public class FulfillmentService {
 
         JSONArray devices = new JSONArray();
 
-        // 1) deviceInfoMap 복제
+        // deviceInfoMap 복제
         Map<String, String> extendedMap = new LinkedHashMap<>(deviceInfoMap);
 
         for (Map.Entry<String, String> entry : deviceInfoMap.entrySet()) {
@@ -71,16 +71,20 @@ public class FulfillmentService {
             String modelCode   = entry.getValue();
 
             List<GoogleDTO> extraList = googleMapper.getEachRoomDeviceIdList(originalId);
-            System.out.println(extraList);
-            if (extraList != null) {
+            // 값이 존재하면 originalId 제거 후, subDeviceId 추가
+            if (extraList != null && !extraList.isEmpty()) {
+                // originalId 제거
+                extendedMap.remove(originalId);
+
+                // subDeviceId 들을 동일한 modelCode로 추가
                 for (GoogleDTO extra : extraList) {
                     String subDeviceId = extra.getDeviceId();
-                    // 중복 방지를 위해 이미 key가 없을 때만 추가하거나, 무조건 덮어쓰기
                     extendedMap.put(subDeviceId, modelCode);
                 }
             }
         }
 
+        int i = 1;
         for (Map.Entry<String, String> entry : extendedMap.entrySet()) {
             String deviceId = entry.getKey(); // deviceId
             String modelCode = entry.getValue(); // modelCode
@@ -149,7 +153,6 @@ public class FulfillmentService {
             // device.put("name", new JSONObject().put("name", "대성" + "-" +
             // deviceNick.getDeviceNickname()));
 //            device.put("name", new JSONObject().put("name", "대성보일러" + "-" + deviceNick.getDeviceNickname()));
-            int i = 1;
             device.put("name", new JSONObject().put("name", "대성보일러" + "-" + i));
             ++i;
 
