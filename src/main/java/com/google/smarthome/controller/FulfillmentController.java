@@ -51,7 +51,7 @@ public class FulfillmentController {
         System.out.println("devices: " + devices);
 
         for(GoogleDTO googleDTO : devices){
-            if(googleDTO.getDeviceId().contains("4d4332363030")){
+            if(googleDTO.getDeviceId().contains("44522d33303057")){ // DR-300W
                 List<GoogleDTO> additionalDevices = googleMapper.getEachRoomDeviceIdByUserId(googleDTO.getDeviceId());
                 if (additionalDevices != null) {
                     devices.addAll(additionalDevices);
