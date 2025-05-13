@@ -9,6 +9,7 @@ import java.util.List;
 public interface GoogleMapper {
 
     public GoogleDTO getInfoByDeviceId(String deviceId);
+    public GoogleDTO getInfoByEachRoomDeviceId(String deviceId);
     public GoogleDTO getGoogleAuthInfo(String deviceId);
     public int updateGoogleAuthInfo(GoogleDTO value);
     public int updateDeviceStatus(GoogleDTO value);

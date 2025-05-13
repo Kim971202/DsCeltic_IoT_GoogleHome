@@ -22,6 +22,24 @@
             a.DEVC_ID = #{deviceId}
     </select>
 
+    <select id="getInfoByEachRoomDeviceId" parameterType="String" resultMap="google">
+        SELECT
+            a.POWR AS powrStatus,
+            a.HTTP AS tempStatus,
+            a.SUB_ID AS deviceId,
+            a.OPMD AS modeValue,
+            a.CHTP AS currentTemp,
+            b.USER_ID AS userId
+        FROM
+            TBR_OPR_VALVE_BOX_STATUS a
+        INNER JOIN
+            TBT_OPR_DEVICE_REGIST b
+        ON
+            a.PR_ID = b.DEVC_ID
+        WHERE
+            a.PR_ID = #{deviceId}
+    </select>
+
     <update id="updateDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
         UPDATE
             TBR_OPR_DEVICE_STATUS

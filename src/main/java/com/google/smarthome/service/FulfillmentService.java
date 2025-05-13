@@ -132,6 +132,15 @@ public class FulfillmentService {
 
             // GoogleDTO에서 기기 상태 정보 가져오기
             GoogleDTO deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+            GoogleDTO extraDeviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
+
+            // 둘 중 하나라도 null이 아니면 non-null한 쪽으로 대입
+            if (deviceStatus == null) {
+                deviceStatus = extraDeviceStatus;
+            } else if (extraDeviceStatus != null) {
+                deviceStatus = extraDeviceStatus;
+            }
+
             if (deviceStatus != null) {
                 JSONObject customData = new JSONObject();
                 boolean online = googleMapper.getOnlineStatus().getOnline().equals("true");
