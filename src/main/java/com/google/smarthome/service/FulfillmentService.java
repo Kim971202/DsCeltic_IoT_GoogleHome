@@ -106,7 +106,7 @@ public class FulfillmentService {
             availableModes.put(createMode(settings));
 
             // modelCode에 따라 보일러와 환기 기기를 구분
-            if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF") || modelCode.contains("MC2600")) {
+            if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF") || modelCode.contains("DR-300W")) {
                 deviceType = "action.devices.types.BOILER";
                 attributes
                         .put("temperatureStepCelsius", 1)
