@@ -60,7 +60,6 @@ public class FulfillmentService {
 
         JSONObject payload = new JSONObject();
         payload.put("agentUserId", userId);
-//        payload.put("agentUserId", "AllUserName");
 
         JSONArray devices = new JSONArray();
 
@@ -83,13 +82,13 @@ public class FulfillmentService {
             availableModes.put(createMode(settings));
 
             // modelCode에 따라 보일러와 환기 기기를 구분
-            if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF")) {
+            if (modelCode.equals("ESCeco13S") || modelCode.equals("DCR-91/WF") || modelCode.contains("MC2600")) {
                 deviceType = "action.devices.types.BOILER";
                 attributes
                         .put("temperatureStepCelsius", 1)
                         .put("temperatureUnitForUX", "C")
                         .put("temperatureRange", new JSONObject()
-                                .put("minThresholdCelsius", 40)
+                                .put("minThresholdCelsius", 5)
                                 .put("maxThresholdCelsius", 80))
                         .put("availableModes", availableModes);
 
@@ -387,13 +386,34 @@ public class FulfillmentService {
     // 온도 설정 명령
     private void handleTemperatureSetpoint(String deviceId, double temperature) throws Exception {
         log.info("Setting temperature for device " + deviceId + " to " + temperature);
-        if (temperature < 10 || temperature > 80) {
-            throw new IllegalArgumentException("Temperature out of range");
+        // 기기 별로 적용 최소/최대 온도 다름
+        /*
+        * DR-910W(난방수온\온돌난방):  40℃~80℃
+        * DCR-91WF(난방수온\온돌난방): 50℃~80℃
+        * MC2600시리즈(실내난방):      5℃~40℃
+        * */
+        String functionId = "wtTp";
+
+        if(deviceId.contains("2045534365636f313353")){          // ESCeco13S
+            if (temperature < 40 || temperature > 80) {
+                throw new IllegalArgumentException("Temperature out of range");
+            }
+        } else if(deviceId.contains("204443522d39312f5746")){   // DCR-91/WF
+            if (temperature < 10 || temperature > 80) {
+                throw new IllegalArgumentException("Temperature out of range");
+            }
+        } else if(deviceId.contains("4d4332363030"))    {
+            // MC2600
+            if (temperature < 10 || temperature > 80) {
+                throw new IllegalArgumentException("Temperature out of range");
+            }
+            functionId = "htTp";
         }
+
         deviceStatus.setDeviceId(deviceId);
         deviceStatus.setTempStatus(String.valueOf(temperature));
         googleMapper.updateDeviceStatus(deviceStatus);
-        handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), "wtTp"); //htTp
+        handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), functionId); //wtTp OR htTp
     }
 
     // 모드 설정 명령
@@ -462,14 +482,12 @@ public class FulfillmentService {
                     { "02", "온돌난방", "Heating_Water_Temperature" },
                     { "03", "외출", "Away" },
                     { "05", "절약난방", "Economy_Heating" },
-//                    { "061", "취침", "Sleep1" },
                     { "07", "온수전용모드", "Hot_Water_Only" }
             };
         } else {
             return new String[][] {
                     { "01", "실내난방", "Heating_Indoor_Temperature" },
                     { "03", "외출모드", "Away" }, // 외출/온수전용 같음
-//                    { "08", "빠른온수모드", "FAST_WATER" }  ON/OFF로 수정 하였으므로 제거
             };
         }
     }

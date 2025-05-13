@@ -60,6 +60,16 @@
             USER_ID = #{userId}
     </select>
 
+    <select id="getEachRoomDeviceIdByUserId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
+        SELECT
+            SUB_ID AS deviceId,
+            DEVC_MODL_CD AS deviceModelCode
+        FROM
+            TBR_OPR_VALVE_BOX_STATUS
+        WHERE
+            PR_ID = #{deviceId}
+    </select>
+
     <select id="getNicknameByDeviceId" parameterType="com.google.smarthome.dto.GoogleDTO" resultMap="google">
         SELECT
             DEVC_NICK AS deviceNickname

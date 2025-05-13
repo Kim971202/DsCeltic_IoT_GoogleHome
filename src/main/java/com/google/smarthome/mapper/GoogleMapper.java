@@ -19,5 +19,6 @@ public interface GoogleMapper {
     public GoogleDTO getOnlineStatus();
     public GoogleDTO checkGoogleRegistDevice(String deviceId);
     public List<GoogleDTO> getDeviceIdByUserId(String userId);
+    public List<GoogleDTO> getEachRoomDeviceIdByUserId(String deviceId);
     public List<GoogleDTO> getGroupIdByUserId(String userId);
 }

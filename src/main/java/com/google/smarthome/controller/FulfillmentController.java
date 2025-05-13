@@ -44,14 +44,19 @@ public class FulfillmentController {
         String userId = redisCommand.getValues(googleAuth);
         log.info("userId: " + userId);
 
-//        String realUserId = googleMapper.getUserIdByAuthorizationCode(googleAuth).getUserId();
-//        List<GoogleDTO> householdList = googleMapper.getGroupIdByUserId(realUserId);
-//        System.out.println("householdList: " + householdList);
+        // 해당 사용자가 각방이 있는 지 확인
+        // 4d4332363030 (MC2600) 여부로 확인
         List<GoogleDTO> devices = googleMapper.getDeviceIdByUserId(userId);
 
         System.out.println("devices: " + devices);
 
         for(GoogleDTO googleDTO : devices){
+            if(googleDTO.getDeviceId().contains("4d4332363030")){
+                List<GoogleDTO> additionalDevices = googleMapper.getEachRoomDeviceIdByUserId(googleDTO.getDeviceId());
+                if (additionalDevices != null) {
+                    devices.addAll(additionalDevices);
+                }
+            }
             System.out.println("googleDTO.getDeviceId(): " + googleDTO.getDeviceId());
         }
 
