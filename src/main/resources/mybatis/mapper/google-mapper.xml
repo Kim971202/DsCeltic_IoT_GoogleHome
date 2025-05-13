@@ -28,7 +28,7 @@
             a.DEVC_MODL_CD AS deviceModelCode,
             b.USER_ID AS userId
         FROM
-            TBR_OPR_DEVICE_STATUS a
+            TBR_OPR_VALVE_BOX_STATUS a
         INNER JOIN
             TBT_OPR_DEVICE_REGIST b
         ON
