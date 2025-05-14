@@ -68,6 +68,18 @@
             DEVC_ID = #{deviceId}
     </update>
 
+    <update id="updateEachRoomDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
+        UPDATE
+            TBR_OPR_DEVICE_STATUS
+        <set>
+            <if test="tempStatus != null">HTTP = #{tempStatus},</if> <!-- HTTP-->
+            <if test="powrStatus != null">POWR = #{powrStatus},</if>
+            <if test="modeValue != null">OPMD = #{modeValue},</if>
+        </set>
+        WHERE
+            SUB_ID = #{deviceId}
+    </update>
+
     <select id="getAccountByUserId" parameterType="String" resultMap="google">
         SELECT
             USER_ID AS userId,

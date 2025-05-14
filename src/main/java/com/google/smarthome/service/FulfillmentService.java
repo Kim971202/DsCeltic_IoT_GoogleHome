@@ -23,12 +23,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -343,16 +338,22 @@ public class FulfillmentService {
                                         deviceStatus.setPowrStatus("of");
                                     else if (mode.equals("heat"))
                                         deviceStatus.setPowrStatus("on");
-                                    googleMapper.updateDeviceStatus(deviceStatus);
+
+                                    // 데이터베이스 업데이트
+                                    if(deviceId.contains("4d4332363030")){
+                                        googleMapper.updateEachRoomDeviceStatus(deviceStatus);
+                                    } else {
+                                        googleMapper.updateDeviceStatus(deviceStatus);
+                                    }
                                     handleDevice(userId, deviceId, mode, "powr");
                                     break;
+
                                 case "action.devices.commands.SetModes":
                                     JSONObject params = execCommand.getJSONObject("params")
                                             .getJSONObject("updateModeSettings");
                                     for (String modeName : params.keySet()) {
                                         String modeValue = params.getString(modeName);
-                                        log.info(
-                                                "설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
+                                        log.info("설정 mode of device " + deviceId + " to " + modeName + ": " + modeValue);
                                         switch (modeValue) {
                                             case "061":
                                                 deviceStatus.setModeValue("06");
@@ -370,7 +371,6 @@ public class FulfillmentService {
 
                                         handleSetModes(userId, deviceId, modeName, modeValue);
                                         updateDeviceState(userId, deviceId, "currentModeSettings", params.toMap());
-                                        googleMapper.updateDeviceStatus(deviceStatus);
                                     }
                                     break;
                                 default:
@@ -443,7 +443,14 @@ public class FulfillmentService {
 
         deviceStatus.setDeviceId(deviceId);
         deviceStatus.setTempStatus(String.valueOf(temperature));
-        googleMapper.updateDeviceStatus(deviceStatus);
+
+        // 데이터베이스 업데이트
+        if(deviceId.contains("4d4332363030")){
+            googleMapper.updateEachRoomDeviceStatus(deviceStatus);
+        } else {
+            googleMapper.updateDeviceStatus(deviceStatus);
+        }
+
         handleDevice(deviceStatus.getUserId(), deviceId, String.valueOf(temperature), functionId); //wtTp OR htTp
     }
 
@@ -471,8 +478,31 @@ public class FulfillmentService {
         JSONObject payload = new JSONObject();
         JSONObject devices = new JSONObject();
 
+        // 각방 ID를 추가 한 신규 리스트
+        List<String> deviceIdList = new ArrayList<>(deviceIds);
+
+        // Iterator 로 순회하며 조건에 맞는 원소는 remove(), 추가 서브 ID는 add()
+        ListIterator<String> it = deviceIdList.listIterator();
+        while (it.hasNext()) {
+            String id = it.next();
+            if (id.contains("4d4332363030")) {
+                it.remove();  // 이 ID는 리스트에서 빼고
+                List<GoogleDTO> extra = googleMapper.getEachRoomDeviceIdList(id);
+                if (extra != null) {
+                    for (GoogleDTO dto : extra) {
+                        it.add(dto.getDeviceId());  // 바로 그 자리(or 다음 자리)에 서브 ID 삽입
+                    }
+                }
+            }
+        }
+
         for (String deviceId : deviceIds) {
-            deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+
+            if(deviceId.contains("4d4332363030")){
+                deviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
+            } else {
+                deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+            }
 
             JSONObject deviceState = new JSONObject();
             Map<String, Object> currentModeSettings = new HashMap<>();
@@ -674,13 +704,18 @@ public class FulfillmentService {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     public void updateDeviceState(String userId, String deviceId, String attribute, Object value) {
         log.info("Updating device state for UserId: {}, DeviceId: {}, Attribute: {}, Value: {}", userId, deviceId,
                 attribute, value);
 
         try {
             // 기기의 상태를 갱신
-            deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+            if(deviceId.contains("4d4332363030")){
+                deviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
+            } else {
+                deviceStatus = googleMapper.getInfoByDeviceId(deviceId);
+            }
 
             switch (attribute) {
                 case "on":
@@ -702,7 +737,11 @@ public class FulfillmentService {
             }
 
             // 데이터베이스 업데이트
-            googleMapper.updateDeviceStatus(deviceStatus);
+            if(deviceId.contains("4d4332363030")){
+                googleMapper.updateEachRoomDeviceStatus(deviceStatus);
+            } else {
+                googleMapper.updateDeviceStatus(deviceStatus);
+            }
 
             // Google Home Graph API를 통해 상태 동기화
             QueryResult.Response queryResponse = new QueryResult.Response();
