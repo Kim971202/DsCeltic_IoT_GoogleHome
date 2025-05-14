@@ -70,7 +70,7 @@
 
     <update id="updateEachRoomDeviceStatus" parameterType="com.google.smarthome.dto.GoogleDTO">
         UPDATE
-            TBR_OPR_DEVICE_STATUS
+            TBR_OPR_VALVE_BOX_STATUS
         <set>
             <if test="tempStatus != null">HTTP = #{tempStatus},</if> <!-- HTTP-->
             <if test="powrStatus != null">POWR = #{powrStatus},</if>
