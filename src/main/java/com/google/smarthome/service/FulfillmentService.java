@@ -497,7 +497,7 @@ public class FulfillmentService {
         }
 
         for (String deviceId : deviceIds) {
-
+            System.out.println("deviceId: " + deviceId);
             if(deviceId.contains("4d4332363030")){
                 deviceStatus = googleMapper.getInfoByEachRoomDeviceId(deviceId);
             } else {
